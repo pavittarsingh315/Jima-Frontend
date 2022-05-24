@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
@@ -66,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                       controller: identifierController,
                       textInputAction: TextInputAction.next,
                       keyboardType: identifierIsPhone ? TextInputType.phone : TextInputType.emailAddress,
+                      inputFormatters: [if (identifierIsPhone) PhoneInputFormatter()],
                       decoration: InputDecoration(
                         hintText: identifierIsPhone ? "Phone Number" : "Email",
                         errorStyle: const TextStyle(fontSize: 14.0),
