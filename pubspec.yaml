@@ -34,6 +34,7 @@ dependencies:
   auto_route: ^4.0.1
   provider: ^6.0.3
   flutter_multi_formatter: ^2.5.7
+  form_field_validator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
