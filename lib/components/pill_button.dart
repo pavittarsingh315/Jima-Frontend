@@ -4,11 +4,13 @@ class PillButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onTap;
   final Color color, textColor;
+  final bool enabled;
   const PillButton({
     Key? key,
     required this.child,
     required this.onTap,
     required this.color,
+    this.enabled = true,
     this.textColor = Colors.white,
   }) : super(key: key);
 
@@ -21,10 +23,11 @@ class PillButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(11),
         child: TextButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(color),
+            backgroundColor: enabled ? MaterialStateProperty.all<Color>(color) : MaterialStateProperty.all<Color>(Colors.grey),
             foregroundColor: MaterialStateProperty.all<Color>(textColor),
+            overlayColor: enabled ? null : MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) => Colors.transparent),
           ),
-          onPressed: onTap,
+          onPressed: enabled ? onTap : null,
           child: child,
         ),
       ),

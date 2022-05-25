@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/authentication/registration.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,24 +19,39 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  bool identifierIsPhone = true;
+  bool contactIsPhone = true;
   bool isPasswordHidden = true;
   bool isLoginIn = false;
-  late final TextEditingController identifierController;
+  bool filledOutForm = false;
+  late final TextEditingController contactController;
   late final TextEditingController passwordController;
 
   @override
   void initState() {
     super.initState();
-    identifierController = TextEditingController();
+    contactController = TextEditingController();
     passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    identifierController.dispose();
+    contactController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void checkIfFormIsFilled(_) {
+    if (contactController.text != "" && passwordController.text != "") {
+      if (!filledOutForm) {
+        filledOutForm = true;
+        setState(() {});
+      }
+    } else {
+      if (filledOutForm) {
+        filledOutForm = false;
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -47,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
       FocusManager.instance.primaryFocus?.unfocus();
       if (form!.validate()) {
         form.save();
-        debugPrint("+${identifierIsPhone ? toNumericString(identifierController.text) : identifierController.text}");
+        debugPrint("+${contactIsPhone ? toNumericString(contactController.text) : contactController.text}");
         debugPrint(passwordController.text);
         setState(() {
           isLoginIn = true;
@@ -76,18 +93,18 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     child: TextFormField(
-                      controller: identifierController,
+                      controller: contactController,
                       textInputAction: TextInputAction.next,
-                      keyboardType: identifierIsPhone ? TextInputType.phone : TextInputType.emailAddress,
-                      inputFormatters: [if (identifierIsPhone) PhoneInputFormatter()],
+                      keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
+                      inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
                       validator: MultiValidator(
                         [
-                          RequiredValidator(errorText: "Required"),
-                          identifierIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
+                          contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
                         ],
                       ),
+                      onChanged: checkIfFormIsFilled,
                       decoration: InputDecoration(
-                        hintText: identifierIsPhone ? "Phone Number" : "Email",
+                        hintText: contactIsPhone ? "Phone Number" : "Email",
                         errorStyle: const TextStyle(fontSize: 14.0),
                         filled: true,
                         fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
@@ -97,15 +114,16 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            identifierController.text = "";
+                            contactController.text = "";
                             FocusManager.instance.primaryFocus?.unfocus();
+                            checkIfFormIsFilled(null);
                             setState(() {
-                              identifierIsPhone = !identifierIsPhone;
+                              contactIsPhone = !contactIsPhone;
                             });
                           },
                           behavior: HitTestBehavior.translucent,
                           child: Icon(
-                            identifierIsPhone ? Icons.phone_iphone_rounded : Icons.email_rounded,
+                            contactIsPhone ? Icons.phone_iphone_rounded : Icons.email_rounded,
                             color: primary,
                           ),
                         ),
@@ -118,8 +136,8 @@ class _LoginPageState extends State<LoginPage> {
                       controller: passwordController,
                       textInputAction: TextInputAction.go,
                       obscureText: isPasswordHidden,
-                      onEditingComplete: _onLoginTap,
-                      validator: MultiValidator([RequiredValidator(errorText: "Required")]),
+                      onChanged: checkIfFormIsFilled,
+                      onEditingComplete: filledOutForm ? _onLoginTap : null,
                       decoration: InputDecoration(
                         hintText: "Password",
                         errorStyle: const TextStyle(fontSize: 14.0),
@@ -147,7 +165,8 @@ class _LoginPageState extends State<LoginPage> {
                   PillButton(
                     onTap: _onLoginTap,
                     color: primary,
-                    child: isLoginIn ? const CupertinoActivityIndicator(color: Colors.white) : const Text("Login", style: TextStyle(fontSize: 15)),
+                    enabled: filledOutForm,
+                    child: isLoginIn ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,7 +182,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.router.pushWidget(const RegistrationPage());
+                        },
                         child: const Text(
                           "Register",
                           style: TextStyle(
