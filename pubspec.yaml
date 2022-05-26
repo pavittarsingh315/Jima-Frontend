@@ -36,6 +36,7 @@ dependencies:
   provider: ^6.0.3
   swipeable_page_route: ^0.2.6
   http: ^0.13.4
+  flutter_secure_storage: ^5.0.2
   another_flushbar: ^1.10.29
 
   flutter_multi_formatter: ^2.5.7

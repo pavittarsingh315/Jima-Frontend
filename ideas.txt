@@ -6,3 +6,4 @@
 6. Add an optional pin code setting where a user has to enter a pin to access the app.
 7. Use the url_launcher package to open webpages from within the app.
 8. When showing comments under a post, only show the comments stats like num likes, num dislike, num replies. Make the user click on the comment to see the replies in a comment detail view page. Use a hero widget to animate the page transition. Pin comment to top and have replies scroll under it. This is exactly like #1.
+9. Use this(https://stackoverflow.com/questions/53912650/how-to-show-progress-bar-with-dots-indicating-the-progress) to show a dot on a video's progress bar.

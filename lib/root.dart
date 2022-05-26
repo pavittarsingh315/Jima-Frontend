@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/trunk.dart';
 import 'package:nerajima/pages/authentication/login.dart';
 
@@ -11,11 +13,18 @@ class AppRoot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
 
     Future<bool> _runPreAppCheck() async {
       try {
-        Map<String, dynamic> response = await authProvider.tokenAuth();
-        return response["authenticated"];
+        Map<String, dynamic> res = await authProvider.tokenAuth();
+        if (res["status"]) {
+          User user = res["user"];
+          userProvider.setUser(user);
+          return true;
+        } else {
+          return false;
+        }
       } catch (e) {
         return Future.error(e);
       }
