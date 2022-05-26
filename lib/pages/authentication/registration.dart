@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/utils/phone_validator.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 
@@ -48,13 +50,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (!filledOutForm) {
         filledOutForm = true;
         setState(() {});
-        print('true');
       }
     } else {
       if (filledOutForm) {
         filledOutForm = false;
         setState(() {});
-        print('false');
       }
     }
   }
@@ -105,6 +105,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       autofocus: true,
                       keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
                       inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
+                      validator: MultiValidator([
+                        contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
+                        MaxLengthValidator(50, errorText: "Contact cannot exceed 50 characters."),
+                      ]),
                       onChanged: checkIfFormIsFilled,
                       decoration: InputDecoration(
                         hintText: contactIsPhone ? "Phone Number" : "Email",
@@ -119,9 +123,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           onTap: () {
                             contactController.text = "";
                             FocusManager.instance.primaryFocus?.unfocus();
-                            checkIfFormIsFilled(null);
                             setState(() {
                               contactIsPhone = !contactIsPhone;
+                              filledOutForm = false;
                             });
                           },
                           behavior: HitTestBehavior.translucent,
@@ -139,6 +143,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       controller: usernameController,
                       textInputAction: TextInputAction.next,
                       onChanged: checkIfFormIsFilled,
+                      validator: MultiValidator([MinLengthValidator(6, errorText: "Username must be at least 6 characters."), MaxLengthValidator(30, errorText: "Username cannot exceed 30 characters.")]),
                       decoration: InputDecoration(
                         hintText: "Username",
                         errorStyle: const TextStyle(fontSize: 14.0),
@@ -157,6 +162,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       controller: nameController,
                       textInputAction: TextInputAction.next,
                       onChanged: checkIfFormIsFilled,
+                      validator: MultiValidator([MaxLengthValidator(30, errorText: "Name cannot exceed 30 characters.")]),
                       decoration: InputDecoration(
                         hintText: "Name",
                         errorStyle: const TextStyle(fontSize: 14.0),
@@ -177,6 +183,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       obscureText: isPasswordHidden,
                       onChanged: checkIfFormIsFilled,
                       onEditingComplete: filledOutForm ? _onRegisterTap : null,
+                      validator: MultiValidator([MinLengthValidator(10, errorText: "Password must be at least 10 characters.")]),
                       decoration: InputDecoration(
                         hintText: "Password",
                         errorStyle: const TextStyle(fontSize: 14.0),
@@ -223,8 +230,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           if (areRegistering) return;
                           setState(() {
                             agreeToTerms = !agreeToTerms;
+                            if (agreeToTerms) {
+                              checkIfFormIsFilled(null);
+                            } else {
+                              filledOutForm = false;
+                            }
                           });
-                          checkIfFormIsFilled(null);
                         },
                       ),
                     ],

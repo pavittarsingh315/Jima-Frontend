@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/pages/authentication/login.dart';
 
 class AppRoot extends StatelessWidget {
@@ -7,11 +9,12 @@ class AppRoot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     Future<bool> _runPreAppCheck() async {
       try {
-        debugPrint("Ran Pre App Check");
-        await Future.delayed(const Duration(seconds: 2));
-        return false; // isAuth value
+        Map<String, dynamic> response = await authProvider.tokenAuth();
+        return response["authenticated"];
       } catch (e) {
         return Future.error(e);
       }

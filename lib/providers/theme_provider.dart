@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 const Color primary = Color(0xFF6880fc);
@@ -17,7 +18,6 @@ class ThemeProvider extends ChangeNotifier {
   bool get isDarkModeEnabled => _themeMode == ThemeMode.dark;
 
   Future<void> getTheme() async {
-    await Future.delayed(const Duration(milliseconds: 500));
     _alreadyGotTheme = true;
     _themeMode = ThemeMode.light;
     debugPrint("got theme");
@@ -33,7 +33,8 @@ class ThemeProvider extends ChangeNotifier {
     ),
     colorScheme: const ColorScheme.dark(),
     brightness: Brightness.dark,
-    textSelectionTheme: const TextSelectionThemeData(cursorColor: primary, selectionColor: secondary),
+    textSelectionTheme: const TextSelectionThemeData(cursorColor: primary, selectionColor: secondary, selectionHandleColor: primary),
+    cupertinoOverrideTheme: const CupertinoThemeData(primaryColor: primary), // to change selectionHandleColor on iOS
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: Colors.black,
@@ -50,7 +51,8 @@ class ThemeProvider extends ChangeNotifier {
     ),
     colorScheme: const ColorScheme.light(),
     brightness: Brightness.light,
-    textSelectionTheme: const TextSelectionThemeData(cursorColor: primary, selectionColor: tertiary),
+    textSelectionTheme: const TextSelectionThemeData(cursorColor: primary, selectionColor: tertiary, selectionHandleColor: primary),
+    cupertinoOverrideTheme: const CupertinoThemeData(primaryColor: primary), // to change selectionHandleColor on iOS
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: Colors.white,
