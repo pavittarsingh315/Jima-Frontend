@@ -87,4 +87,13 @@ class AuthProvider extends ChangeNotifier {
       return Future.error(e);
     }
   }
+
+  Future<void> logout() async {
+    try {
+      await _secureStorage.delete(key: "access");
+      await _secureStorage.delete(key: "refresh");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
 }
