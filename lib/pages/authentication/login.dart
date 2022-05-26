@@ -5,8 +5,11 @@ import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
+import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/pages/authentication/registration.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
@@ -61,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     Future<void> _onLoginTap() async {
@@ -75,6 +79,9 @@ class _LoginPageState extends State<LoginPage> {
           final res = await authProvider.loginAuth(contact: contact, password: passwordController.text);
           isAuthenticating = false;
           if (res["status"]) {
+            User user = res['user'];
+            userProvider.setUser(user);
+            context.router.pushAndPopUntil(const AppTrunk(), predicate: (route) => false);
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
           builder: (BuildContext context, _) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/trunk.dart';
 import 'package:nerajima/pages/authentication/login.dart';
 
 class AppRoot extends StatelessWidget {
@@ -31,21 +32,12 @@ class AppRoot extends StatelessWidget {
           return const Scaffold(body: Center(child: Text('Splash Screen')));
         }
         if (snapshot.data == true) {
-          return _home(context);
+          return const AppTrunk();
         } else if (snapshot.data == false) {
           return const LoginPage();
         }
         return const Scaffold(body: Center(child: Text('Unknown Error...')));
       },
-    );
-  }
-
-  Widget _home(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Home Page",
-        style: TextStyle(fontSize: 25),
-      ),
     );
   }
 }

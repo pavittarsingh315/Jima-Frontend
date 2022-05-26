@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert' as convert;
 
+import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
 enum Status {
@@ -39,11 +40,13 @@ class AuthProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(response.body);
 
       if (resData["message"] == "Success") {
-        var userData = resData["data"]["data"]; // convert to User model
+        User user = User.fromJson(resData["data"]["data"]);
+
+        // store tokens.
 
         _authStatus = Status.goodAuth;
         notifyListeners();
-        return {"status": true};
+        return {"status": true, "user": user};
       } else if (resData["message"] == "Error") {
         _authStatus = Status.badAuth;
         notifyListeners();

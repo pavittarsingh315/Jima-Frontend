@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
 import 'package:nerajima/root.dart';
+import 'package:nerajima/trunk.dart';
 
 import 'package:nerajima/pages/authentication/login.dart';
 import 'package:nerajima/pages/authentication/registration.dart';
@@ -15,6 +16,10 @@ import 'package:nerajima/pages/authentication/registration.dart';
     AutoRoute(
       path: '/',
       page: AppRoot,
+    ),
+    AutoRoute(
+      path: "/trunk",
+      page: AppTrunk,
     ),
     AutoRoute(
       path: "/authentication",
