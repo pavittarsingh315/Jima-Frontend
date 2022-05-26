@@ -31,8 +31,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
+
   auto_route: ^4.0.1
   provider: ^6.0.3
+  swipeable_page_route: ^0.2.6
+  http: ^0.13.4
+  another_flushbar: ^1.10.29
+
   flutter_multi_formatter: ^2.5.7
   form_field_validator: ^1.1.0
 

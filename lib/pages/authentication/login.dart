@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
+import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/authentication/registration.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
+import 'package:nerajima/utils/show_alert.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,8 +24,8 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   bool contactIsPhone = true;
   bool isPasswordHidden = true;
-  bool isLoginIn = false;
   bool filledOutForm = false;
+  bool isAuthenticating = false;
   late final TextEditingController contactController;
   late final TextEditingController passwordController;
 
@@ -57,22 +60,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     Future<void> _onLoginTap() async {
+      if (isAuthenticating) return; // prevents spam
       final form = formKey.currentState;
       FocusManager.instance.primaryFocus?.unfocus();
       if (form!.validate()) {
         form.save();
-        debugPrint("+${contactIsPhone ? toNumericString(contactController.text) : contactController.text}");
-        debugPrint(passwordController.text);
-        setState(() {
-          isLoginIn = true;
-        });
-        await Future.delayed(const Duration(milliseconds: 1500));
-        setState(() {
-          isLoginIn = false;
-        });
+        try {
+          isAuthenticating = true;
+          final String contact = contactIsPhone ? "+${toNumericString(contactController.text)}" : contactController.text;
+          final res = await authProvider.loginAuth(contact: contact, password: passwordController.text);
+          isAuthenticating = false;
+          if (res["status"]) {
+          } else {
+            showAlert(msg: res["message"], context: context, isError: true);
+          }
+        } catch (e) {
+          isAuthenticating = false;
+          showAlert(msg: "Could not connect to server...", context: context, isError: true);
+        }
       }
     }
 
@@ -160,11 +169,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  PillButton(
-                    onTap: _onLoginTap,
-                    color: primary,
-                    enabled: filledOutForm,
-                    child: isLoginIn ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
+                  Consumer<AuthProvider>(
+                    builder: (context, auth, child) {
+                      return PillButton(
+                        onTap: _onLoginTap,
+                        color: primary,
+                        enabled: filledOutForm,
+                        child: auth.authStatus == Status.authenticating ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
+                      );
+                    },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,7 +194,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          context.router.pushWidget(const RegistrationPage());
+                          context.router.pushNativeRoute(
+                            SwipeablePageRoute(
+                              builder: (context) => const RegistrationPage(),
+                            ),
+                          );
                         },
                         child: const Text(
                           "Register",
