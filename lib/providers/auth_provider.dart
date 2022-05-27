@@ -10,6 +10,7 @@ enum Status {
   badAuth,
   authenticating,
   goodAuth,
+  registering,
 }
 
 class AuthProvider extends ChangeNotifier {
@@ -92,6 +93,60 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _secureStorage.delete(key: "access");
       await _secureStorage.delete(key: "refresh");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message]
+  Future<Map<String, dynamic>> initiateRegistration({required String contact, required String username, required String name, required String password}) async {
+    try {
+      _authStatus = Status.registering;
+      notifyListeners();
+
+      final reqBody = {"contact": contact, "username": username, "name": name, "password": password};
+      final url = Uri.parse(ApiEndpoints.initRegistration);
+      Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
+      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+
+      if (resData["message"] == "Success") {
+        _authStatus = Status.badAuth; // still bad since user still needs to confirm code.
+        notifyListeners();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        _authStatus = Status.badAuth;
+        notifyListeners();
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong registering...");
+    } catch (e) {
+      _authStatus = Status.badAuth;
+      notifyListeners();
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status, user]. Error map keys: [status, message]
+  Future<Map<String, dynamic>> finalizeRegistration({required String code, required String contact, required String username, required String name, required String password}) async {
+    try {
+      Map<String, String> requestData = {"code": code, "contact": contact, "username": username, "name": name, "password": password};
+      var url = Uri.parse(ApiEndpoints.confRegistration);
+      Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
+      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+
+      if (resData["message"] == "Success") {
+        User user = User.fromJson(resData["data"]["data"]);
+
+        await _secureStorage.write(key: "access", value: user.access);
+        await _secureStorage.write(key: "refresh", value: user.refresh);
+
+        return {"status": true, "user": user};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong registering...");
     } catch (e) {
       return Future.error(e);
     }

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
+import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/utils/phone_validator.dart';
+import 'package:nerajima/pages/authentication/verify_registration.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/utils/phone_validator.dart';
+import 'package:nerajima/utils/show_alert.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -19,9 +24,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final formKey = GlobalKey<FormState>();
   bool contactIsPhone = true;
   bool isPasswordHidden = true;
-  bool areRegistering = false;
-  bool agreeToTerms = false;
   bool filledOutForm = false;
+  bool isRegistering = false;
+  bool agreeToTerms = false;
   late final TextEditingController contactController;
   late final TextEditingController usernameController;
   late final TextEditingController nameController;
@@ -62,24 +67,33 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     Future<void> _onRegisterTap() async {
+      if (isRegistering) return; // prevents spam
       final form = formKey.currentState;
       FocusManager.instance.primaryFocus?.unfocus();
       if (form!.validate()) {
         form.save();
-        debugPrint(contactController.text);
-        debugPrint(usernameController.text);
-        debugPrint(nameController.text);
-        debugPrint(passwordController.text);
-        setState(() {
-          areRegistering = true;
-        });
-        await Future.delayed(const Duration(milliseconds: 1500));
-        setState(() {
-          areRegistering = false;
-        });
+        try {
+          isRegistering = true;
+          final String contact = contactIsPhone ? "+${toNumericString(contactController.text)}" : contactController.text;
+          final res = await authProvider.initiateRegistration(contact: contact, username: usernameController.text, name: nameController.text, password: passwordController.text);
+          isRegistering = false;
+          if (res["status"]) {
+            context.router.pushNativeRoute(
+              SwipeablePageRoute(
+                builder: (context) => VerifyRegistration(contact: contactController.text, username: usernameController.text, name: nameController.text, password: passwordController.text),
+              ),
+            );
+          } else {
+            showAlert(msg: res["message"], context: context, isError: true);
+          }
+        } catch (e) {
+          isRegistering = false;
+          showAlert(msg: "Could not connect to server...", context: context, isError: true);
+        }
       }
     }
 
@@ -227,7 +241,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         value: agreeToTerms,
                         activeColor: primary,
                         onChanged: (_) {
-                          if (areRegistering) return;
+                          if (isRegistering) return;
                           setState(() {
                             agreeToTerms = !agreeToTerms;
                             if (agreeToTerms) {
@@ -240,11 +254,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ],
                   ),
-                  PillButton(
-                    onTap: _onRegisterTap,
-                    color: primary,
-                    enabled: filledOutForm,
-                    child: areRegistering ? const LoadingSpinner() : const Text("Register", style: TextStyle(fontSize: 15)),
+                  Consumer<AuthProvider>(
+                    builder: (context, auth, child) {
+                      return PillButton(
+                        onTap: _onRegisterTap,
+                        color: primary,
+                        enabled: filledOutForm,
+                        child: auth.authStatus == Status.registering ? const LoadingSpinner() : const Text("Register", style: TextStyle(fontSize: 15)),
+                      );
+                    },
                   ),
                 ],
               ),
