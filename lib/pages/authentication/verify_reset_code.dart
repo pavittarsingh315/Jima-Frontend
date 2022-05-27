@@ -1,40 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
-import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/models/user_model.dart';
+import 'package:nerajima/pages/authentication/reset_password.dart';
 import 'package:nerajima/components/resend_code.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
-class VerifyRegistration extends StatelessWidget {
-  final String originalContact, formattedContact, username, name, password;
-  const VerifyRegistration({
-    Key? key,
-    required this.originalContact,
-    required this.formattedContact,
-    required this.username,
-    required this.name,
-    required this.password,
-  }) : super(key: key);
+class VerifyPasswordResetCode extends StatelessWidget {
+  final String originalContact, formattedContact;
+  const VerifyPasswordResetCode({Key? key, required this.originalContact, required this.formattedContact}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     Future<void> _onCodeInputted(String code) async {
       try {
-        final res = await authProvider.finalizeRegistration(code: code, contact: formattedContact, username: username, name: name, password: password);
+        final res = await authProvider.verifyPasswordResetCode(code: code, contact: formattedContact);
         if (res["status"]) {
-          User user = res['user'];
-          userProvider.setUser(user);
-          context.router.pushAndPopUntil(const AppTrunk(), predicate: (route) => false);
+          context.router.pushNativeRoute(
+            SwipeablePageRoute(
+              builder: (context) => ResetPassword(code: code, contact: formattedContact),
+            ),
+          );
         } else {
           showAlert(msg: res["message"], context: context, isError: true);
         }
@@ -44,7 +37,7 @@ class VerifyRegistration extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Verify Registration")),
+      appBar: AppBar(title: const Text("Confirm Reset")),
       body: Center(
         child: SizedBox(
           width: size.width * 0.8,
@@ -53,7 +46,7 @@ class VerifyRegistration extends StatelessWidget {
             children: [
               SizedBox(height: size.height * 0.03),
               Text(
-                "A six digit code was sent to $originalContact",
+                "Enter the six digit code sent to $originalContact",
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: size.height * 0.03),

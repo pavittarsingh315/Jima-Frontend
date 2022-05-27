@@ -7,17 +7,21 @@ import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
 enum Status {
+  nil,
   badAuth,
   authenticating,
   goodAuth,
   registering,
+  requestingReset,
 }
 
 class AuthProvider extends ChangeNotifier {
   final _secureStorage = const FlutterSecureStorage();
   Status _authStatus = Status.badAuth;
+  Status _resetPasswordStatus = Status.nil;
 
   Status get authStatus => _authStatus;
+  Status get resetPasswordStatus => _resetPasswordStatus;
 
   /// Success map keys: [status, user]. Error map keys: [status].
   Future<Map<String, dynamic>> tokenAuth() async {
@@ -109,20 +113,17 @@ class AuthProvider extends ChangeNotifier {
       Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
+      _authStatus = Status.badAuth; // still bad since user still needs to confirm code.
+      notifyListeners();
+
       if (resData["message"] == "Success") {
-        _authStatus = Status.badAuth; // still bad since user still needs to confirm code.
-        notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
-        _authStatus = Status.badAuth;
-        notifyListeners();
         return {"status": false, "message": resData["data"]["data"]};
       }
 
       throw Exception("Something went wrong registering...");
     } catch (e) {
-      _authStatus = Status.badAuth;
-      notifyListeners();
       return Future.error(e);
     }
   }
@@ -147,6 +148,78 @@ class AuthProvider extends ChangeNotifier {
       }
 
       throw Exception("Something went wrong registering...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message]
+  Future<Map<String, dynamic>> requestPasswordReset({required String contact}) async {
+    try {
+      _resetPasswordStatus = Status.requestingReset;
+      notifyListeners();
+
+      Map<String, String> requestData = {"contact": contact};
+      var url = Uri.parse(ApiEndpoints.reqPasswordReset);
+      Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      _resetPasswordStatus = Status.nil;
+      notifyListeners();
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong requesting a reset code...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message]
+  Future<Map<String, dynamic>> verifyPasswordResetCode({required String code, required String contact}) async {
+    try {
+      Map<String, String> requestData = {"code": code, "contact": contact};
+      var url = Uri.parse(ApiEndpoints.confPasswordResetCode);
+      Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong verifying the code...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message]
+  Future<Map<String, dynamic>> confirmPasswordReset({required String code, required String contact, required String password}) async {
+    try {
+      _resetPasswordStatus = Status.requestingReset;
+      notifyListeners();
+
+      Map<String, String> requestData = {"code": code, "contact": contact, "password": password};
+      var url = Uri.parse(ApiEndpoints.confPasswordReset);
+      Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      _resetPasswordStatus = Status.nil;
+      notifyListeners();
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong changing the password...");
     } catch (e) {
       return Future.error(e);
     }

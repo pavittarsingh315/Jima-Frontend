@@ -11,6 +11,7 @@ import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/pages/authentication/registration.dart';
+import 'package:nerajima/pages/authentication/request_password_reset.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
@@ -190,7 +191,13 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.router.pushNativeRoute(
+                            SwipeablePageRoute(
+                              builder: (context) => const RequestPasswordReset(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Forgot Password",
                           style: TextStyle(
