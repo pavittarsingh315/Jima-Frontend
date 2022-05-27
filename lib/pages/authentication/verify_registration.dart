@@ -13,10 +13,11 @@ import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class VerifyRegistration extends StatelessWidget {
-  final String contact, username, name, password;
+  final String originalContact, formattedContact, username, name, password;
   const VerifyRegistration({
     Key? key,
-    required this.contact,
+    required this.originalContact,
+    required this.formattedContact,
     required this.username,
     required this.name,
     required this.password,
@@ -30,7 +31,7 @@ class VerifyRegistration extends StatelessWidget {
 
     Future<void> _onCodeInputted(String code) async {
       try {
-        final res = await authProvider.finalizeRegistration(code: code, contact: contact, username: username, name: name, password: password);
+        final res = await authProvider.finalizeRegistration(code: code, contact: formattedContact, username: username, name: name, password: password);
         if (res["status"]) {
           User user = res['user'];
           userProvider.setUser(user);
@@ -53,7 +54,7 @@ class VerifyRegistration extends StatelessWidget {
             children: [
               SizedBox(height: size.height * 0.03),
               Text(
-                "A six digit code was sent to $contact",
+                "A six digit code was sent to $originalContact",
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: size.height * 0.03),
@@ -117,16 +118,26 @@ class _ResendButtonState extends State<ResendButton> {
   @override
   Widget build(BuildContext context) {
     final isTimerRunning = timer == null ? false : timer!.isActive;
-    return TextButton(
-      onPressed: isTimerRunning ? null : startTimer,
-      style: const ButtonStyle(),
-      child: Text(
-        isTimerRunning ? "$seconds" : "Resend Code",
-        style: TextStyle(
-          color: isTimerRunning ? Colors.red : primary,
+    if (isTimerRunning) {
+      return Text(
+        "$seconds",
+        style: const TextStyle(
+          color: Colors.red,
           fontWeight: FontWeight.w500,
         ),
-      ),
-    );
+      );
+    } else {
+      return TextButton(
+        onPressed: startTimer,
+        style: const ButtonStyle(),
+        child: const Text(
+          "Resend Code",
+          style: TextStyle(
+            color: primary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
   }
 }

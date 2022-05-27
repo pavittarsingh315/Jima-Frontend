@@ -34,7 +34,7 @@ class AuthProvider extends ChangeNotifier {
       final reqBody = {"access": store['access'], "refresh": store['refresh']};
       final url = Uri.parse(ApiEndpoints.tokenLogin);
       Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
-      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
         User user = User.fromJson(resData["data"]["data"]);
@@ -64,7 +64,7 @@ class AuthProvider extends ChangeNotifier {
       final reqBody = {"contact": contact, "password": password};
       final url = Uri.parse(ApiEndpoints.login);
       Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
-      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
         User user = User.fromJson(resData["data"]["data"]);
@@ -107,7 +107,7 @@ class AuthProvider extends ChangeNotifier {
       final reqBody = {"contact": contact, "username": username, "name": name, "password": password};
       final url = Uri.parse(ApiEndpoints.initRegistration);
       Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
-      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
         _authStatus = Status.badAuth; // still bad since user still needs to confirm code.
@@ -133,7 +133,7 @@ class AuthProvider extends ChangeNotifier {
       Map<String, String> requestData = {"code": code, "contact": contact, "username": username, "name": name, "password": password};
       var url = Uri.parse(ApiEndpoints.confRegistration);
       Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
-      final Map<String, dynamic> resData = convert.jsonDecode(response.body);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
         User user = User.fromJson(resData["data"]["data"]);

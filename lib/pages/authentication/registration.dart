@@ -84,7 +84,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
           if (res["status"]) {
             context.router.pushNativeRoute(
               SwipeablePageRoute(
-                builder: (context) => VerifyRegistration(contact: contactController.text, username: usernameController.text, name: nameController.text, password: passwordController.text),
+                builder: (context) => VerifyRegistration(
+                  originalContact: contactController.text,
+                  formattedContact: contact,
+                  username: usernameController.text,
+                  name: nameController.text,
+                  password: passwordController.text,
+                ),
               ),
             );
           } else {
