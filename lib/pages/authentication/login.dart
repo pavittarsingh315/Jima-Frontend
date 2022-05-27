@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
           if (res["status"]) {
             User user = res['user'];
             userProvider.setUser(user);
-            context.router.pushAndPopUntil(const AppTrunk(), predicate: (route) => false);
+            context.router.pushAndPopUntil(const AppRoot(), predicate: (route) => false);
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

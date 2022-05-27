@@ -38,6 +38,7 @@ dependencies:
   http: ^0.13.4
   flutter_secure_storage: ^5.0.2
   another_flushbar: ^1.10.29
+  font_awesome_flutter: ^10.1.0
 
   flutter_multi_formatter: ^2.5.7
   form_field_validator: ^1.1.0
