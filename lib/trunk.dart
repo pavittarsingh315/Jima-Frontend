@@ -26,8 +26,10 @@ class AppTrunk extends StatelessWidget {
       ],
       extendBody: true,
       bottomNavigationBuilder: (BuildContext context, TabsRouter tabsRouter) {
+        final double safeAreaBottomPadding = MediaQuery.of(context).padding.bottom;
+        final double verticalPadding = safeAreaBottomPadding == 0 ? 10 : safeAreaBottomPadding;
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).padding.bottom),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: verticalPadding),
           child: Container(
             decoration: BoxDecoration(
               color: darkModeIsOn ? Colors.black : Colors.white,

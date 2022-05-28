@@ -62,6 +62,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
     Future<void> _requestReset() async {
       if (isRequesting) return;
       final form = formKey.currentState;
+      FocusManager.instance.primaryFocus?.unfocus();
       if (form!.validate()) {
         form.save();
         try {

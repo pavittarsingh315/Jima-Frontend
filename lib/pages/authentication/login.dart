@@ -95,137 +95,133 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Center(
-          child: SizedBox(
-            width: size.width * 0.8,
-            child: Form(
-              key: formKey,
-              child: ListView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-                  SizedBox(height: size.height * 0.03),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: contactController,
-                      textInputAction: TextInputAction.next,
-                      keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
-                      inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
-                      validator: MultiValidator([
-                        contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
-                      ]),
-                      onChanged: checkIfFormIsFilled,
-                      decoration: InputDecoration(
-                        hintText: contactIsPhone ? "Phone Number" : "Email",
-                        errorStyle: const TextStyle(fontSize: 14.0),
-                        filled: true,
-                        fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(11.0),
-                          borderSide: const BorderSide(width: 0, style: BorderStyle.none),
-                        ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            contactController.text = "";
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            setState(() {
-                              contactIsPhone = !contactIsPhone;
-                              filledOutForm = false;
-                            });
-                          },
-                          behavior: HitTestBehavior.translucent,
-                          child: Icon(
-                            contactIsPhone ? Icons.phone_iphone_rounded : Icons.email_rounded,
-                            color: primary,
-                          ),
+      body: Center(
+        child: SizedBox(
+          width: size.width * 0.8,
+          child: Form(
+            key: formKey,
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [
+                SizedBox(height: size.height * 0.03),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: contactController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
+                    inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
+                    validator: MultiValidator([
+                      contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
+                    ]),
+                    onChanged: checkIfFormIsFilled,
+                    decoration: InputDecoration(
+                      hintText: contactIsPhone ? "Phone Number" : "Email",
+                      errorStyle: const TextStyle(fontSize: 14.0),
+                      filled: true,
+                      fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11.0),
+                        borderSide: const BorderSide(width: 0, style: BorderStyle.none),
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          contactController.text = "";
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          setState(() {
+                            contactIsPhone = !contactIsPhone;
+                            filledOutForm = false;
+                          });
+                        },
+                        behavior: HitTestBehavior.translucent,
+                        child: Icon(
+                          contactIsPhone ? Icons.phone_iphone_rounded : Icons.email_rounded,
+                          color: primary,
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: passwordController,
-                      textInputAction: TextInputAction.go,
-                      obscureText: isPasswordHidden,
-                      onChanged: checkIfFormIsFilled,
-                      onEditingComplete: filledOutForm ? _onLoginTap : null,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        errorStyle: const TextStyle(fontSize: 14.0),
-                        filled: true,
-                        fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(11.0),
-                          borderSide: const BorderSide(width: 0, style: BorderStyle.none),
-                        ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isPasswordHidden = !isPasswordHidden;
-                            });
-                          },
-                          behavior: HitTestBehavior.translucent,
-                          child: Icon(
-                            isPasswordHidden ? Icons.visibility_off_rounded : Icons.visibility,
-                            color: primary,
-                          ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: passwordController,
+                    textInputAction: TextInputAction.go,
+                    obscureText: isPasswordHidden,
+                    onChanged: checkIfFormIsFilled,
+                    onEditingComplete: filledOutForm ? _onLoginTap : null,
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                      errorStyle: const TextStyle(fontSize: 14.0),
+                      filled: true,
+                      fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(11.0),
+                        borderSide: const BorderSide(width: 0, style: BorderStyle.none),
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPasswordHidden = !isPasswordHidden;
+                          });
+                        },
+                        behavior: HitTestBehavior.translucent,
+                        child: Icon(
+                          isPasswordHidden ? Icons.visibility_off_rounded : Icons.visibility,
+                          color: primary,
                         ),
                       ),
                     ),
                   ),
-                  Consumer<AuthProvider>(
-                    builder: (context, auth, child) {
-                      return PillButton(
-                        onTap: _onLoginTap,
-                        color: primary,
-                        enabled: filledOutForm,
-                        child: auth.authStatus == Status.authenticating ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
-                      );
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          context.router.pushNativeRoute(
-                            SwipeablePageRoute(
-                              builder: (context) => const RequestPasswordReset(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          "Forgot Password",
-                          style: TextStyle(
-                            color: primary,
-                            fontWeight: FontWeight.w500,
+                ),
+                Consumer<AuthProvider>(
+                  builder: (context, auth, child) {
+                    return PillButton(
+                      onTap: _onLoginTap,
+                      color: primary,
+                      enabled: filledOutForm,
+                      child: auth.authStatus == Status.authenticating ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
+                    );
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        context.router.pushNativeRoute(
+                          SwipeablePageRoute(
+                            builder: (context) => const RequestPasswordReset(),
                           ),
+                        );
+                      },
+                      child: const Text(
+                        "Forgot Password",
+                        style: TextStyle(
+                          color: primary,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          context.router.pushNativeRoute(
-                            SwipeablePageRoute(
-                              builder: (context) => const RegistrationPage(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(
-                            color: primary,
-                            fontWeight: FontWeight.w500,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.router.pushNativeRoute(
+                          SwipeablePageRoute(
+                            builder: (context) => const RegistrationPage(),
                           ),
+                        );
+                      },
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(
+                          color: primary,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ),

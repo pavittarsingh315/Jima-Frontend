@@ -60,6 +60,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     Future<void> _onResetTap() async {
       if (isResetting) return;
       final form = formKey.currentState;
+      FocusManager.instance.primaryFocus?.unfocus();
       if (form!.validate()) {
         form.save();
         try {
