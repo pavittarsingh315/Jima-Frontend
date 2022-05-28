@@ -39,6 +39,10 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   another_flushbar: ^1.10.29
   font_awesome_flutter: ^10.1.0
+  transparent_image: ^2.0.0
+  custom_nested_scroll_view:
+      git:
+         url: https://github.com/idootop/custom_nested_scroll_view.git
 
   flutter_multi_formatter: ^2.5.7
   form_field_validator: ^1.1.0

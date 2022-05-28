@@ -30,7 +30,7 @@ class ProfileBottomNavIcon extends StatelessWidget {
       },
       onLongPress: () {
         if (isActive && tabsRouter.canPopSelfOrChildren) {
-          HapticFeedback.heavyImpact();
+          HapticFeedback.mediumImpact();
           context.router.navigate(const ProfileRoute());
         }
       },

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
