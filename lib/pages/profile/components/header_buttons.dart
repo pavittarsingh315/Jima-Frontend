@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
 
@@ -16,17 +15,17 @@ class HeaderButtons extends StatelessWidget {
     if (buttonType == Button.back) {
       return _wrapper(
         onPress: () {},
-        icon: FontAwesomeIcons.chevronLeft,
+        icon: CupertinoIcons.chevron_back,
       );
     } else if (buttonType == Button.settings) {
       return _wrapper(
         onPress: () {},
-        icon: FontAwesomeIcons.gear,
+        icon: CupertinoIcons.gear,
       );
     } else {
       return _wrapper(
         onPress: () {},
-        icon: FontAwesomeIcons.ellipsis,
+        icon: Icons.more_horiz_rounded,
       );
     }
   }
@@ -44,7 +43,7 @@ class HeaderButtons extends StatelessWidget {
         child: Icon(
           icon,
           color: primary,
-          size: 18,
+          size: 20,
         ),
       ),
     );

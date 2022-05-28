@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/router/router.gr.dart';
@@ -37,9 +37,9 @@ class ProfileBottomNavIcon extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 11),
-        child: FaIcon(
-          FontAwesomeIcons.solidUser,
-          size: 23.5,
+        child: Icon(
+          CupertinoIcons.person_fill,
+          size: 27,
           color: isActive ? primary : Colors.grey,
         ),
       ),
