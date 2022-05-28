@@ -8,6 +8,7 @@ class PillButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color color, textColor;
   final bool enabled;
+  final double margin;
   const PillButton({
     Key? key,
     required this.child,
@@ -15,13 +16,14 @@ class PillButton extends StatelessWidget {
     required this.color,
     this.enabled = true,
     this.textColor = Colors.white,
+    this.margin = 10,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: margin),
       width: double.infinity,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(11),

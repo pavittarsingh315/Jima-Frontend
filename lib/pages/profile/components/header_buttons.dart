@@ -15,23 +15,17 @@ class HeaderButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     if (buttonType == Button.back) {
       return _wrapper(
-        onPress: () {
-          print('back');
-        },
+        onPress: () {},
         icon: FontAwesomeIcons.chevronLeft,
       );
     } else if (buttonType == Button.settings) {
       return _wrapper(
-        onPress: () {
-          print('settings');
-        },
+        onPress: () {},
         icon: FontAwesomeIcons.gear,
       );
     } else {
       return _wrapper(
-        onPress: () {
-          print('more');
-        },
+        onPress: () {},
         icon: FontAwesomeIcons.ellipsis,
       );
     }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:provider/provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
+import 'package:nerajima/pages/profile/components/profile_info.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
+import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 
 class ProfileLayout extends StatefulWidget {
@@ -34,6 +36,7 @@ class ProfileLayout extends StatefulWidget {
   State<ProfileLayout> createState() => _ProfileLayoutState();
 }
 
+// TODO: when creating the blacklist message screen for the whitelist post tab, place a container under the Text widget. This will make it so any emojis won't do the weird choppy render.
 class _ProfileLayoutState extends State<ProfileLayout> {
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
   late ScrollController _scrollController;
@@ -83,6 +86,21 @@ class _ProfileLayoutState extends State<ProfileLayout> {
                 onStrech: null,
               ),
             ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  const SizedBox(height: 20),
+                  _information(context),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+            SliverPinnedHeader(
+              child: Container(
+                color: Colors.red,
+                height: 50,
+              ),
+            ),
           ];
         },
         body: Container(),
@@ -99,6 +117,30 @@ class _ProfileLayoutState extends State<ProfileLayout> {
     return Consumer<UserProvider>(
       builder: (context, user, child) {
         return profileImage(user.user.profilePicture, size);
+      },
+    );
+  }
+
+  Widget _information(BuildContext context) {
+    if (!widget.isCurrentUserProfile) {
+      return ProfileInformation(
+        name: widget.name,
+        bio: widget.bio,
+        numFollowers: widget.numFollowers,
+        numWhitelisted: widget.numWhitelisted,
+        numFollowing: widget.numFollowing,
+      );
+    }
+
+    return Consumer<UserProvider>(
+      builder: (context, user, child) {
+        return ProfileInformation(
+          name: user.user.name,
+          bio: user.user.bio,
+          numFollowers: user.user.numFollowers,
+          numWhitelisted: user.user.numWhitelisted,
+          numFollowing: user.user.numFollowing,
+        );
       },
     );
   }
