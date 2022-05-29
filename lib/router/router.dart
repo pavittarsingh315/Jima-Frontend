@@ -9,7 +9,9 @@ import 'package:nerajima/pages/home/home.dart';
 import 'package:nerajima/pages/browse/browse.dart';
 import 'package:nerajima/pages/create/create.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
+
 import 'package:nerajima/pages/profile/profile.dart';
+import 'package:nerajima/pages/profile/settings.dart';
 
 // Run this command to auto generate the code for the routing. Rerun the command if you make any changes.
 // If you keep making changes, you can replace "build" with "watch"
@@ -74,6 +76,10 @@ import 'package:nerajima/pages/profile/profile.dart';
             AutoRoute(
               path: '',
               page: ProfilePage,
+            ),
+            AutoRoute(
+              path: 'settings',
+              page: SettingsPage,
             ),
           ],
         ),
