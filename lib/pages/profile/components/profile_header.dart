@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -47,8 +49,13 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Container(
-                color: darkModeIsOn ? Colors.black : Colors.white,
+              child: ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: glassSigmaValue, sigmaY: glassSigmaValue),
+                  child: Container(
+                    color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
+                  ),
+                ),
               ),
             ),
             Positioned.fill(
@@ -136,24 +143,25 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget _buttonWrapper({required double opacity, required EdgeInsetsGeometry? margin, required Widget child}) {
+    final double backgroundOpacity = (1 - opacity <= 0.3) ? 1 - opacity : 0.3;
+    final double sigma = (1 - opacity) * 100 <= 15 ? (1 - opacity) * 100 : 15;
     return Consumer<ThemeProvider>(
       builder: (context, theme, _) {
         return Container(
           margin: margin,
-          child: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: theme.isDarkModeEnabled ? Colors.black : Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: theme.isDarkModeEnabled ? darkModeShadowColor.withOpacity(opacity) : lightModeShadowColor.withOpacity(opacity),
-                  blurRadius: 11,
-                  offset: const Offset(0, 5),
+          child: ClipOval(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: theme.isDarkModeEnabled ? Colors.black.withOpacity(backgroundOpacity) : Colors.white.withOpacity(backgroundOpacity),
+                  shape: BoxShape.circle,
+                  border: Border.all(width: 1, color: theme.isDarkModeEnabled ? Colors.black87.withOpacity(backgroundOpacity) : Colors.white30.withOpacity(backgroundOpacity)),
                 ),
-              ],
+                child: child,
+              ),
             ),
-            child: child,
           ),
         );
       },

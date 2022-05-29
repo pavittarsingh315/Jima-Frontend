@@ -10,6 +10,8 @@ import 'package:nerajima/pages/create/nav_icon.dart';
 import 'package:nerajima/pages/inbox/nav_icon.dart';
 import 'package:nerajima/pages/profile/nav_icon.dart';
 
+import 'package:nerajima/utils/glass_wrapper.dart';
+
 class AppTrunk extends StatelessWidget {
   const AppTrunk({Key? key}) : super(key: key);
 
@@ -26,25 +28,18 @@ class AppTrunk extends StatelessWidget {
       ],
       extendBody: true,
       bottomNavigationBuilder: (BuildContext context, TabsRouter tabsRouter) {
-        final double safeAreaBottomPadding = MediaQuery.of(context).padding.bottom;
-        final double verticalPadding = safeAreaBottomPadding == 0 ? 10 : safeAreaBottomPadding;
-        return Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, verticalPadding),
+        return GlassWrapper(
           child: Container(
             decoration: BoxDecoration(
-              color: darkModeIsOn ? Colors.black : Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: darkModeIsOn ? darkModeShadowColor : lightModeShadowColor,
-                  blurRadius: 11,
-                  offset: const Offset(0, 5),
+              color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
+              border: Border(
+                top: BorderSide(
+                  width: 0.1,
+                  color: Colors.grey.shade400,
                 ),
-              ],
+              ),
             ),
-            child: SizedBox(
-              height: 55,
-              width: double.infinity,
+            child: SafeArea(
               child: Row(
                 children: [
                   _navItem(context, HomeBottomNavIcon(tabsRouter: tabsRouter)),
@@ -64,7 +59,7 @@ class AppTrunk extends StatelessWidget {
   Widget _navItem(BuildContext context, Widget child) {
     return SizedBox(
       height: 50,
-      width: (MediaQuery.of(context).size.width - 40) / 5, // -40 because of 20 padding from both left and right
+      width: MediaQuery.of(context).size.width / 5,
       child: child,
     );
   }

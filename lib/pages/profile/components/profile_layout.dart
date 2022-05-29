@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
-import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
 import 'package:nerajima/pages/profile/components/profile_info.dart';
+import 'package:nerajima/pages/profile/components/profile_tabs.dart';
 import 'package:nerajima/pages/profile/components/profile_body.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
@@ -41,6 +40,7 @@ class ProfileLayout extends StatefulWidget {
 
 class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProviderStateMixin {
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
+  final GlobalKey infoKey = GlobalKey();
   late TabController _tabController;
   late ScrollController _scrollController;
 
@@ -100,7 +100,13 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
                 ],
               ),
             ),
-            SliverPinnedHeader(child: _tabs(context)),
+            SliverPinnedHeader(
+              child: ProfileTabs(
+                tabController: _tabController,
+                scrollController: _scrollController,
+                infoKey: infoKey,
+              ),
+            ),
           ];
         },
         body: ProfileBody(
@@ -129,6 +135,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
   Widget _information(BuildContext context) {
     if (!widget.isCurrentUserProfile) {
       return ProfileInformation(
+        key: infoKey,
         name: widget.name,
         bio: widget.bio,
         numFollowers: widget.numFollowers,
@@ -140,44 +147,12 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
     return Consumer<UserProvider>(
       builder: (context, user, child) {
         return ProfileInformation(
+          key: infoKey,
           name: user.user.name,
           bio: user.user.bio,
           numFollowers: user.user.numFollowers,
           numWhitelisted: user.user.numWhitelisted,
           numFollowing: user.user.numFollowing,
-        );
-      },
-    );
-  }
-
-  Widget _tabs(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, theme, child) {
-        return Container(
-          height: 38,
-          decoration: BoxDecoration(
-            color: theme.isDarkModeEnabled ? Colors.black : Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: theme.isDarkModeEnabled ? darkModeShadowColor : lightModeShadowColor,
-                blurRadius: 11,
-                spreadRadius: -10,
-                offset: const Offset(0, 7),
-              ),
-            ],
-          ),
-          child: TabBar(
-            controller: _tabController,
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(width: 0.66, color: primary),
-              insets: EdgeInsets.symmetric(horizontal: 33.0),
-            ),
-            tabs: [
-              Tab(icon: Icon(CupertinoIcons.lock_open, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black)),
-              Tab(icon: Icon(CupertinoIcons.lock, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black)),
-              if (_tabController.length == 3) Tab(icon: Icon(CupertinoIcons.cube_box, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black))
-            ],
-          ),
         );
       },
     );
