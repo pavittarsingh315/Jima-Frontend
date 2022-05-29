@@ -154,7 +154,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
             color: theme.isDarkModeEnabled ? Colors.black : Colors.white,
             boxShadow: [
               BoxShadow(
-                color: theme.isDarkModeEnabled ? const Color.fromARGB(255, 22, 22, 22) : Colors.grey.shade400,
+                color: theme.isDarkModeEnabled ? darkModeShadowColor : lightModeShadowColor,
                 blurRadius: 11,
                 spreadRadius: -10,
                 offset: const Offset(0, 7),

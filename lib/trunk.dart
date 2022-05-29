@@ -36,7 +36,7 @@ class AppTrunk extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: darkModeIsOn ? const Color.fromARGB(255, 22, 22, 22) : Colors.grey.shade400,
+                  color: darkModeIsOn ? darkModeShadowColor : lightModeShadowColor,
                   blurRadius: 11,
                   offset: const Offset(0, 5),
                 ),

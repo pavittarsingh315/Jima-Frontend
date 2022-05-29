@@ -8,7 +8,9 @@ const Color secondary = Color(0xFF9CACFF);
 const Color tertiary = Color(0xFFF1E6FF);
 const Color darkModeBackgroundContrast = Color(0xFF151515);
 const Color lightModeBackgroundContrast = Color(0xFFf6f6f6);
-const double sigmaValue = 11;
+
+final darkModeShadowColor = Colors.grey.shade900;
+final lightModeShadowColor = Colors.grey.shade400;
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;

@@ -147,7 +147,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: theme.isDarkModeEnabled ? Color.fromRGBO(22, 22, 22, opacity) : Colors.grey.shade400.withOpacity(opacity),
+                  color: theme.isDarkModeEnabled ? darkModeShadowColor.withOpacity(opacity) : lightModeShadowColor.withOpacity(opacity),
                   blurRadius: 11,
                   offset: const Offset(0, 5),
                 ),
