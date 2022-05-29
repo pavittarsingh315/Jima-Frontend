@@ -48,7 +48,6 @@ class LogoutButton extends StatelessWidget {
       child: const Text(
         "Logout",
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white),
       ),
     );
   }

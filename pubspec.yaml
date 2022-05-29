@@ -41,6 +41,7 @@ dependencies:
   transparent_image: ^2.0.0
   sliver_tools: ^0.2.6
   intl: ^0.17.0
+  shared_preferences: ^2.0.15
   custom_nested_scroll_view:
       git:
          url: https://github.com/idootop/custom_nested_scroll_view.git

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:nerajima/pages/profile/components/settings/logout.dart';
+import 'package:nerajima/pages/profile/components/settings/theme_switch.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class SettingsPage extends StatelessWidget {
             child: ListView(
               children: [
                 const SizedBox(height: 10),
-                // const ThemeSwitcher(),
+                const ThemeSwitcher(),
                 const SizedBox(height: 10),
                 const Divider(
                   thickness: 0.5,
