@@ -8,6 +8,7 @@ import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
 import 'package:nerajima/pages/profile/components/profile_info.dart';
+import 'package:nerajima/pages/profile/components/profile_body.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
@@ -38,7 +39,6 @@ class ProfileLayout extends StatefulWidget {
   State<ProfileLayout> createState() => _ProfileLayoutState();
 }
 
-// TODO: when creating the blacklist message screen for the whitelist post tab, place a container under the Text widget. This will make it so any emojis won't do the weird choppy render.
 class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProviderStateMixin {
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
   late TabController _tabController;
@@ -103,7 +103,12 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
             SliverPinnedHeader(child: _tabs(context)),
           ];
         },
-        body: Container(),
+        body: ProfileBody(
+          controller: _tabController,
+          profileId: widget.profileId, // no Consumer because id won't change
+          profileBlacklistMessage: widget.blacklistMessage, // no Consumer because user won't see their own blacklist message
+          areWhitelisted: widget.areWhitelisted, // no Consumer because it won't change.
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_layout.dart';
 
+// TODO: set areWhitelisted to true.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -21,7 +22,7 @@ class ProfilePage extends StatelessWidget {
       numFollowers: userProvider.user.numFollowers,
       numWhitelisted: userProvider.user.numWhitelisted,
       numFollowing: userProvider.user.numFollowing,
-      areWhitelisted: true, // default true for user's own profile
+      areWhitelisted: false, // default true for user's own profile
       isCurrentUserProfile: true, // default true for user's own profile. Otherwise, profileId == userProvider.user.profileId
       showBackButton: false, // profile is root of ProfileRouter so it will not show back button
     );

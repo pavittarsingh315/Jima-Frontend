@@ -29,7 +29,7 @@ class AppTrunk extends StatelessWidget {
         final double safeAreaBottomPadding = MediaQuery.of(context).padding.bottom;
         final double verticalPadding = safeAreaBottomPadding == 0 ? 10 : safeAreaBottomPadding;
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: verticalPadding),
+          padding: EdgeInsets.fromLTRB(20, 5, 20, verticalPadding),
           child: Container(
             decoration: BoxDecoration(
               color: darkModeIsOn ? Colors.black : Colors.white,
