@@ -1,7 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
+import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/utils/custom_bottom_sheet.dart';
+import 'package:nerajima/utils/custom_dialog.dart';
 
 class EditPictureOptions extends StatefulWidget {
   const EditPictureOptions({Key? key}) : super(key: key);
@@ -11,11 +19,94 @@ class EditPictureOptions extends StatefulWidget {
 }
 
 class _EditPictureOptionsState extends State<EditPictureOptions> {
-  Future<void> _onCameraTap() async {}
-  Future<void> _onImageTap() async {}
+  final ImagePicker _picker = ImagePicker();
+
+  void popBottomSheet() {
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    Future<void> _cropImage(XFile image) async {
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        cropStyle: CropStyle.rectangle,
+        uiSettings: [
+          AndroidUiSettings(toolbarTitle: "Crop", showCropGrid: false),
+          IOSUiSettings(title: "Crop", showCancelConfirmationDialog: true),
+        ],
+      );
+      if (croppedImage != null) {
+        userProvider.setNewProfilePicture(newProfilePicture: File(croppedImage.path));
+        popBottomSheet();
+      }
+    }
+
+    Future<void> _onCameraTap() async {
+      // isDenied is true by default. When user actually clicks "Dont Allow", then isPermanentlyDenied is set to true.
+      if (await Permission.camera.isPermanentlyDenied) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            void cancel() => Navigator.of(context).pop();
+            void settings() => openAppSettings();
+            return CustomDialog(
+              message: "Allow Camera Access in Settings",
+              actionLabels: const ["Cancel", "Settings"],
+              actionCallbacks: [cancel, settings],
+              actionColors: const [Colors.red, Colors.blue],
+            );
+          },
+        );
+        return;
+      }
+
+      if (await Permission.camera.request().isGranted) {
+        try {
+          final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+          if (image != null) {
+            await _cropImage(image);
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
+    }
+
+    Future<void> _onImageTap() async {
+      if (await Permission.photos.isPermanentlyDenied) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            void cancel() => Navigator.of(context).pop();
+            void settings() => openAppSettings();
+            return CustomDialog(
+              message: "Allow Photo Access in Settings",
+              actionLabels: const ["Cancel", "Settings"],
+              actionCallbacks: [cancel, settings],
+              actionColors: const [Colors.red, Colors.blue],
+            );
+          },
+        );
+        return;
+      }
+
+      if (await Permission.photos.request().isGranted) {
+        try {
+          final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+          if (image != null) {
+            await _cropImage(image);
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
+    }
+
     return CustomBottomSheet(
       children: [
         _option(context, "Camera", CupertinoIcons.camera, _onCameraTap),

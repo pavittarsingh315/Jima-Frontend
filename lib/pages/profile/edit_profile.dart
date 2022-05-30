@@ -151,7 +151,9 @@ class EditProfilePage extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () async {},
+                    onPressed: () async {
+                      await user.changeProfilePicture();
+                    },
                     style: noSplashButtonStyle(),
                     child: const Text(
                       "Save",

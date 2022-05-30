@@ -29,4 +29,10 @@ class UserProvider extends ChangeNotifier {
     _savedNewProfilePicture = true;
     notifyListeners();
   }
+
+  Future<void> changeProfilePicture() async {
+    // use _newProfilePicture to do API call
+    _savedNewProfilePicture = true;
+    notifyListeners();
+  }
 }

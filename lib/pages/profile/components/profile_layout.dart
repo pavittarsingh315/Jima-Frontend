@@ -127,6 +127,12 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
 
     return Consumer<UserProvider>(
       builder: (context, user, child) {
+        if (user.newProfilePicture != null) {
+          return Image.file(
+            user.newProfilePicture!,
+            fit: BoxFit.cover,
+          );
+        }
         return profileImage(user.user.profilePicture, size);
       },
     );
