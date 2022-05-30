@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:nerajima/router/router.gr.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/pages/profile/settings.dart';
 
 enum Button { back, settings, more }
 
@@ -17,17 +16,15 @@ class HeaderButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     if (buttonType == Button.back) {
       return _wrapper(
-        onPress: () {},
+        onPress: () {
+          context.router.pop();
+        },
         icon: CupertinoIcons.chevron_back,
       );
     } else if (buttonType == Button.settings) {
       return _wrapper(
         onPress: () {
-          context.router.pushNativeRoute(
-            SwipeablePageRoute(
-              builder: (context) => const SettingsPage(),
-            ),
-          );
+          context.router.push(const SettingsRoute());
         },
         icon: CupertinoIcons.gear,
       );

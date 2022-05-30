@@ -72,8 +72,8 @@ class _ProfileTabsState extends State<ProfileTabs> {
               height: 38,
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(width: 0.1, color: Colors.grey.shade400),
-                  bottom: BorderSide(width: 0.1, color: Colors.grey.shade400),
+                  top: BorderSide(width: 0.2, color: Colors.grey.shade400),
+                  bottom: BorderSide(width: 0.2, color: Colors.grey.shade400),
                 ),
                 color: theme.isDarkModeEnabled ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
               ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 
+import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
 
@@ -106,7 +108,9 @@ class ProfileInformation extends StatelessWidget {
       children: [
         Expanded(
           child: PillButton(
-            onTap: () {},
+            onTap: () {
+              context.router.push(const EditProfileRoute());
+            },
             color: primary,
             margin: 0,
             child: const Text("Edit Profile"),

@@ -11,20 +11,21 @@
 // ignore_for_file: type=lint
 
 import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:flutter/material.dart' as _i11;
+import 'package:flutter/material.dart' as _i12;
 
-import '../pages/authentication/login.dart' as _i9;
-import '../pages/authentication/registration.dart' as _i10;
+import '../pages/authentication/login.dart' as _i10;
+import '../pages/authentication/registration.dart' as _i11;
 import '../pages/browse/browse.dart' as _i4;
 import '../pages/create/create.dart' as _i5;
 import '../pages/home/home.dart' as _i3;
 import '../pages/inbox/inbox.dart' as _i6;
+import '../pages/profile/edit_profile.dart' as _i9;
 import '../pages/profile/profile.dart' as _i7;
 import '../pages/profile/settings.dart' as _i8;
 import '../root.dart' as _i1;
 
 class AppRouter extends _i2.RootStackRouter {
-  AppRouter([_i11.GlobalKey<_i11.NavigatorState>? navigatorKey])
+  AppRouter([_i12.GlobalKey<_i12.NavigatorState>? navigatorKey])
       : super(navigatorKey);
 
   @override
@@ -81,13 +82,17 @@ class AppRouter extends _i2.RootStackRouter {
       return _i2.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i8.SettingsPage());
     },
+    EditProfileRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i9.EditProfilePage());
+    },
     LoginRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i9.LoginPage());
+          routeData: routeData, child: const _i10.LoginPage());
     },
     RegistrationRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i10.RegistrationPage());
+          routeData: routeData, child: const _i11.RegistrationPage());
     }
   };
 
@@ -129,7 +134,9 @@ class AppRouter extends _i2.RootStackRouter {
                 _i2.RouteConfig(ProfileRoute.name,
                     path: '', parent: ProfileRouter.name),
                 _i2.RouteConfig(SettingsRoute.name,
-                    path: 'settings', parent: ProfileRouter.name)
+                    path: 'settings', parent: ProfileRouter.name),
+                _i2.RouteConfig(EditProfileRoute.name,
+                    path: 'edit', parent: ProfileRouter.name)
               ])
         ]),
         _i2.RouteConfig(AuthRouter.name, path: '/authentication', children: [
@@ -254,7 +261,15 @@ class SettingsRoute extends _i2.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i9.LoginPage]
+/// [_i9.EditProfilePage]
+class EditProfileRoute extends _i2.PageRouteInfo<void> {
+  const EditProfileRoute() : super(EditProfileRoute.name, path: 'edit');
+
+  static const String name = 'EditProfileRoute';
+}
+
+/// generated route for
+/// [_i10.LoginPage]
 class LoginRoute extends _i2.PageRouteInfo<void> {
   const LoginRoute() : super(LoginRoute.name, path: 'login');
 
@@ -262,7 +277,7 @@ class LoginRoute extends _i2.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i10.RegistrationPage]
+/// [_i11.RegistrationPage]
 class RegistrationRoute extends _i2.PageRouteInfo<void> {
   const RegistrationRoute() : super(RegistrationRoute.name, path: 'register');
 
