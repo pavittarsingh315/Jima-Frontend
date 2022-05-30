@@ -263,7 +263,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       onTap: _onRegisterTap,
                       color: primary,
                       enabled: filledOutForm,
-                      child: auth.authStatus == Status.registering ? const LoadingSpinner() : const Text("Register", style: TextStyle(fontSize: 15)),
+                      child: auth.authStatus == AuthStatus.registering ? const LoadingSpinner() : const Text("Register", style: TextStyle(fontSize: 15)),
                     );
                   },
                 ),

@@ -71,9 +71,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
           if (image != null) {
             await _cropImage(image);
           }
-        } catch (e) {
-          print(e);
-        }
+        } catch (_) {}
       }
     }
 
@@ -101,9 +99,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
           if (image != null) {
             await _cropImage(image);
           }
-        } catch (e) {
-          print(e);
-        }
+        } catch (_) {}
       }
     }
 

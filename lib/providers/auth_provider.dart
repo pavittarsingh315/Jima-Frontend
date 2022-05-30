@@ -6,7 +6,7 @@ import 'dart:convert' as convert;
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
-enum Status {
+enum AuthStatus {
   nil,
   badAuth,
   authenticating,
@@ -17,21 +17,21 @@ enum Status {
 
 class AuthProvider extends ChangeNotifier {
   final _secureStorage = const FlutterSecureStorage();
-  Status _authStatus = Status.badAuth;
-  Status _resetPasswordStatus = Status.nil;
+  AuthStatus _authStatus = AuthStatus.badAuth;
+  AuthStatus _resetPasswordStatus = AuthStatus.nil;
 
-  Status get authStatus => _authStatus;
-  Status get resetPasswordStatus => _resetPasswordStatus;
+  AuthStatus get authStatus => _authStatus;
+  AuthStatus get resetPasswordStatus => _resetPasswordStatus;
 
   /// Success map keys: [status, user]. Error map keys: [status].
   Future<Map<String, dynamic>> tokenAuth() async {
     try {
       debugPrint("Ran Pre App Check");
 
-      _authStatus = Status.authenticating;
+      _authStatus = AuthStatus.authenticating;
       Map<String, String> store = await _secureStorage.readAll();
       if (store['access'] == null || store['refresh'] == null) {
-        _authStatus = Status.badAuth;
+        _authStatus = AuthStatus.badAuth;
         return {"status": false};
       }
 
@@ -43,18 +43,18 @@ class AuthProvider extends ChangeNotifier {
       if (resData["message"] == "Success") {
         User user = User.fromJson(resData["data"]["data"]);
 
-        _authStatus = Status.goodAuth;
+        _authStatus = AuthStatus.goodAuth;
         return {"status": true, "user": user};
       } else if (resData["message"] == "Error") {
         await _secureStorage.deleteAll();
 
-        _authStatus = Status.badAuth;
+        _authStatus = AuthStatus.badAuth;
         return {"status": false};
       }
 
       throw Exception("Something went wrong with the pre app check...");
     } catch (e) {
-      _authStatus = Status.badAuth;
+      _authStatus = AuthStatus.badAuth;
       return Future.error(e);
     }
   }
@@ -62,7 +62,7 @@ class AuthProvider extends ChangeNotifier {
   /// Success map keys: [status, user]. Error map keys: [status, message].
   Future<Map<String, dynamic>> loginAuth({required String contact, required String password}) async {
     try {
-      _authStatus = Status.authenticating;
+      _authStatus = AuthStatus.authenticating;
       notifyListeners();
 
       final reqBody = {"contact": contact, "password": password};
@@ -76,18 +76,18 @@ class AuthProvider extends ChangeNotifier {
         await _secureStorage.write(key: "access", value: user.access);
         await _secureStorage.write(key: "refresh", value: user.refresh);
 
-        _authStatus = Status.goodAuth;
+        _authStatus = AuthStatus.goodAuth;
         notifyListeners();
         return {"status": true, "user": user};
       } else if (resData["message"] == "Error") {
-        _authStatus = Status.badAuth;
+        _authStatus = AuthStatus.badAuth;
         notifyListeners();
         return {"status": false, "message": resData["data"]["data"]};
       }
 
       throw Exception("Something went wrong logging in...");
     } catch (e) {
-      _authStatus = Status.badAuth;
+      _authStatus = AuthStatus.badAuth;
       notifyListeners();
       return Future.error(e);
     }
@@ -105,7 +105,7 @@ class AuthProvider extends ChangeNotifier {
   /// Success map keys: [status]. Error map keys: [status, message]
   Future<Map<String, dynamic>> initiateRegistration({required String contact, required String username, required String name, required String password}) async {
     try {
-      _authStatus = Status.registering;
+      _authStatus = AuthStatus.registering;
       notifyListeners();
 
       final reqBody = {"contact": contact, "username": username, "name": name, "password": password};
@@ -113,7 +113,7 @@ class AuthProvider extends ChangeNotifier {
       Response response = await post(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-      _authStatus = Status.badAuth; // still bad since user still needs to confirm code.
+      _authStatus = AuthStatus.badAuth; // still bad since user still needs to confirm code.
       notifyListeners();
 
       if (resData["message"] == "Success") {
@@ -156,7 +156,7 @@ class AuthProvider extends ChangeNotifier {
   /// Success map keys: [status]. Error map keys: [status, message]
   Future<Map<String, dynamic>> requestPasswordReset({required String contact}) async {
     try {
-      _resetPasswordStatus = Status.requestingReset;
+      _resetPasswordStatus = AuthStatus.requestingReset;
       notifyListeners();
 
       Map<String, String> requestData = {"contact": contact};
@@ -164,7 +164,7 @@ class AuthProvider extends ChangeNotifier {
       Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-      _resetPasswordStatus = Status.nil;
+      _resetPasswordStatus = AuthStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {
@@ -202,7 +202,7 @@ class AuthProvider extends ChangeNotifier {
   /// Success map keys: [status]. Error map keys: [status, message]
   Future<Map<String, dynamic>> confirmPasswordReset({required String code, required String contact, required String password}) async {
     try {
-      _resetPasswordStatus = Status.requestingReset;
+      _resetPasswordStatus = AuthStatus.requestingReset;
       notifyListeners();
 
       Map<String, String> requestData = {"code": code, "contact": contact, "password": password};
@@ -210,7 +210,7 @@ class AuthProvider extends ChangeNotifier {
       Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-      _resetPasswordStatus = Status.nil;
+      _resetPasswordStatus = AuthStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {

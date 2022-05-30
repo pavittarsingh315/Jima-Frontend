@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: _onLoginTap,
                       color: primary,
                       enabled: filledOutForm,
-                      child: auth.authStatus == Status.authenticating ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
+                      child: auth.authStatus == AuthStatus.authenticating ? const LoadingSpinner() : const Text("Login", style: TextStyle(fontSize: 15)),
                     );
                   },
                 ),

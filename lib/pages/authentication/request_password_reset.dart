@@ -151,7 +151,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
                       onTap: _requestReset,
                       color: primary,
                       enabled: filledOutForm,
-                      child: auth.resetPasswordStatus == Status.requestingReset ? const LoadingSpinner() : const Text("Request Reset", style: TextStyle(fontSize: 15)),
+                      child: auth.resetPasswordStatus == AuthStatus.requestingReset ? const LoadingSpinner() : const Text("Request Reset", style: TextStyle(fontSize: 15)),
                     );
                   },
                 ),
