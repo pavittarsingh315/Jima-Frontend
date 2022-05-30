@@ -6,6 +6,7 @@ import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_picture_options.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 import 'package:nerajima/utils/button_styles.dart';
@@ -44,7 +45,7 @@ class EditProfilePage extends StatelessWidget {
         enableDrag: true,
         useRootNavigator: true,
         builder: (context) {
-          return Container(color: Colors.red);
+          return const EditPictureOptions();
         },
       );
     }

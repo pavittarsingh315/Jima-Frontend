@@ -18,6 +18,12 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setNewProfilePicture({required File newProfilePicture}) {
+    _newProfilePicture = newProfilePicture;
+    _savedNewProfilePicture = false;
+    notifyListeners();
+  }
+
   void clearNewProfilePicture() {
     _newProfilePicture = null;
     _savedNewProfilePicture = true;
