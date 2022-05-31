@@ -109,7 +109,7 @@ class ProfileInformation extends StatelessWidget {
         Expanded(
           child: PillButton(
             onTap: () {
-              context.router.push(const EditProfileRoute());
+              context.router.push(const EditRouter());
             },
             color: primary,
             margin: 0,

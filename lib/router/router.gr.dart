@@ -11,21 +11,25 @@
 // ignore_for_file: type=lint
 
 import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:flutter/material.dart' as _i12;
+import 'package:flutter/material.dart' as _i16;
 
-import '../pages/authentication/login.dart' as _i10;
-import '../pages/authentication/registration.dart' as _i11;
+import '../pages/authentication/login.dart' as _i14;
+import '../pages/authentication/registration.dart' as _i15;
 import '../pages/browse/browse.dart' as _i4;
 import '../pages/create/create.dart' as _i5;
 import '../pages/home/home.dart' as _i3;
 import '../pages/inbox/inbox.dart' as _i6;
+import '../pages/profile/components/edit/edit_bio.dart' as _i12;
+import '../pages/profile/components/edit/edit_blacklist_message.dart' as _i13;
+import '../pages/profile/components/edit/edit_name.dart' as _i11;
+import '../pages/profile/components/edit/edit_username.dart' as _i10;
 import '../pages/profile/edit_profile.dart' as _i9;
 import '../pages/profile/profile.dart' as _i7;
 import '../pages/profile/settings.dart' as _i8;
 import '../root.dart' as _i1;
 
 class AppRouter extends _i2.RootStackRouter {
-  AppRouter([_i12.GlobalKey<_i12.NavigatorState>? navigatorKey])
+  AppRouter([_i16.GlobalKey<_i16.NavigatorState>? navigatorKey])
       : super(navigatorKey);
 
   @override
@@ -82,17 +86,37 @@ class AppRouter extends _i2.RootStackRouter {
       return _i2.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i8.SettingsPage());
     },
+    EditRouter.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i2.EmptyRouterPage());
+    },
     EditProfileRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i9.EditProfilePage());
     },
+    EditUsernameRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i10.EditUsernamePage());
+    },
+    EditNameRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i11.EditNamePage());
+    },
+    EditBioRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i12.EditBioPage());
+    },
+    EditBlacklistMessageRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i13.EditBlacklistMessagePage());
+    },
     LoginRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i10.LoginPage());
+          routeData: routeData, child: const _i14.LoginPage());
     },
     RegistrationRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i11.RegistrationPage());
+          routeData: routeData, child: const _i15.RegistrationPage());
     }
   };
 
@@ -135,8 +159,21 @@ class AppRouter extends _i2.RootStackRouter {
                     path: '', parent: ProfileRouter.name),
                 _i2.RouteConfig(SettingsRoute.name,
                     path: 'settings', parent: ProfileRouter.name),
-                _i2.RouteConfig(EditProfileRoute.name,
-                    path: 'edit', parent: ProfileRouter.name)
+                _i2.RouteConfig(EditRouter.name,
+                    path: 'edit',
+                    parent: ProfileRouter.name,
+                    children: [
+                      _i2.RouteConfig(EditProfileRoute.name,
+                          path: '', parent: EditRouter.name),
+                      _i2.RouteConfig(EditUsernameRoute.name,
+                          path: 'username', parent: EditRouter.name),
+                      _i2.RouteConfig(EditNameRoute.name,
+                          path: 'name', parent: EditRouter.name),
+                      _i2.RouteConfig(EditBioRoute.name,
+                          path: 'bio', parent: EditRouter.name),
+                      _i2.RouteConfig(EditBlacklistMessageRoute.name,
+                          path: 'blacklistMessage', parent: EditRouter.name)
+                    ])
               ])
         ]),
         _i2.RouteConfig(AuthRouter.name, path: '/authentication', children: [
@@ -261,15 +298,57 @@ class SettingsRoute extends _i2.PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [_i2.EmptyRouterPage]
+class EditRouter extends _i2.PageRouteInfo<void> {
+  const EditRouter({List<_i2.PageRouteInfo>? children})
+      : super(EditRouter.name, path: 'edit', initialChildren: children);
+
+  static const String name = 'EditRouter';
+}
+
+/// generated route for
 /// [_i9.EditProfilePage]
 class EditProfileRoute extends _i2.PageRouteInfo<void> {
-  const EditProfileRoute() : super(EditProfileRoute.name, path: 'edit');
+  const EditProfileRoute() : super(EditProfileRoute.name, path: '');
 
   static const String name = 'EditProfileRoute';
 }
 
 /// generated route for
-/// [_i10.LoginPage]
+/// [_i10.EditUsernamePage]
+class EditUsernameRoute extends _i2.PageRouteInfo<void> {
+  const EditUsernameRoute() : super(EditUsernameRoute.name, path: 'username');
+
+  static const String name = 'EditUsernameRoute';
+}
+
+/// generated route for
+/// [_i11.EditNamePage]
+class EditNameRoute extends _i2.PageRouteInfo<void> {
+  const EditNameRoute() : super(EditNameRoute.name, path: 'name');
+
+  static const String name = 'EditNameRoute';
+}
+
+/// generated route for
+/// [_i12.EditBioPage]
+class EditBioRoute extends _i2.PageRouteInfo<void> {
+  const EditBioRoute() : super(EditBioRoute.name, path: 'bio');
+
+  static const String name = 'EditBioRoute';
+}
+
+/// generated route for
+/// [_i13.EditBlacklistMessagePage]
+class EditBlacklistMessageRoute extends _i2.PageRouteInfo<void> {
+  const EditBlacklistMessageRoute()
+      : super(EditBlacklistMessageRoute.name, path: 'blacklistMessage');
+
+  static const String name = 'EditBlacklistMessageRoute';
+}
+
+/// generated route for
+/// [_i14.LoginPage]
 class LoginRoute extends _i2.PageRouteInfo<void> {
   const LoginRoute() : super(LoginRoute.name, path: 'login');
 
@@ -277,7 +356,7 @@ class LoginRoute extends _i2.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i11.RegistrationPage]
+/// [_i15.RegistrationPage]
 class RegistrationRoute extends _i2.PageRouteInfo<void> {
   const RegistrationRoute() : super(RegistrationRoute.name, path: 'register');
 

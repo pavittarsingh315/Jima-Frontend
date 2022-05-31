@@ -14,6 +14,7 @@ enum UserStatus {
 
 class UserProvider extends ChangeNotifier {
   late User _user;
+  late Map<String, String> _requestHeaders;
   UserStatus _userStatus = UserStatus.nil;
   File? _newProfilePicture;
   bool _savedNewProfilePicture = true;
@@ -25,6 +26,7 @@ class UserProvider extends ChangeNotifier {
 
   void setUser(User user) {
     _user = user;
+    _requestHeaders = {'Content-Type': "application/json", 'Token': _user.access, 'UserId': _user.userId};
     notifyListeners();
   }
 
@@ -46,20 +48,23 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> changeUsername({required String username}) async {
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> changeUsername({required String newUsername}) async {
     try {
       _userStatus = UserStatus.updating;
       notifyListeners();
 
-      final reqBody = {"username": username};
+      final reqBody = {"username": newUsername};
       final url = Uri.parse(ApiEndpoints.editUsername);
-      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
+      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       _userStatus = UserStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {
+        _user.username = newUsername;
+        notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -71,20 +76,23 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> changeName({required String name}) async {
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> changeName({required String newName}) async {
     try {
       _userStatus = UserStatus.updating;
       notifyListeners();
 
-      final reqBody = {"name": name};
+      final reqBody = {"name": newName};
       final url = Uri.parse(ApiEndpoints.editName);
-      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
+      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       _userStatus = UserStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {
+        _user.name = newName;
+        notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -96,20 +104,23 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> changeBio({required String bio}) async {
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> changeBio({required String newBio}) async {
     try {
       _userStatus = UserStatus.updating;
       notifyListeners();
 
-      final reqBody = {"bio": bio};
+      final reqBody = {"bio": newBio};
       final url = Uri.parse(ApiEndpoints.editBio);
-      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
+      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       _userStatus = UserStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {
+        _user.bio = newBio;
+        notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -121,20 +132,23 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> changeBlacklistMessage({required String blacklistMessage}) async {
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> changeBlacklistMessage({required String newBlacklistMessage}) async {
     try {
       _userStatus = UserStatus.updating;
       notifyListeners();
 
-      final reqBody = {"blacklistMessage": blacklistMessage};
+      final reqBody = {"blacklistMessage": newBlacklistMessage};
       final url = Uri.parse(ApiEndpoints.editBlacklistMessage);
-      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: {'Content-Type': "application/json"});
+      Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       _userStatus = UserStatus.nil;
       notifyListeners();
 
       if (resData["message"] == "Success") {
+        _user.blacklistMessage = newBlacklistMessage;
+        notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};

@@ -13,6 +13,10 @@ import 'package:nerajima/pages/inbox/inbox.dart';
 import 'package:nerajima/pages/profile/profile.dart';
 import 'package:nerajima/pages/profile/settings.dart';
 import 'package:nerajima/pages/profile/edit_profile.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_username.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_name.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_bio.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.dart';
 
 // Run this command to auto generate the code for the routing. Rerun the command if you make any changes.
 // If you keep making changes, you can replace "build" with "watch"
@@ -84,7 +88,30 @@ import 'package:nerajima/pages/profile/edit_profile.dart';
             ),
             AutoRoute(
               path: 'edit',
-              page: EditProfilePage,
+              name: 'EditRouter',
+              page: EmptyRouterPage,
+              children: [
+                AutoRoute(
+                  path: '',
+                  page: EditProfilePage,
+                ),
+                AutoRoute(
+                  path: 'username',
+                  page: EditUsernamePage,
+                ),
+                AutoRoute(
+                  path: 'name',
+                  page: EditNamePage,
+                ),
+                AutoRoute(
+                  path: 'bio',
+                  page: EditBioPage,
+                ),
+                AutoRoute(
+                  path: 'blacklistMessage',
+                  page: EditBlacklistMessagePage,
+                ),
+              ],
             )
           ],
         ),

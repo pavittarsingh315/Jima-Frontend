@@ -20,17 +20,20 @@ class PrivatePosts extends StatelessWidget {
       context: context,
       removeTop: true,
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              profileBlacklistMessage,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 22),
-            ),
-            // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
-            Container(height: 1, color: Colors.transparent),
-          ],
+        child: Center(
+          child: Wrap(
+            children: [
+              Center(
+                child: Text(
+                  profileBlacklistMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 22),
+                ),
+              ),
+              // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
+              Container(height: 1, color: Colors.transparent),
+            ],
+          ),
         ),
       ),
     );

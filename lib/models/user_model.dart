@@ -1,5 +1,7 @@
 import 'package:nerajima/utils/utils.dart';
 
+const String defaultBlacklistMessage = "You do not have permission to view these posts!";
+
 class User {
   final String access, refresh, userId, profileId, dateJoined;
   late String username, name, bio, blacklistMessage, profilePicture, miniProfilePicture;

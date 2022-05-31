@@ -11,3 +11,16 @@ class PhoneValidator extends TextFieldValidator {
     return true;
   }
 }
+
+class LineLengthValidator extends TextFieldValidator {
+  LineLengthValidator({required String errorText}) : super(errorText);
+
+  @override
+  bool isValid(String? value) {
+    final String bioValue = value ?? "";
+    if ((bioValue.trim()).split("\n").length > 6) {
+      return false;
+    }
+    return true;
+  }
+}

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
 
+import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
@@ -115,7 +117,7 @@ class EditProfilePage extends StatelessWidget {
                               children: [
                                 if (!user.savedNewProfilePicture) _profilePictureActions(context),
                                 SizedBox(height: size.height * 0.025),
-                                _field(context, "Username", "@${user.user.username}"),
+                                _field(context, "Username", user.user.username),
                                 SizedBox(height: size.height * 0.03),
                                 _field(context, "Name", user.user.name),
                                 SizedBox(height: size.height * 0.03),
@@ -188,9 +190,13 @@ class EditProfilePage extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (fieldName == "Username") {
+          context.router.push(const EditUsernameRoute());
         } else if (fieldName == "Name") {
+          context.router.push(const EditNameRoute());
         } else if (fieldName == "Bio") {
+          context.router.push(const EditBioRoute());
         } else if (fieldName == "Blacklist Msg") {
+          context.router.push(const EditBlacklistMessageRoute());
         } else if (fieldName == "Manage Whitelist") {}
       },
       child: Container(
