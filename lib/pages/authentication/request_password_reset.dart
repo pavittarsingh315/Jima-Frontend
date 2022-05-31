@@ -112,9 +112,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
                     textInputAction: TextInputAction.go,
                     keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
                     inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
-                    validator: MultiValidator([
-                      contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
-                    ]),
+                    validator: contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
                     onChanged: checkIfFormIsFilled,
                     onEditingComplete: filledOutForm ? _requestReset : null,
                     decoration: InputDecoration(

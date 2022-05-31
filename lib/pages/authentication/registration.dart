@@ -179,7 +179,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     controller: nameController,
                     textInputAction: TextInputAction.next,
                     onChanged: checkIfFormIsFilled,
-                    validator: MultiValidator([MaxLengthValidator(30, errorText: "Name cannot exceed 30 characters.")]),
+                    validator: MaxLengthValidator(30, errorText: "Name cannot exceed 30 characters."),
                     decoration: InputDecoration(
                       hintText: "Name",
                       errorStyle: const TextStyle(fontSize: 14.0),
@@ -200,7 +200,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     obscureText: isPasswordHidden,
                     onChanged: checkIfFormIsFilled,
                     onEditingComplete: filledOutForm ? _onRegisterTap : null,
-                    validator: MultiValidator([MinLengthValidator(10, errorText: "Password must be at least 10 characters.")]),
+                    validator: MinLengthValidator(10, errorText: "Password must be at least 10 characters."),
                     decoration: InputDecoration(
                       hintText: "Password",
                       errorStyle: const TextStyle(fontSize: 14.0),

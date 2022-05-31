@@ -96,7 +96,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     obscureText: isPasswordHidden,
                     onChanged: checkIfFormIsFilled,
                     onEditingComplete: filledOutForm ? _onResetTap : null,
-                    validator: MultiValidator([MinLengthValidator(10, errorText: "Password must be at least 10 characters.")]),
+                    validator: MinLengthValidator(10, errorText: "Password must be at least 10 characters."),
                     decoration: InputDecoration(
                       hintText: "Password",
                       errorStyle: const TextStyle(fontSize: 14.0),

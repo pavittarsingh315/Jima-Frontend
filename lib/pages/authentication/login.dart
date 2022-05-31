@@ -111,9 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                     textInputAction: TextInputAction.next,
                     keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,
                     inputFormatters: [if (contactIsPhone) PhoneInputFormatter()],
-                    validator: MultiValidator([
-                      contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
-                    ]),
+                    validator: contactIsPhone ? PhoneValidator(errorText: "Include Country Code") : EmailValidator(errorText: "Invalid Email"),
                     onChanged: checkIfFormIsFilled,
                     decoration: InputDecoration(
                       hintText: contactIsPhone ? "Phone Number" : "Email",

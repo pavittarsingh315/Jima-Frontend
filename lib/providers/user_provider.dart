@@ -147,7 +147,11 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
 
       if (resData["message"] == "Success") {
-        _user.blacklistMessage = newBlacklistMessage;
+        if (newBlacklistMessage == "" && _user.blacklistMessage != defaultBlacklistMessage) {
+          _user.blacklistMessage = defaultBlacklistMessage;
+        } else {
+          _user.blacklistMessage = newBlacklistMessage;
+        }
         notifyListeners();
         return {"status": true};
       } else if (resData["message"] == "Error") {
