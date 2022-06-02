@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
+import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
@@ -52,6 +56,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final size = MediaQuery.of(context).size;
 
@@ -66,7 +71,9 @@ class _ResetPasswordState extends State<ResetPassword> {
           final res = await authProvider.confirmPasswordReset(code: widget.code, contact: widget.contact, password: passwordController.text);
           isResetting = false;
           if (res["status"]) {
-            showAlert(msg: "You're good to go 🚀🚀", context: context, isError: false);
+            User user = res['user'];
+            userProvider.setUser(user);
+            context.router.pushAndPopUntil(const AppRoot(), predicate: (route) => false);
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

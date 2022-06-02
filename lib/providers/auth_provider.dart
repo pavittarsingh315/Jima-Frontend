@@ -199,7 +199,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Success map keys: [status]. Error map keys: [status, message]
+  /// Success map keys: [status, user]. Error map keys: [status, message]
   Future<Map<String, dynamic>> confirmPasswordReset({required String code, required String contact, required String password}) async {
     try {
       _resetPasswordStatus = AuthStatus.requestingReset;
@@ -210,12 +210,19 @@ class AuthProvider extends ChangeNotifier {
       Response response = await post(url, body: convert.jsonEncode(requestData), headers: {'Content-Type': "application/json"});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-      _resetPasswordStatus = AuthStatus.nil;
-      notifyListeners();
-
       if (resData["message"] == "Success") {
-        return {"status": true};
+        User user = User.fromJson(resData["data"]["data"]);
+
+        await _secureStorage.write(key: "access", value: user.access);
+        await _secureStorage.write(key: "refresh", value: user.refresh);
+
+        _authStatus = AuthStatus.goodAuth;
+        _resetPasswordStatus = AuthStatus.nil;
+        notifyListeners();
+        return {"status": true, "user": user};
       } else if (resData["message"] == "Error") {
+        _resetPasswordStatus = AuthStatus.nil;
+        notifyListeners();
         return {"status": false, "message": resData["data"]["data"]};
       }
 

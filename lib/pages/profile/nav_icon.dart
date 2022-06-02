@@ -38,7 +38,7 @@ class ProfileBottomNavIcon extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 11),
         child: Icon(
-          CupertinoIcons.person_fill,
+          CupertinoIcons.person,
           size: 27,
           color: isActive ? primary : Colors.grey,
         ),

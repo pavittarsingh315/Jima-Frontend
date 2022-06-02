@@ -38,7 +38,7 @@ class HomeBottomNavIcon extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 11),
         child: Icon(
-          CupertinoIcons.house_fill,
+          CupertinoIcons.house,
           size: 27,
           color: isActive ? primary : Colors.grey,
         ),

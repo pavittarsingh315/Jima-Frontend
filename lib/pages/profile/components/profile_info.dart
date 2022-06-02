@@ -52,8 +52,7 @@ class ProfileInformation extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             _editButton(context),
-            const SizedBox(height: 17),
-            _bio(bio),
+            if (bio != "") _bio(bio),
           ],
         ),
       ),
@@ -121,10 +120,15 @@ class ProfileInformation extends StatelessWidget {
   }
 
   Widget _bio(String bio) {
-    return Text(
-      bio,
-      textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 14),
+    return Column(
+      children: [
+        const SizedBox(height: 17),
+        Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
     );
   }
 }
