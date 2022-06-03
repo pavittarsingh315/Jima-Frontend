@@ -2,6 +2,7 @@ class ApiEndpoints {
   static const String _baseUrl = "https://testing-jima.herokuapp.com/api";
   static const String _authUrl = "$_baseUrl/auth";
   static const String _userUrl = "$_baseUrl/user";
+  static const String _utilUrl = "$_baseUrl/util";
 
   static const String login = "$_authUrl/login";
   static const String tokenLogin = "$_authUrl/login/token";
@@ -15,4 +16,6 @@ class ApiEndpoints {
   static const String editName = "$_userUrl/edit/name";
   static const String editBio = "$_userUrl/edit/bio";
   static const String editBlacklistMessage = "$_userUrl/edit/blacklistmessage";
+
+  static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
 }

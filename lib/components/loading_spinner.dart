@@ -18,14 +18,17 @@ class LoadingSpinner extends StatelessWidget {
     if (Platform.isIOS) {
       return CupertinoActivityIndicator(
         color: color,
+        radius: size,
       );
     } else {
       return SizedBox(
         height: size,
         width: size,
-        child: CircularProgressIndicator(
-          color: color,
-          strokeWidth: 2,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: color,
+            strokeWidth: 2,
+          ),
         ),
       );
     }

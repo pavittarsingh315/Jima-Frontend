@@ -10,6 +10,7 @@ import 'package:nerajima/pages/profile/components/profile_header.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_picture_options.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
+import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 import 'package:nerajima/utils/button_styles.dart';
 
@@ -85,6 +86,13 @@ class EditProfilePage extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                   child: const Icon(Icons.edit, color: Colors.white),
+                ),
+              ),
+            if (user.userStatus == UserStatus.gettingUrl)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                  child: const LoadingSpinner(),
                 ),
               ),
           ],

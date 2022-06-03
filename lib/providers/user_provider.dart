@@ -1,15 +1,18 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart';
 import 'dart:convert' as convert;
-
+import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
 enum UserStatus {
   nil,
   updating,
+  gettingUrl,
+  uploading,
 }
 
 class UserProvider extends ChangeNotifier {
@@ -27,7 +30,15 @@ class UserProvider extends ChangeNotifier {
   void setUser(User user) {
     _user = user;
     _requestHeaders = {'Content-Type': "application/json", 'Token': _user.access, 'UserId': _user.userId};
+    FlutterUploader().setBackgroundHandler(backgroundHandler);
     notifyListeners();
+  }
+
+  static void backgroundHandler() {
+    WidgetsFlutterBinding.ensureInitialized();
+    FlutterUploader uploader = FlutterUploader();
+    uploader.progress.listen((progress) {});
+    uploader.result.listen((result) {});
   }
 
   void setNewProfilePicture({required File newProfilePicture}) {
@@ -42,10 +53,34 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeProfilePicture() async {
-    // use _newProfilePicture to do API call
-    _savedNewProfilePicture = true;
-    notifyListeners();
+  Future<Map<String, dynamic>> changeProfilePicture() async {
+    try {
+      _userStatus = UserStatus.gettingUrl;
+      notifyListeners();
+
+      final url = Uri.parse(ApiEndpoints.getProfilePicUploadUrl);
+      Response response = await get(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      _userStatus = UserStatus.nil;
+      notifyListeners();
+
+      if (resData["message"] == "Success") {
+        var uploadUrl = resData["data"]["data"]["uploadUrl"];
+        var fileUrl = resData["data"]["data"]["fileUrl"];
+
+        _userStatus = UserStatus.uploading;
+        notifyListeners();
+
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong updating the profile picture...");
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 
   /// Success map keys: [status]. Error map keys: [status, message].

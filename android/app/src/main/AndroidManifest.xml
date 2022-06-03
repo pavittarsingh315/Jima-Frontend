@@ -37,4 +37,25 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <provider
+        android:name="androidx.work.impl.WorkManagerInitializer"
+        android:authorities="${applicationId}.workmanager-init"
+        android:enabled="false"
+        android:exported="false" />
+
+    <provider
+        android:name="com.bluechilli.flutteruploader.FlutterUploaderInitializer"
+        android:authorities="${applicationId}.flutter-upload-init"
+        android:exported="false">
+        <!-- change this number to configure the maximum number of concurrent tasks -->
+        <meta-data
+            android:name="com.bluechilli.flutterupload.MAX_CONCURRENT_TASKS"
+            android:value="3" />
+
+        <!-- change this number to configure connection timeout for the upload http request -->
+        <meta-data android:name="com.bluechilli.flutteruploader.UPLOAD_CONNECTION_TIMEOUT_IN_SECONDS" android:value="3600" />
+    </provider>
+    <string name="flutter_uploader_notification_failed">Upload failed.</string>
+    <string name="flutter_uploader_notification_complete">Upload successful.</string>
+
 </manifest>
