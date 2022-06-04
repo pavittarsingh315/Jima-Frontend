@@ -11,13 +11,13 @@ import 'package:nerajima/utils/api_endpoints.dart';
 enum UserStatus {
   nil,
   updating,
-  gettingUrl,
   uploading,
 }
 
 class UserProvider extends ChangeNotifier {
   late User _user;
   late Map<String, String> _requestHeaders;
+  late FlutterUploader _uploader;
   UserStatus _userStatus = UserStatus.nil;
   File? _newProfilePicture;
   bool _savedNewProfilePicture = true;
@@ -30,15 +30,8 @@ class UserProvider extends ChangeNotifier {
   void setUser(User user) {
     _user = user;
     _requestHeaders = {'Content-Type': "application/json", 'Token': _user.access, 'UserId': _user.userId};
-    FlutterUploader().setBackgroundHandler(backgroundHandler);
+    _uploader = FlutterUploader();
     notifyListeners();
-  }
-
-  static void backgroundHandler() {
-    WidgetsFlutterBinding.ensureInitialized();
-    FlutterUploader uploader = FlutterUploader();
-    uploader.progress.listen((progress) {});
-    uploader.result.listen((result) {});
   }
 
   void setNewProfilePicture({required File newProfilePicture}) {
@@ -53,26 +46,50 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Success map keys: [status]. Error map keys: [status, message].
   Future<Map<String, dynamic>> changeProfilePicture() async {
     try {
-      _userStatus = UserStatus.gettingUrl;
+      _userStatus = UserStatus.uploading;
       notifyListeners();
 
       final url = Uri.parse(ApiEndpoints.getProfilePicUploadUrl);
       Response response = await get(url, headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-      _userStatus = UserStatus.nil;
-      notifyListeners();
-
       if (resData["message"] == "Success") {
         var uploadUrl = resData["data"]["data"]["uploadUrl"];
         var fileUrl = resData["data"]["data"]["fileUrl"];
 
-        _userStatus = UserStatus.uploading;
-        notifyListeners();
+        await _uploader.enqueue(
+          RawUpload(
+            url: uploadUrl,
+            method: UploadMethod.PUT,
+            headers: {"Content-Type": "image/jpeg"},
+            path: _newProfilePicture!.path,
+          ),
+        );
 
-        return {"status": true};
+        _uploader.result.listen(
+          (_) {},
+          onError: (ex, stacktrace) {
+            throw Exception("Something went wrong updating the profile picture...");
+          },
+          cancelOnError: true,
+        );
+
+        final reqBody = {"newProfilePicture": fileUrl, "oldProfilePicture": _user.profilePicture};
+        final url = Uri.parse(ApiEndpoints.editProfilePicture);
+        Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
+        final Map<String, dynamic> resData2 = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+        if (resData2["message"] == "Success") {
+          _userStatus = UserStatus.nil;
+          _savedNewProfilePicture = true;
+          notifyListeners();
+          return {"status": true};
+        } else if (resData2["message"] == "Error") {
+          return {"status": false, "message": resData2["data"]["data"]};
+        }
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
       }

@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_uploader/flutter_uploader.dart';
 
 import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 
+void backgroundHandler() {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterUploader uploader = FlutterUploader();
+  uploader.progress.listen((progress) {});
+  uploader.result.listen((result) {});
+}
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterUploader().setBackgroundHandler(backgroundHandler);
   runApp(MyApp());
 }
 

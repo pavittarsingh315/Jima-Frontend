@@ -11,6 +11,7 @@ import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_picture_options.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/utils/show_alert.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 import 'package:nerajima/utils/button_styles.dart';
 
@@ -41,18 +42,6 @@ class EditProfilePage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final double opacityIncreaseSlope = calculateOpacitySlope(maxOpacity: ((size.height / 2.2) - 103) * (1 - 0.75));
 
-    void _onEdit() async {
-      await showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        enableDrag: true,
-        useRootNavigator: true,
-        builder: (context) {
-          return const EditPictureOptions();
-        },
-      );
-    }
-
     return SliverPersistentHeader(
       pinned: true,
       delegate: ProfileHeaderDelegate(
@@ -67,7 +56,7 @@ class EditProfilePage extends StatelessWidget {
         background: _background(context),
         action: null,
         onStrech: null,
-        onHeaderTap: _onEdit,
+        onHeaderTap: null,
       ),
     );
   }
@@ -83,12 +72,27 @@ class EditProfilePage extends StatelessWidget {
             ),
             if (user.savedNewProfilePicture)
               Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
-                  child: const Icon(Icons.edit, color: Colors.white),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+                    if (user.userStatus == UserStatus.uploading) return;
+                    await showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      enableDrag: true,
+                      useRootNavigator: true,
+                      builder: (context) {
+                        return const EditPictureOptions();
+                      },
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                    child: const Icon(Icons.edit, color: Colors.white),
+                  ),
                 ),
               ),
-            if (user.userStatus == UserStatus.gettingUrl)
+            if (user.userStatus == UserStatus.uploading)
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
@@ -162,7 +166,11 @@ class EditProfilePage extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () async {
-                      await user.changeProfilePicture();
+                      if (user.newProfilePicture == null) return;
+                      final res = await user.changeProfilePicture();
+                      if (!res["status"]) {
+                        showAlert(msg: res["message"], context: context, isError: true);
+                      }
                     },
                     style: noSplashButtonStyle(),
                     child: const Text(

@@ -16,6 +16,7 @@ class ApiEndpoints {
   static const String editName = "$_userUrl/edit/name";
   static const String editBio = "$_userUrl/edit/bio";
   static const String editBlacklistMessage = "$_userUrl/edit/blacklistmessage";
+  static const String editProfilePicture = "$_userUrl/edit/profilePicture";
 
   static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
 }
