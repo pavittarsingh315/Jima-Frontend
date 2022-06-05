@@ -60,6 +60,7 @@ class UserProvider extends ChangeNotifier {
         var uploadUrl = resData["data"]["data"]["uploadUrl"];
         var fileUrl = resData["data"]["data"]["fileUrl"];
 
+        await _uploader.clearUploads();
         await _uploader.enqueue(
           RawUpload(
             url: uploadUrl,
@@ -70,7 +71,9 @@ class UserProvider extends ChangeNotifier {
         );
 
         _uploader.result.listen(
-          (_) {},
+          (e) {
+            print(e.status);
+          },
           onError: (ex, stacktrace) {
             throw Exception("Something went wrong updating the profile picture...");
           },

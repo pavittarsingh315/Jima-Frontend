@@ -42,7 +42,6 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
       );
       if (croppedImage != null) {
         userProvider.setNewProfilePicture(newProfilePicture: File(croppedImage.path));
-        popBottomSheet();
       }
     }
 
@@ -67,6 +66,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
 
       if (await Permission.camera.request().isGranted) {
         try {
+          popBottomSheet();
           final XFile? image = await _picker.pickImage(source: ImageSource.camera);
           if (image != null) {
             await _cropImage(image);
@@ -95,6 +95,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
 
       if (await Permission.photos.request().isGranted) {
         try {
+          popBottomSheet();
           final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
           if (image != null) {
             await _cropImage(image);

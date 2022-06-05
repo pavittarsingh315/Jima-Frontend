@@ -18,7 +18,7 @@ class LoadingSpinner extends StatelessWidget {
     if (Platform.isIOS) {
       return CupertinoActivityIndicator(
         color: color,
-        radius: size,
+        radius: size / 2,
       );
     } else {
       return SizedBox(

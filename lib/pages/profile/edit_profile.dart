@@ -68,7 +68,7 @@ class EditProfilePage extends StatelessWidget {
         return Stack(
           children: [
             Positioned.fill(
-              child: (user.newProfilePicture != null) ? Image.file(user.newProfilePicture!, fit: BoxFit.cover) : profileImage(user.user.profilePicture, size),
+              child: (user.newProfilePicture != null) ? Image.file(user.newProfilePicture!, fit: BoxFit.cover) : cachedProfileImage(user.user.profilePicture, size),
             ),
             if (user.savedNewProfilePicture)
               Positioned.fill(
@@ -90,13 +90,6 @@ class EditProfilePage extends StatelessWidget {
                     decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                     child: const Icon(Icons.edit, color: Colors.white),
                   ),
-                ),
-              ),
-            if (user.userStatus == UserStatus.uploading)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
-                  child: const LoadingSpinner(),
                 ),
               ),
           ],
@@ -167,6 +160,21 @@ class EditProfilePage extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () async {
                       if (user.newProfilePicture == null) return;
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Consumer<UserProvider>(
+                            builder: (context, user, child) {
+                              if (user.savedNewProfilePicture) {
+                                Navigator.of(context).pop();
+                                return const SizedBox();
+                              } else {
+                                return const LoadingSpinner();
+                              }
+                            },
+                          );
+                        },
+                      );
                       final res = await user.changeProfilePicture();
                       if (!res["status"]) {
                         showAlert(msg: res["message"], context: context, isError: true);

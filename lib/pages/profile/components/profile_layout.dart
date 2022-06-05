@@ -133,7 +133,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
             fit: BoxFit.cover,
           );
         }
-        return profileImage(user.user.profilePicture, size);
+        return cachedProfileImage(user.user.profilePicture, size);
       },
     );
   }
