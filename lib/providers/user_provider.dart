@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart';
 import 'dart:convert' as convert;
 import 'package:flutter_uploader/flutter_uploader.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
@@ -60,30 +62,30 @@ class UserProvider extends ChangeNotifier {
         var uploadUrl = resData["data"]["data"]["uploadUrl"];
         var fileUrl = resData["data"]["data"]["fileUrl"];
 
+        var file = await _resizeImage(_newProfilePicture!.absolute.path, 1000, 1000);
+        if (file == null) {
+          throw Exception("Something went wrong updating the profile picture...");
+        }
         await _uploader.clearUploads();
         await _uploader.enqueue(
           RawUpload(
             url: uploadUrl,
             method: UploadMethod.PUT,
             headers: {"Content-Type": "image/jpeg"},
-            path: _newProfilePicture!.path,
+            path: file.path,
           ),
         );
 
-        _uploader.result.listen(
-          (e) {
-            print(e.status);
-          },
-          onError: (ex, stacktrace) {
-            throw Exception("Something went wrong updating the profile picture...");
-          },
-          cancelOnError: true,
-        );
+        // since image is now resized and easily portable, it won't take long to send image.
+        // this delay is to add a buffer to really make sure the image is sent.
+        await Future.delayed(const Duration(milliseconds: 200));
 
         final reqBody = {"newProfilePicture": fileUrl, "oldProfilePicture": _user.profilePicture};
         final url = Uri.parse(ApiEndpoints.editProfilePicture);
         Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
         final Map<String, dynamic> resData2 = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+        file.deleteSync();
 
         if (resData2["message"] == "Success") {
           _userStatus = UserStatus.nil;
@@ -217,5 +219,20 @@ class UserProvider extends ChangeNotifier {
     } catch (e) {
       return Future.error(e);
     }
+  }
+
+  Future<File?> _resizeImage(String filePath, int height, int width) async {
+    // final stopwatch = Stopwatch()..start(); // uncomment to print exec. time of function
+    Directory tempDir = await getTemporaryDirectory();
+    final result = await FlutterImageCompress.compressAndGetFile(
+      filePath,
+      "${tempDir.path}/resized.jpeg",
+      minHeight: height,
+      minWidth: width,
+      format: CompressFormat.jpeg,
+    );
+    // stopwatch.stop(); // uncomment to print exec. time of function
+    // print('Executed in ${stopwatch.elapsed.inMilliseconds}'); // uncomment to print exec. time of function
+    return result;
   }
 }
