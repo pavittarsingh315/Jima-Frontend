@@ -63,9 +63,6 @@
 	<!-- change this number to configure the request timeout -->
 	<key>FUTimeoutInSeconds</key>
 	<integer>3600</integer>
-	<!-- Notifcation displayed when all files are uploaded. Shown iff app is not in foreground -->
-	<key>FUAllFilesUploadedMessage</key>
-	<string>All files have been uploaded</string>
 
 </dict>
 </plist>
