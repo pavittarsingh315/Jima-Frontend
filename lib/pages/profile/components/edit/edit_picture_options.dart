@@ -20,6 +20,7 @@ class EditPictureOptions extends StatefulWidget {
 
 class _EditPictureOptionsState extends State<EditPictureOptions> {
   final ImagePicker _picker = ImagePicker();
+  bool ignoreGesture = false;
 
   void popBottomSheet() {
     Navigator.of(context).pop();
@@ -42,6 +43,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
       );
       if (croppedImage != null) {
         userProvider.setNewProfilePicture(newProfilePicture: File(croppedImage.path));
+        popBottomSheet();
       }
     }
 
@@ -66,8 +68,11 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
 
       if (await Permission.camera.request().isGranted) {
         try {
-          popBottomSheet();
+          ignoreGesture = true;
+          setState(() {});
           final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+          ignoreGesture = false;
+          setState(() {});
           if (image != null) {
             await _cropImage(image);
           }
@@ -95,7 +100,6 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
 
       if (await Permission.photos.request().isGranted) {
         try {
-          popBottomSheet();
           final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
           if (image != null) {
             await _cropImage(image);
@@ -104,14 +108,17 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
       }
     }
 
-    return CustomBottomSheet(
-      children: [
-        _option(context, "Camera", CupertinoIcons.camera, _onCameraTap),
-        const Divider(color: Colors.grey),
-        _option(context, "Choose an image ", CupertinoIcons.photo, _onImageTap),
-        const Divider(color: Colors.grey),
-        _cancelBtn(context),
-      ],
+    return IgnorePointer(
+      ignoring: ignoreGesture,
+      child: CustomBottomSheet(
+        children: [
+          _option(context, "Camera", CupertinoIcons.camera, _onCameraTap),
+          const Divider(color: Colors.grey),
+          _option(context, "Choose an image ", CupertinoIcons.photo, _onImageTap),
+          const Divider(color: Colors.grey),
+          _cancelBtn(context),
+        ],
+      ),
     );
   }
 
