@@ -23,6 +23,7 @@ class UserProvider extends ChangeNotifier {
   UserStatus _userStatus = UserStatus.nil;
   File? _newProfilePicture;
   bool _savedNewProfilePicture = true;
+  int imgIndex = 0;
 
   User get user => _user;
   UserStatus get userStatus => _userStatus;
@@ -59,20 +60,32 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        var uploadUrl = resData["data"]["data"]["uploadUrl"];
-        var fileUrl = resData["data"]["data"]["fileUrl"];
+        var largeUploadUrl = resData["data"]["data"]["largeUploadUrl"];
+        var miniUploadUrl = resData["data"]["data"]["miniUploadUrl"];
+        var largeFileUrl = resData["data"]["data"]["largeFileUrl"];
+        var miniFileUrl = resData["data"]["data"]["miniFileUrl"];
 
-        var file = await _resizeImage(_newProfilePicture!.absolute.path, 1000, 1000);
-        if (file == null) {
+        var largeFile = await _resizeImage(_newProfilePicture!.absolute.path, 1100, 1100);
+        var miniFile = await _resizeImage(_newProfilePicture!.absolute.path, 200, 200);
+        if (largeFile == null || miniFile == null) {
           throw Exception("Something went wrong updating the profile picture...");
         }
+
         await _uploader.clearUploads();
         await _uploader.enqueue(
           RawUpload(
-            url: uploadUrl,
+            url: largeUploadUrl,
             method: UploadMethod.PUT,
             headers: {"Content-Type": "image/jpeg"},
-            path: file.path,
+            path: largeFile.path,
+          ),
+        );
+        await _uploader.enqueue(
+          RawUpload(
+            url: miniUploadUrl,
+            method: UploadMethod.PUT,
+            headers: {"Content-Type": "image/jpeg"},
+            path: miniFile.path,
           ),
         );
 
@@ -80,16 +93,19 @@ class UserProvider extends ChangeNotifier {
         // this delay is to add a buffer to really make sure the image is sent.
         await Future.delayed(const Duration(milliseconds: 200));
 
-        final reqBody = {"newProfilePicture": fileUrl, "oldProfilePicture": _user.profilePicture};
+        final reqBody = {"newProfilePicture": largeFileUrl, "newMiniProfilePicture": miniFileUrl, "oldProfilePicture": _user.profilePicture};
         final url = Uri.parse(ApiEndpoints.editProfilePicture);
         Response response = await put(url, body: convert.jsonEncode(reqBody), headers: _requestHeaders);
         final Map<String, dynamic> resData2 = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
-        file.deleteSync();
+        largeFile.deleteSync();
+        miniFile.deleteSync();
 
         if (resData2["message"] == "Success") {
           _userStatus = UserStatus.nil;
           _savedNewProfilePicture = true;
+          _user.profilePicture = largeFileUrl;
+          _user.miniProfilePicture = miniFileUrl;
           notifyListeners();
           return {"status": true};
         } else if (resData2["message"] == "Error") {
@@ -226,11 +242,12 @@ class UserProvider extends ChangeNotifier {
     Directory tempDir = await getTemporaryDirectory();
     final result = await FlutterImageCompress.compressAndGetFile(
       filePath,
-      "${tempDir.path}/resized.jpeg",
+      "${tempDir.path}/resized$imgIndex.jpeg",
       minHeight: height,
       minWidth: width,
       format: CompressFormat.jpeg,
     );
+    imgIndex++;
     // stopwatch.stop(); // uncomment to print exec. time of function
     // print('Executed in ${stopwatch.elapsed.inMilliseconds}'); // uncomment to print exec. time of function
     return result;
