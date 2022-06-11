@@ -1,9 +1,8 @@
 1. Use a hero widget to animate from a post to the post's detail view. Pin the post at the top of the details page and have comments under the post scroll while the post remains pinned.
 2. For the the whitelist, followers, and following use an animatedlist so that when you remove/add an item to the list, it'll transition in nicely.
-3. When uploading a new profile image, display an animated circular progress indicator in the center of the img with the edit pencil icon in the center of the indicator. You already built an animated indicator in old jima. Use flutter_uploader package for this.
-4. Use the #2 example of the container transform on the animations package pub.dev page to animate from user tile to user profile. Use this in whitelist, followers, and following to animate to a profile page when a user tile is clicked.
-5. Add an optional pin code setting where a user has to enter a pin to access the app.
-6. Use the url_launcher package to open webpages from within the app.
-7. When showing comments under a post, only show the comments stats like num likes, num dislike, num replies. Make the user click on the comment to see the replies in a comment detail view page. Use a hero widget to animate the page transition. Pin comment to top and have replies scroll under it. This is exactly like #1.
-8. Use this(https://stackoverflow.com/questions/53912650/how-to-show-progress-bar-with-dots-indicating-the-progress) to show a dot on a video's progress bar.
-9. Allow comments to be audios.
+3. Use the #2 example of the container transform on the animations package pub.dev page to animate from user tile to user profile. Use this in whitelist, followers, and following to animate to a profile page when a user tile is clicked.
+4. Add an optional pin code setting where a user has to enter a pin to access the app.
+5. Use the url_launcher package to open webpages from within the app.
+6. When showing comments under a post, only show the comments stats like num likes, num dislike, num replies. Make the user click on the comment to see the replies in a comment detail view page. Use a hero widget to animate the page transition. Pin comment to top and have replies scroll under it. This is exactly like #1.
+7. Use this(https://stackoverflow.com/questions/53912650/how-to-show-progress-bar-with-dots-indicating-the-progress) to show a dot on a video's progress bar.
+8. Allow comments to be audios.
