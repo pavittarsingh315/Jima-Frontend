@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
+import 'package:nerajima/pages/browse/search_body.dart';
+
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -13,9 +15,7 @@ class SearchPage extends StatelessWidget {
       width: size.width,
       child: Stack(
         children: [
-          const Center(
-            child: Text("Browse Page"),
-          ),
+          const SearchBody(),
           Align(
             alignment: Alignment.bottomRight,
             child: _backButton(context),

@@ -227,39 +227,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-/*
-CountryCodePicker(
-        
-        initialSelection: 'US',
-        showCountryOnly: true,
-        showOnlyCountryWhenClosed: false,
-        showFlagMain: true,
-        barrierColor: Colors.transparent,
-        dialogBackgroundColor: darkModeIsEnabled ? Colors.grey[900] : Colors.white,
-        searchDecoration: InputDecoration(
-          filled: true,
-          fillColor: darkModeIsEnabled ? darkModeBackgroundContrast : lightModeBackgroundContrast,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(width: 0, style: BorderStyle.none),
-          ),
-          prefixIcon: const Icon(
-            CupertinoIcons.search,
-            color: Colors.grey,
-            size: 23,
-          ),
-          suffixIcon: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              print('hello');
-            },
-            child: const Icon(
-              CupertinoIcons.clear_circled,
-              color: Colors.grey,
-              size: 16,
-            ),
-          ),
-        ),
-      ),
-*/
