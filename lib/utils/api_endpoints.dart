@@ -19,4 +19,7 @@ class ApiEndpoints {
   static const String editProfilePicture = "$_userUrl/edit/profilePicture";
 
   static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
+
+  /// Append query to the end of the url.
+  static const String searchForUser = "$_userUrl/profile/search/user/";
 }

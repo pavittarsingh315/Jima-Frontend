@@ -56,6 +56,8 @@ dependencies:
   cached_network_image: ^3.2.1
   flutter_image_compress: ^1.1.0
   path_provider: ^2.0.11
+  animations: ^2.0.3
+  flutter_speed_dial: ^6.0.0
 
 dev_dependencies:
   flutter_test:
