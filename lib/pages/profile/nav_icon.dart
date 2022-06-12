@@ -8,7 +8,7 @@ import 'package:nerajima/router/router.gr.dart';
 
 class ProfileBottomNavIcon extends StatelessWidget {
   final TabsRouter tabsRouter;
-  final int index = 4; // index of profile in navbar
+  final int index = 2; // index of profile in navbar
 
   const ProfileBottomNavIcon({Key? key, required this.tabsRouter}) : super(key: key);
 

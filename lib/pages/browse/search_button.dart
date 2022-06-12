@@ -4,7 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/pages/home/components/search_page.dart';
+import 'package:nerajima/pages/browse/search_page.dart';
 
 class SearchButton extends StatelessWidget {
   const SearchButton({Key? key}) : super(key: key);

@@ -8,7 +8,7 @@ import 'package:nerajima/router/router.gr.dart';
 
 class InboxBottomNavIcon extends StatelessWidget {
   final TabsRouter tabsRouter;
-  final int index = 3; // index of inbox in navbar
+  final int index = 1; // index of inbox in navbar
 
   const InboxBottomNavIcon({Key? key, required this.tabsRouter}) : super(key: key);
 

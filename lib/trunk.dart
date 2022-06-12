@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/home/nav_icon.dart';
-import 'package:nerajima/pages/browse/nav_icon.dart';
-import 'package:nerajima/pages/create/nav_icon.dart';
 import 'package:nerajima/pages/inbox/nav_icon.dart';
 import 'package:nerajima/pages/profile/nav_icon.dart';
 
@@ -21,8 +19,6 @@ class AppTrunk extends StatelessWidget {
     return AutoTabsScaffold(
       routes: const [
         HomeRouter(),
-        BrowseRouter(),
-        CreateRouter(),
         InboxRouter(),
         ProfileRouter(),
       ],
@@ -43,8 +39,6 @@ class AppTrunk extends StatelessWidget {
               child: Row(
                 children: [
                   _navItem(context, HomeBottomNavIcon(tabsRouter: tabsRouter)),
-                  _navItem(context, BrowseBottomNavIcon(tabsRouter: tabsRouter)),
-                  _navItem(context, CreateBottomNavIcon(tabsRouter: tabsRouter)),
                   _navItem(context, InboxBottomNavIcon(tabsRouter: tabsRouter)),
                   _navItem(context, ProfileBottomNavIcon(tabsRouter: tabsRouter)),
                 ],
@@ -59,7 +53,7 @@ class AppTrunk extends StatelessWidget {
   Widget _navItem(BuildContext context, Widget child) {
     return SizedBox(
       height: 50,
-      width: MediaQuery.of(context).size.width / 5,
+      width: MediaQuery.of(context).size.width / 3,
       child: child,
     );
   }

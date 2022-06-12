@@ -6,8 +6,6 @@ import 'package:nerajima/pages/authentication/login.dart';
 import 'package:nerajima/pages/authentication/registration.dart';
 
 import 'package:nerajima/pages/home/home.dart';
-import 'package:nerajima/pages/browse/browse.dart';
-import 'package:nerajima/pages/create/create.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
 
 import 'package:nerajima/pages/profile/profile.dart';
@@ -37,28 +35,6 @@ import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.da
             AutoRoute(
               path: '',
               page: HomePage,
-            ),
-          ],
-        ),
-        AutoRoute(
-          path: 'browse',
-          name: 'BrowseRouter',
-          page: EmptyRouterPage,
-          children: [
-            AutoRoute(
-              path: '',
-              page: BrowsePage,
-            ),
-          ],
-        ),
-        AutoRoute(
-          path: 'create',
-          name: 'CreateRouter',
-          page: EmptyRouterPage,
-          children: [
-            AutoRoute(
-              path: '',
-              page: CreatePage,
             ),
           ],
         ),

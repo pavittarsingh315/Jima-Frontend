@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/pages/home/components/search_button.dart';
+import 'package:nerajima/pages/browse/search_button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
