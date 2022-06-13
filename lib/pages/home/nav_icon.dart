@@ -8,7 +8,7 @@ import 'package:nerajima/router/router.gr.dart';
 
 class HomeBottomNavIcon extends StatelessWidget {
   final TabsRouter tabsRouter;
-  final int index = 0; // index of home in navbar
+  final int index = 1; // index of home in navbar
 
   const HomeBottomNavIcon({Key? key, required this.tabsRouter}) : super(key: key);
 
@@ -38,7 +38,7 @@ class HomeBottomNavIcon extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 11),
         child: Icon(
-          CupertinoIcons.house,
+          isActive ? CupertinoIcons.house_fill : CupertinoIcons.house,
           size: 27,
           color: isActive ? primary : Colors.grey,
         ),

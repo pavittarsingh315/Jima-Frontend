@@ -18,8 +18,8 @@ class AppTrunk extends StatelessWidget {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return AutoTabsScaffold(
       routes: const [
-        HomeRouter(),
         InboxRouter(),
+        HomeRouter(),
         ProfileRouter(),
       ],
       extendBody: true,
@@ -38,8 +38,8 @@ class AppTrunk extends StatelessWidget {
             child: SafeArea(
               child: Row(
                 children: [
-                  _navItem(context, HomeBottomNavIcon(tabsRouter: tabsRouter)),
                   _navItem(context, InboxBottomNavIcon(tabsRouter: tabsRouter)),
+                  _navItem(context, HomeBottomNavIcon(tabsRouter: tabsRouter)),
                   _navItem(context, ProfileBottomNavIcon(tabsRouter: tabsRouter)),
                 ],
               ),

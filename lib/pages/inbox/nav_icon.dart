@@ -8,7 +8,7 @@ import 'package:nerajima/router/router.gr.dart';
 
 class InboxBottomNavIcon extends StatelessWidget {
   final TabsRouter tabsRouter;
-  final int index = 1; // index of inbox in navbar
+  final int index = 0; // index of inbox in navbar
 
   const InboxBottomNavIcon({Key? key, required this.tabsRouter}) : super(key: key);
 
@@ -38,7 +38,7 @@ class InboxBottomNavIcon extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 11),
         child: Icon(
-          CupertinoIcons.mail,
+          isActive ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
           size: 27,
           color: isActive ? primary : Colors.grey,
         ),

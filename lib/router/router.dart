@@ -31,6 +31,7 @@ import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.da
           path: 'home',
           name: 'HomeRouter',
           page: EmptyRouterPage,
+          initial: true,
           children: [
             AutoRoute(
               path: '',

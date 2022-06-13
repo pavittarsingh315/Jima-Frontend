@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:nerajima/pages/browse/search_bar.dart';
+import 'package:nerajima/pages/browse/search_results.dart';
 
 class SearchBody extends StatefulWidget {
   const SearchBody({Key? key}) : super(key: key);
@@ -11,10 +12,17 @@ class SearchBody extends StatefulWidget {
 
 class _SearchBodyState extends State<SearchBody> {
   bool showRecents = true;
+  bool showResults = false;
 
-  void setShowRecents() {
-    print('got called');
-    showRecents = !showRecents;
+  void setShowRecents(bool shouldShow) {
+    if (showRecents == shouldShow) return;
+    showRecents = shouldShow;
+    setState(() {});
+  }
+
+  void setShowResults(bool shouldShow) {
+    if (showResults == shouldShow) return;
+    showResults = shouldShow;
     setState(() {});
   }
 
@@ -22,14 +30,17 @@ class _SearchBodyState extends State<SearchBody> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SearchBar(setShowRecents: setShowRecents),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: showRecents ? _recentSearches(context) : _suggestions(context),
+        SearchBar(setShowRecents: setShowRecents, setShowResults: setShowResults),
+        if (showResults)
+          const Expanded(child: SearchResults())
+        else
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: showRecents ? _recentSearches(context) : _suggestions(context),
+            ),
           ),
-        )
       ],
     );
   }
