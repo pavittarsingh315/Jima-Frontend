@@ -21,5 +21,13 @@ class ApiEndpoints {
   static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
 
   /// Append query to the end of the url.
-  static const String searchForUser = "$_userUrl/profile/search/user/";
+  static const String searchForUser = "$_userUrl/profile/search/user";
+  static const String getSearchHistory = "$_userUrl/profile/search/history/get";
+  static const String clearSearchHistory = "$_userUrl/profile/search/history/clear";
+
+  /// Append query to end of the url
+  static const String addToSearchHistory = "$_userUrl/profile/search/history/add";
+
+  /// Append index of search to remove to the end of the url
+  static const String removeFromSearchHistory = "$_userUrl/profile/search/history/remove";
 }

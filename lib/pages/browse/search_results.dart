@@ -67,7 +67,10 @@ class _SearchResultsState extends State<SearchResults> with SingleTickerProvider
         color: darkModeIsOn ? darkModeBackgroundContrast : lightModeBackgroundContrast,
         borderRadius: BorderRadius.circular(7),
       ),
-      child: Text(label),
+      child: Text(
+        label,
+        style: TextStyle(color: darkModeIsOn ? Colors.white : Colors.black),
+      ),
     );
   }
 }

@@ -6,7 +6,15 @@ import 'package:nerajima/components/ui_search_bar.dart';
 
 class SearchBar extends StatefulWidget {
   final Function(bool) setShowRecents, setShowResults;
-  const SearchBar({Key? key, required this.setShowRecents, required this.setShowResults}) : super(key: key);
+  final TextEditingController searchController;
+  final VoidCallback onEditingComplete;
+  const SearchBar({
+    Key? key,
+    required this.setShowRecents,
+    required this.setShowResults,
+    required this.searchController,
+    required this.onEditingComplete,
+  }) : super(key: key);
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -14,22 +22,9 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   bool showClearButton = false;
-  late final TextEditingController searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
 
   void checkIfSearchHasValue(_) {
-    if (searchController.text != "") {
+    if (widget.searchController.text != "") {
       if (!showClearButton) {
         showClearButton = true;
         setState(() {});
@@ -47,8 +42,9 @@ class _SearchBarState extends State<SearchBar> {
 
   void makeSearch() {
     FocusManager.instance.primaryFocus?.unfocus();
-    if (searchController.text != "") {
+    if (widget.searchController.text != "") {
       widget.setShowResults(true); // show results
+      widget.onEditingComplete();
     }
   }
 
@@ -58,7 +54,7 @@ class _SearchBarState extends State<SearchBar> {
     return UISearchBar(
       hintText: "Search",
       autofocus: true,
-      controller: searchController,
+      controller: widget.searchController,
       padding: EdgeInsets.fromLTRB(11, safeAreaPadding.top, 11, 4),
       suffix: _clearButton(context),
       onChanged: checkIfSearchHasValue,
@@ -72,7 +68,7 @@ class _SearchBarState extends State<SearchBar> {
         behavior: HitTestBehavior.translucent,
         onTap: () {
           HapticFeedback.lightImpact();
-          searchController.text = "";
+          widget.searchController.text = "";
           showClearButton = false;
           setState(() {});
           widget.setShowRecents(true); // show recents

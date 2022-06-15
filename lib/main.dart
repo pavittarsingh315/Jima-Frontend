@@ -5,6 +5,7 @@ import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/providers/search_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 
 void backgroundHandler() {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
           builder: (BuildContext context, _) {
