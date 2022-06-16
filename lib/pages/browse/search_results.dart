@@ -33,7 +33,10 @@ class _SearchResultsState extends State<SearchResults> with SingleTickerProvider
         TabBar(
           isScrollable: true,
           controller: _tabController,
-          indicatorColor: Colors.transparent,
+          indicator: const UnderlineTabIndicator(
+            borderSide: BorderSide(width: 0.66, color: primary),
+            insets: EdgeInsets.symmetric(horizontal: 22.0),
+          ),
           labelPadding: const EdgeInsets.symmetric(horizontal: 8),
           tabs: [
             Tab(child: _tabBody(context, "Top")),
@@ -63,13 +66,12 @@ class _SearchResultsState extends State<SearchResults> with SingleTickerProvider
       height: 30,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: darkModeIsOn ? darkModeBackgroundContrast : lightModeBackgroundContrast,
-        borderRadius: BorderRadius.circular(7),
-      ),
       child: Text(
         label,
-        style: TextStyle(color: darkModeIsOn ? Colors.white : Colors.black),
+        style: TextStyle(
+          fontWeight: FontWeight.w400,
+          color: darkModeIsOn ? Colors.white : Colors.black,
+        ),
       ),
     );
   }
