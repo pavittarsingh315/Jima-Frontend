@@ -23,6 +23,7 @@ class AppTrunk extends StatelessWidget {
         ProfileRouter(),
       ],
       extendBody: true,
+      resizeToAvoidBottomInset: false, // false means scaffolds widgets don't resize when keyboard appears
       bottomNavigationBuilder: (BuildContext context, TabsRouter tabsRouter) {
         return GlassWrapper(
           child: Container(
