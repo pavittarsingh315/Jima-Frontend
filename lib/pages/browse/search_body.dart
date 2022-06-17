@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -5,8 +7,10 @@ import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/search_provider.dart';
-import 'package:nerajima/components/ui_search_bar.dart';
 import 'package:nerajima/pages/browse/search_results.dart';
+import 'package:nerajima/components/ui_search_bar.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/loading_spinner.dart';
 
 class SearchBody extends StatefulWidget {
   const SearchBody({Key? key}) : super(key: key);
@@ -16,6 +20,7 @@ class SearchBody extends StatefulWidget {
 }
 
 class _SearchBodyState extends State<SearchBody> {
+  Timer? searchTimer;
   bool showClearButton = false;
   bool showRecents = true;
   bool showResults = false;
@@ -46,7 +51,7 @@ class _SearchBodyState extends State<SearchBody> {
     setState(() {});
   }
 
-  void _checkIfSearchHasValue(_) {
+  void _checkIfSearchHasValue() {
     if (searchController.text != "") {
       if (!showClearButton) {
         showClearButton = true;
@@ -61,6 +66,19 @@ class _SearchBodyState extends State<SearchBody> {
       }
     }
     _setShowResults(false); // hide results
+  }
+
+  void _onSearchTypingStop(value) {
+    if (searchTimer != null) {
+      setState(() {
+        searchTimer?.cancel();
+      });
+    }
+    setState(() {
+      searchTimer = Timer(const Duration(milliseconds: 500), () {
+        _searchProvider.makeSearch(query: value, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+      });
+    });
   }
 
   void _performSearch() {
@@ -87,7 +105,10 @@ class _SearchBodyState extends State<SearchBody> {
               controller: searchController,
               padding: EdgeInsets.only(top: safeAreaPadding.top, bottom: 6),
               suffix: _clearSearchBar(context),
-              onChanged: _checkIfSearchHasValue,
+              onChanged: (v) {
+                _checkIfSearchHasValue();
+                _onSearchTypingStop(v);
+              },
               onEditingComplete: _performSearch,
             ),
             if (showRecents) _clearSearchHistory(context),
@@ -194,6 +215,7 @@ class _SearchBodyState extends State<SearchBody> {
                       FocusManager.instance.primaryFocus?.unfocus();
                       searchController.text = search.recentSearches[index];
                       search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                      // make search suggestions equal to a users results list in search provider.
                       showResults = true;
                       showClearButton = true;
                       showRecents = false;
@@ -202,9 +224,15 @@ class _SearchBodyState extends State<SearchBody> {
                     child: Container(
                       height: 50,
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        search.recentSearches[index],
-                        style: const TextStyle(fontSize: 16),
+                      child: Column(
+                        children: [
+                          Text(
+                            search.recentSearches[index],
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
+                          Container(height: 1, color: Colors.transparent),
+                        ],
                       ),
                     ),
                   ),
@@ -233,19 +261,37 @@ class _SearchBodyState extends State<SearchBody> {
   }
 
   Widget _suggestions(BuildContext context) {
-    return ListView.builder(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      itemCount: 60,
-      itemBuilder: (context, index) {
-        return Container(
-          height: 50,
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 11),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: index % 2 == 0 ? Colors.blue.shade100 : Colors.pink.shade100,
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Text("Suggestion ${index.toString()}"),
+    return Consumer<SearchProvider>(
+      builder: (context, search, child) {
+        if (search.isSearching) {
+          return LayoutBuilder(
+            builder: (context, constraints) => ListView(
+              children: [
+                Container(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight / 2,
+                  ),
+                  child: const LoadingSpinner(),
+                ),
+              ],
+            ),
+          );
+        }
+        return ListView.builder(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          itemCount: search.searchSuggestions.length,
+          itemBuilder: (context, index) {
+            return ProfilePreviewCard(
+              name: search.searchSuggestions[index].name,
+              username: search.searchSuggestions[index].username,
+              imageUrl: search.searchSuggestions[index].miniProfilePicture,
+              trailingWidget: Container(),
+              onTap: () {
+                search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                // push to profile page.
+              },
+            );
+          },
         );
       },
     );
