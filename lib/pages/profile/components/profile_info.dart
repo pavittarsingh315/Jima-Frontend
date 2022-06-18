@@ -6,9 +6,10 @@ import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
 
-class ProfileInformation extends StatelessWidget {
+class ProfileInformation extends StatefulWidget {
   final String name, bio;
   final int numFollowers, numWhitelisted, numFollowing;
+  final bool isCurrentUserProfile, areFollowing;
 
   const ProfileInformation({
     Key? key,
@@ -17,9 +18,18 @@ class ProfileInformation extends StatelessWidget {
     required this.numFollowers,
     required this.numWhitelisted,
     required this.numFollowing,
+    required this.isCurrentUserProfile,
+    required this.areFollowing,
   }) : super(key: key);
 
   static final NumberFormat numberFormat = NumberFormat('###,000');
+
+  @override
+  State<ProfileInformation> createState() => _ProfileInformationState();
+}
+
+class _ProfileInformationState extends State<ProfileInformation> {
+  late bool areFollowing = widget.areFollowing;
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +40,29 @@ class ProfileInformation extends StatelessWidget {
         width: size.width * 0.8,
         child: Column(
           children: [
-            if (name != "") _name(name),
+            if (widget.name != "") _name(widget.name),
             Row(
               children: [
-                _statItem(context, 0, 'Followers', (numFollowers < 1000) ? numFollowers.toString() : numberFormat.format(numFollowers)),
+                _statItem(context, 0, 'Followers', (widget.numFollowers < 1000) ? widget.numFollowers.toString() : ProfileInformation.numberFormat.format(widget.numFollowers)),
                 Container(
                   width: 1,
                   height: 40,
                   margin: EdgeInsets.symmetric(horizontal: statsMargin),
                   color: Colors.grey,
                 ),
-                _statItem(context, 1, 'Whitelisted', (numWhitelisted < 1000) ? numWhitelisted.toString() : numberFormat.format(numWhitelisted)),
+                _statItem(context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
                 Container(
                   width: 1,
                   height: 40,
                   margin: EdgeInsets.symmetric(horizontal: statsMargin),
                   color: Colors.grey,
                 ),
-                _statItem(context, 2, 'Following', (numFollowing < 1000) ? numFollowing.toString() : numberFormat.format(numFollowing)),
+                _statItem(context, 2, 'Following', (widget.numFollowing < 1000) ? widget.numFollowing.toString() : ProfileInformation.numberFormat.format(widget.numFollowing)),
               ],
             ),
             const SizedBox(height: 25),
-            _editButton(context),
-            if (bio != "") _bio(bio),
+            widget.isCurrentUserProfile ? _editButton(context) : _actions(context),
+            if (widget.bio != "") _bio(widget.bio),
           ],
         ),
       ),
@@ -130,5 +140,43 @@ class ProfileInformation extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _actions(BuildContext context) {
+    if (!areFollowing) {
+      return Row(
+        children: [
+          Expanded(
+            child: PillButton(
+              onTap: () {
+                areFollowing = true;
+                setState(() {});
+                // make api call to follow user
+              },
+              color: primary,
+              margin: 0,
+              child: const Text("Follow"),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          Expanded(
+            child: PillButton(
+              onTap: () {
+                areFollowing = false;
+                setState(() {});
+                // make api call to unfollow user
+              },
+              color: Colors.red,
+              margin: 0,
+              child: const Text("Unfollow"),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }

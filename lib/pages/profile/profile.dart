@@ -24,6 +24,7 @@ class ProfilePage extends StatelessWidget {
       numFollowing: userProvider.user.numFollowing,
       areWhitelisted: false, // default true for user's own profile
       isCurrentUserProfile: true, // default true for user's own profile. Otherwise, profileId == userProvider.user.profileId
+      areFollowing: true, // value does not matter when isCurrentUserProfile == true
       showBackButton: false, // profile is root of ProfileRouter so it will not show back button
     );
   }

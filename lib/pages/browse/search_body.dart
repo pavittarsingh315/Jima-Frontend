@@ -225,13 +225,15 @@ class _SearchBodyState extends State<SearchBody> {
                       height: 50,
                       alignment: Alignment.centerLeft,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             search.recentSearches[index],
                             style: const TextStyle(fontSize: 16),
                           ),
                           // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
-                          Container(height: 1, color: Colors.transparent),
+                          Container(height: 0.25, color: Colors.transparent),
                         ],
                       ),
                     ),

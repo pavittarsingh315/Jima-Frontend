@@ -15,7 +15,7 @@ import 'package:nerajima/utils/opacity_slope_calculator.dart';
 class ProfileLayout extends StatefulWidget {
   final String profileId, username, name, bio, blacklistMessage, profilePicture, dateJoined;
   final int numFollowers, numWhitelisted, numFollowing;
-  final bool areWhitelisted, isCurrentUserProfile, showBackButton;
+  final bool areWhitelisted, isCurrentUserProfile, areFollowing, showBackButton;
 
   const ProfileLayout({
     Key? key,
@@ -31,6 +31,7 @@ class ProfileLayout extends StatefulWidget {
     required this.numFollowing,
     required this.areWhitelisted,
     required this.isCurrentUserProfile,
+    required this.areFollowing,
     required this.showBackButton,
   }) : super(key: key);
 
@@ -147,6 +148,8 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
         numFollowers: widget.numFollowers,
         numWhitelisted: widget.numWhitelisted,
         numFollowing: widget.numFollowing,
+        isCurrentUserProfile: widget.isCurrentUserProfile,
+        areFollowing: widget.areFollowing,
       );
     }
 
@@ -159,6 +162,8 @@ class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProvider
           numFollowers: user.user.numFollowers,
           numWhitelisted: user.user.numWhitelisted,
           numFollowing: user.user.numFollowing,
+          isCurrentUserProfile: widget.isCurrentUserProfile,
+          areFollowing: widget.areFollowing,
         );
       },
     );
