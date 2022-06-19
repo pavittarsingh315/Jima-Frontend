@@ -6,6 +6,7 @@ import 'dart:convert' as convert;
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/models/profile_model.dart';
 import 'package:nerajima/pages/profile/components/profile_layout.dart';
+import 'package:nerajima/utils/api_endpoints.dart';
 
 class VisitProfile extends StatefulWidget {
   final String profileId;
@@ -28,12 +29,12 @@ class _VisitProfileState extends State<VisitProfile> {
   Future<void> _getProfile() async {
     try {
       _userProvider = Provider.of<UserProvider>(context, listen: false);
-      var url = Uri.parse("url to get profile using widget.profileId");
-      Response response = await get(url, headers: {'Content-Type': "application/json", "Authorization": _userProvider.user.access});
+      var url = Uri.parse("${ApiEndpoints.getAProfile}/${widget.profileId}");
+      Response response = await get(url, headers: {'Content-Type': "application/json", "Token": _userProvider.user.access, "UserId": _userProvider.user.userId});
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        Profile profile2 = Profile.fromJson(resData["success"]);
+        Profile profile2 = Profile.fromJson(resData["data"]["data"]);
         profile = profile2;
         setState(() {});
       } else if (resData["message"] == "Error") {

@@ -284,13 +284,13 @@ class _SearchBodyState extends State<SearchBody> {
           itemCount: search.searchSuggestions.length,
           itemBuilder: (context, index) {
             return ProfilePreviewCard(
+              profileId: search.searchSuggestions[index].profileId,
               name: search.searchSuggestions[index].name,
               username: search.searchSuggestions[index].username,
               imageUrl: search.searchSuggestions[index].miniProfilePicture,
               trailingWidget: Container(),
               onTap: () {
                 search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-                // push to profile page.
               },
             );
           },

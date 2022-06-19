@@ -39,17 +39,16 @@ class ProfileLayout extends StatefulWidget {
   State<ProfileLayout> createState() => _ProfileLayoutState();
 }
 
-class _ProfileLayoutState extends State<ProfileLayout> with SingleTickerProviderStateMixin {
+class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateMixin {
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
   final GlobalKey infoKey = GlobalKey();
-  late TabController _tabController;
-  late ScrollController _scrollController;
+  late TabController _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
+  final ScrollController _scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
+  void didUpdateWidget(covariant ProfileLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
     _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
-    _scrollController = ScrollController();
   }
 
   @override

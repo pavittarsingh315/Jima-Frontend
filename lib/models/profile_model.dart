@@ -34,8 +34,8 @@ class Profile {
       numFollowers: json["profile"]["numFollowers"],
       numWhitelisted: json["profile"]["numWhitelisted"],
       numFollowing: json["profile"]["numFollowing"],
-      areWhitelisted: json[""], // TODO: fill this in with name of json field
-      areFollowing: json[""], // TODO: fill this in with name of json field
+      areWhitelisted: json["areWhitelisted"],
+      areFollowing: json["areFollowing"],
     );
   }
 }
