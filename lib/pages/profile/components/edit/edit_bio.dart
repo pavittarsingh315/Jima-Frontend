@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
@@ -10,6 +9,7 @@ import 'package:nerajima/utils/phone_validator.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class EditBioPage extends StatefulWidget {
+  static const String route = "/editBio";
   const EditBioPage({Key? key}) : super(key: key);
 
   @override
@@ -34,7 +34,7 @@ class _EditBioPageState extends State<EditBioPage> {
       if (form!.validate()) {
         form.save();
         if (bio == userProvider.user.bio) {
-          context.router.pop();
+          Navigator.of(context).pop();
           return;
         }
         try {
@@ -42,7 +42,7 @@ class _EditBioPageState extends State<EditBioPage> {
           final res = await userProvider.changeBio(newBio: bio);
           isSaving = false;
           if (res["status"]) {
-            context.router.pop();
+            Navigator.of(context).pop();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

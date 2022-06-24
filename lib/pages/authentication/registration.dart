@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/pages/authentication/verify_registration.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class RegistrationPage extends StatefulWidget {
+  static const String route = "/register";
   const RegistrationPage({Key? key}) : super(key: key);
 
   @override
@@ -82,17 +80,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           final res = await authProvider.initiateRegistration(contact: contact, username: usernameController.text, name: nameController.text, password: passwordController.text);
           isRegistering = false;
           if (res["status"]) {
-            context.router.pushNativeRoute(
-              SwipeablePageRoute(
-                builder: (context) => VerifyRegistration(
-                  originalContact: contactController.text,
-                  formattedContact: contact,
-                  username: usernameController.text,
-                  name: nameController.text,
-                  password: passwordController.text,
-                ),
-              ),
-            );
+            // TODO: push VerifyRegistration
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }
@@ -160,7 +148,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     controller: usernameController,
                     textInputAction: TextInputAction.next,
                     onChanged: checkIfFormIsFilled,
-                    validator: MultiValidator([MinLengthValidator(6, errorText: "Username must be at least 6 characters."), MaxLengthValidator(30, errorText: "Username cannot exceed 30 characters.")]),
+                    validator: MultiValidator(
+                        [MinLengthValidator(6, errorText: "Username must be at least 6 characters."), MaxLengthValidator(30, errorText: "Username cannot exceed 30 characters.")]),
                     decoration: InputDecoration(
                       hintText: "Username",
                       errorStyle: const TextStyle(fontSize: 14.0),

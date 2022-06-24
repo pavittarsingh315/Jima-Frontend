@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/models/user_model.dart';
-import 'package:nerajima/pages/authentication/registration.dart';
-import 'package:nerajima/pages/authentication/request_password_reset.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String route = "/login";
   const LoginPage({Key? key}) : super(key: key);
 
   @override
@@ -82,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
           if (res["status"]) {
             User user = res['user'];
             userProvider.setUser(user);
-            context.router.pushAndPopUntil(const AppRoot(), predicate: (route) => false);
+            // TODO: push named replacement AppTrunk
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }
@@ -187,11 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        context.router.pushNativeRoute(
-                          SwipeablePageRoute(
-                            builder: (context) => const RequestPasswordReset(),
-                          ),
-                        );
+                        // TODO: push RequestPasswordReset
                       },
                       child: const Text(
                         "Forgot Password",
@@ -203,11 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        context.router.pushNativeRoute(
-                          SwipeablePageRoute(
-                            builder: (context) => const RegistrationPage(),
-                          ),
-                        );
+                        // TODO: push RegistrationPage
                       },
                       child: const Text(
                         "Register",

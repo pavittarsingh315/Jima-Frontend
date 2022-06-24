@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/models/user_model.dart';
@@ -13,6 +11,8 @@ import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class ResetPassword extends StatefulWidget {
+  static const String route = "/resetPassword";
+
   final String code, contact;
   const ResetPassword({Key? key, required this.code, required this.contact}) : super(key: key);
 
@@ -73,7 +73,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           if (res["status"]) {
             User user = res['user'];
             userProvider.setUser(user);
-            context.router.pushAndPopUntil(const AppRoot(), predicate: (route) => false);
+            // TODO: push AppTrunk and remove until root
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

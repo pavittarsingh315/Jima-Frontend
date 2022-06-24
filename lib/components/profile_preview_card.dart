@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
-
-import 'package:nerajima/components/visit_profile.dart';
 
 class ProfilePreviewCard extends StatelessWidget {
   final String profileId, name, username, imageUrl;
@@ -51,11 +47,7 @@ class ProfilePreviewCard extends StatelessWidget {
         if (onTap != null) {
           onTap!();
         }
-        context.router.pushNativeRoute(
-          SwipeablePageRoute(
-            builder: (context) => VisitProfile(profileId: profileId),
-          ),
-        );
+        // TODO: push VisitProfile
       },
       contentPadding: const EdgeInsets.all(5),
     );

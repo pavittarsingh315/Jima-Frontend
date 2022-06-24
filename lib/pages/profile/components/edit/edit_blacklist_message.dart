@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
@@ -11,6 +10,7 @@ import 'package:nerajima/utils/show_alert.dart';
 import 'package:nerajima/utils/phone_validator.dart';
 
 class EditBlacklistMessagePage extends StatefulWidget {
+  static const String route = "/editBlacklistMessage";
   const EditBlacklistMessagePage({Key? key}) : super(key: key);
 
   @override
@@ -35,7 +35,7 @@ class _EditBlacklistMessagePageState extends State<EditBlacklistMessagePage> {
       if (form!.validate()) {
         form.save();
         if (blacklistMessage == userProvider.user.blacklistMessage || (blacklistMessage == "" && userProvider.user.blacklistMessage == defaultBlacklistMessage)) {
-          context.router.pop();
+          Navigator.of(context).pop();
           return;
         }
         try {
@@ -43,7 +43,7 @@ class _EditBlacklistMessagePageState extends State<EditBlacklistMessagePage> {
           final res = await userProvider.changeBlacklistMessage(newBlacklistMessage: blacklistMessage);
           isSaving = false;
           if (res["status"]) {
-            context.router.pop();
+            Navigator.of(context).pop();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

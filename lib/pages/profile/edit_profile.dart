@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
@@ -16,6 +14,7 @@ import 'package:nerajima/utils/opacity_slope_calculator.dart';
 import 'package:nerajima/utils/button_styles.dart';
 
 class EditProfilePage extends StatelessWidget {
+  static const String route = "/editProfile";
   const EditProfilePage({Key? key}) : super(key: key);
 
   @override
@@ -214,13 +213,13 @@ class EditProfilePage extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (fieldName == "Username") {
-          context.router.push(const EditUsernameRoute());
+          // TODO: push EditUsername
         } else if (fieldName == "Name") {
-          context.router.push(const EditNameRoute());
+          // TODO: push EditName
         } else if (fieldName == "Bio") {
-          context.router.push(const EditBioRoute());
+          // TODO: push EditBio
         } else if (fieldName == "Blacklist Msg") {
-          context.router.push(const EditBlacklistMessageRoute());
+          // TODO: push EditBlacklistMsg
         } else if (fieldName == "Manage Whitelist") {}
       },
       child: Container(

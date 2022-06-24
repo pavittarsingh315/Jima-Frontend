@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
@@ -12,6 +10,8 @@ import 'package:nerajima/components/resend_code.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class VerifyRegistration extends StatelessWidget {
+  static const String route = "/verifyRegistration";
+
   final String originalContact, formattedContact, username, name, password;
   const VerifyRegistration({
     Key? key,
@@ -34,7 +34,7 @@ class VerifyRegistration extends StatelessWidget {
         if (res["status"]) {
           User user = res['user'];
           userProvider.setUser(user);
-          context.router.pushAndPopUntil(const AppRoot(), predicate: (route) => false);
+          // TODO: push AppTrunk
         } else {
           showAlert(msg: res["message"], context: context, isError: true);
         }

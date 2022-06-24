@@ -4,6 +4,7 @@ import 'package:nerajima/pages/profile/components/settings/logout.dart';
 import 'package:nerajima/pages/profile/components/settings/theme_switch.dart';
 
 class SettingsPage extends StatelessWidget {
+  static const String route = "/settings";
   const SettingsPage({Key? key}) : super(key: key);
 
   @override

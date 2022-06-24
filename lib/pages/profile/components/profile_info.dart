@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
 
@@ -50,7 +48,8 @@ class _ProfileInformationState extends State<ProfileInformation> {
                   margin: EdgeInsets.symmetric(horizontal: statsMargin),
                   color: Colors.grey,
                 ),
-                _statItem(context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
+                _statItem(
+                    context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
                 Container(
                   width: 1,
                   height: 40,
@@ -118,7 +117,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
         Expanded(
           child: PillButton(
             onTap: () {
-              context.router.push(const EditRouter());
+              // TODO: push EditPage
             },
             color: primary,
             margin: 0,

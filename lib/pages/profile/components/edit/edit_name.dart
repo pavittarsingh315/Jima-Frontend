@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
@@ -9,6 +8,7 @@ import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class EditNamePage extends StatefulWidget {
+  static const String route = "/editName";
   const EditNamePage({Key? key}) : super(key: key);
 
   @override
@@ -33,7 +33,7 @@ class _EditNamePageState extends State<EditNamePage> {
       if (form!.validate()) {
         form.save();
         if (name == userProvider.user.name) {
-          context.router.pop();
+          Navigator.of(context).pop();
           return;
         }
         try {
@@ -41,7 +41,7 @@ class _EditNamePageState extends State<EditNamePage> {
           final res = await userProvider.changeName(newName: name);
           isSaving = false;
           if (res["status"]) {
-            context.router.pop();
+            Navigator.of(context).pop();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

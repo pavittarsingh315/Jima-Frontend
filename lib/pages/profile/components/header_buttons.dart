@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:nerajima/router/router.gr.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
 
@@ -17,14 +15,14 @@ class HeaderButtons extends StatelessWidget {
     if (buttonType == Button.back) {
       return _wrapper(
         onPress: () {
-          context.router.pop();
+          Navigator.of(context).pop();
         },
         icon: CupertinoIcons.chevron_back,
       );
     } else if (buttonType == Button.settings) {
       return _wrapper(
         onPress: () {
-          context.router.push(const SettingsRoute());
+          // TODO: push SettingsPage
         },
         icon: CupertinoIcons.gear,
       );

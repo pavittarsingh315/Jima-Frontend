@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/home/nav_icon.dart';
 import 'package:nerajima/pages/inbox/nav_icon.dart';
@@ -11,6 +9,8 @@ import 'package:nerajima/pages/profile/nav_icon.dart';
 import 'package:nerajima/utils/glass_wrapper.dart';
 
 class AppTrunk extends StatelessWidget {
+  static const String route = "/trunk";
+
   const AppTrunk({Key? key}) : super(key: key);
 
   @override

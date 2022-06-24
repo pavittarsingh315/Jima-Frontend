@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
-import 'package:nerajima/pages/authentication/reset_password.dart';
 import 'package:nerajima/components/resend_code.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
 class VerifyPasswordResetCode extends StatelessWidget {
+  static const String route = "/verifyPasswordResetCode";
+
   final String originalContact, formattedContact;
   const VerifyPasswordResetCode({Key? key, required this.originalContact, required this.formattedContact}) : super(key: key);
 
@@ -23,11 +22,7 @@ class VerifyPasswordResetCode extends StatelessWidget {
       try {
         final res = await authProvider.verifyPasswordResetCode(code: code, contact: formattedContact);
         if (res["status"]) {
-          context.router.pushNativeRoute(
-            SwipeablePageRoute(
-              builder: (context) => ResetPassword(code: code, contact: formattedContact),
-            ),
-          );
+          // TODO: push named replacement ResetPassword
         } else {
           showAlert(msg: res["message"], context: context, isError: true);
         }

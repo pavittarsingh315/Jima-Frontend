@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 
-import 'package:nerajima/router/router.gr.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/utils/custom_dialog.dart';
@@ -24,10 +22,7 @@ class LogoutButton extends StatelessWidget {
 
           Future<void> logout() async {
             await authProvider.logout();
-            context.router.root.pushAndPopUntil(
-              const AuthRouter(children: [LoginRoute()]),
-              predicate: (Route<dynamic> router) => false,
-            );
+            // TODO: push LoginPage and remove until root
           }
 
           return CustomDialog(

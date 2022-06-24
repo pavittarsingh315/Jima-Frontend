@@ -9,6 +9,8 @@ import 'package:nerajima/pages/profile/components/profile_layout.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 
 class VisitProfile extends StatefulWidget {
+  static const String route = "/visitProfile";
+
   final String profileId;
   const VisitProfile({Key? key, required this.profileId}) : super(key: key);
 

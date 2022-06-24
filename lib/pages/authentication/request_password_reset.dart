@@ -1,6 +1,4 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:nerajima/pages/authentication/verify_reset_code.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -11,9 +9,9 @@ import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
 import 'package:nerajima/utils/show_alert.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class RequestPasswordReset extends StatefulWidget {
+  static const String route = "/requestPasswordReset";
   const RequestPasswordReset({Key? key}) : super(key: key);
 
   @override
@@ -71,14 +69,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
           final res = await authProvider.requestPasswordReset(contact: contact);
           isRequesting = false;
           if (res["status"]) {
-            context.router.pushNativeRoute(
-              SwipeablePageRoute(
-                builder: (context) => VerifyPasswordResetCode(
-                  originalContact: contactController.text,
-                  formattedContact: contact,
-                ),
-              ),
-            );
+            // TODO: push VerifyPasswordResetCode
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }
