@@ -10,7 +10,7 @@ const Color darkModeBackgroundContrast = Color(0xFF151515);
 const Color lightModeBackgroundContrast = Color(0xFFf6f6f6);
 
 const double glassSigmaValue = 11;
-const double glassOpacity = 0.75;
+const double glassOpacity = 1; // TODO: change this value to 0.75 once body extends past navbar
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;

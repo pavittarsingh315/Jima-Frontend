@@ -50,8 +50,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                   margin: EdgeInsets.symmetric(horizontal: statsMargin),
                   color: Colors.grey,
                 ),
-                _statItem(
-                    context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
+                _statItem(context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
                 Container(
                   width: 1,
                   height: 40,

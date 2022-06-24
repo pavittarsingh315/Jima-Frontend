@@ -44,6 +44,7 @@ class _AppTrunkState extends State<AppTrunk> {
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: false,
       hideNavigationBarWhenKeyboardShows: false,
+      confineInSafeArea: false,
       routeAndNavigatorSettings: const CustomWidgetRouteAndNavigatorSettings(
         initialRoute: "/",
         onGenerateRoute: RouteGenerator.generateRoute,
@@ -53,6 +54,8 @@ class _AppTrunkState extends State<AppTrunk> {
         curve: Curves.ease,
         duration: Duration(milliseconds: 300),
       ),
+      navBarHeight: 80,
+      bottomScreenMargin: 40,
       customWidget: (NavBarEssentials navBarEssentials) {
         return GlassWrapper(
           child: Container(
@@ -81,14 +84,14 @@ class _AppTrunkState extends State<AppTrunk> {
   Widget _navItem(BuildContext context, int index, IconData activeIcon, IconData inactiveIcon) {
     final bool isActive = _controller.index == index;
     return SizedBox(
-      height: 50,
       width: MediaQuery.of(context).size.width / mainScreens.length,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
           if (isActive) {
-            HapticFeedback.lightImpact();
+            HapticFeedback.mediumImpact();
           } else {
+            HapticFeedback.lightImpact();
             _controller.index = index;
             setState(() {});
           }
