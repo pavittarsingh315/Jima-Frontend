@@ -22,7 +22,7 @@ import 'package:nerajima/components/visit_profile.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments as Map<String, dynamic>;
+    final args = settings.arguments as Map<String, dynamic>?;
 
     if (settings.name == AppRoot.route) {
       return MaterialPageRoute(builder: (_) => const AppRoot());
@@ -33,6 +33,7 @@ class RouteGenerator {
     } else if (settings.name == RegistrationPage.route) {
       return MaterialPageRoute(builder: (_) => const RegistrationPage());
     } else if (settings.name == VerifyRegistration.route) {
+      if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(
         builder: (_) => VerifyRegistration(
           name: args["name"],
@@ -45,8 +46,10 @@ class RouteGenerator {
     } else if (settings.name == RequestPasswordReset.route) {
       return MaterialPageRoute(builder: (_) => const RequestPasswordReset());
     } else if (settings.name == VerifyPasswordResetCode.route) {
+      if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(builder: (_) => VerifyPasswordResetCode(originalContact: args["originalContact"], formattedContact: args["formattedContact"]));
     } else if (settings.name == ResetPassword.route) {
+      if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(builder: (_) => ResetPassword(code: args["code"], contact: args["contact"]));
     } else if (settings.name == SettingsPage.route) {
       return MaterialPageRoute(builder: (_) => const SettingsPage());
@@ -61,6 +64,7 @@ class RouteGenerator {
     } else if (settings.name == EditBlacklistMessagePage.route) {
       return MaterialPageRoute(builder: (_) => const EditBlacklistMessagePage());
     } else if (settings.name == VisitProfile.route) {
+      if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(builder: (_) => VisitProfile(profileId: args["profileId"]));
     }
     return _notFoundRoute();
@@ -70,6 +74,14 @@ class RouteGenerator {
     return MaterialPageRoute(
       builder: (_) {
         return const Scaffold(body: Center(child: Text("Page not found!")));
+      },
+    );
+  }
+
+  static Route<dynamic> _notEnoughArgs() {
+    return MaterialPageRoute(
+      builder: (_) {
+        return const Scaffold(body: Center(child: Text("Insufficient arguments provided!")));
       },
     );
   }

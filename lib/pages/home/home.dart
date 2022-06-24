@@ -1,21 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/browse/search_button.dart';
+import 'package:nerajima/components/visit_profile.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       resizeToAvoidBottomInset: false,
-      body: const Center(
-        child: Text(
-          "Home Page",
-          style: TextStyle(fontSize: 25),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Home Page",
+              style: TextStyle(fontSize: 25),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                pushNewScreenWithRouteSettings(
+                  context,
+                  screen: VisitProfile(profileId: userProvider.user.profileId),
+                  settings: const RouteSettings(name: VisitProfile.route),
+                );
+              },
+              child: const Text("Visit Profile"),
+            ),
+          ],
         ),
       ),
       floatingActionButton: _floatingActionButton(context),
@@ -23,27 +43,24 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _floatingActionButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 50.0), // 50 is height of bottom nav bar
-      child: SpeedDial(
-        icon: Icons.more_horiz,
-        backgroundColor: primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-        overlayOpacity: 0,
-        spacing: 4,
-        spaceBetweenChildren: 0,
-        childrenButtonSize: const Size(64, 64),
-        children: [
-          SpeedDialChild(
-            backgroundColor: primary,
-            child: const SearchButton(),
-          ),
-          SpeedDialChild(
-            backgroundColor: primary,
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
-      ),
+    return SpeedDial(
+      icon: Icons.more_horiz,
+      backgroundColor: primary,
+      iconTheme: const IconThemeData(color: Colors.white),
+      overlayOpacity: 0,
+      spacing: 4,
+      spaceBetweenChildren: 0,
+      childrenButtonSize: const Size(64, 64),
+      children: [
+        SpeedDialChild(
+          backgroundColor: primary,
+          child: const SearchButton(),
+        ),
+        SpeedDialChild(
+          backgroundColor: primary,
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
+      ],
     );
   }
 }

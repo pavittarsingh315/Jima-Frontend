@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/search_provider.dart';
+import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/browse/search_results.dart';
 import 'package:nerajima/components/ui_search_bar.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
@@ -263,6 +264,7 @@ class _SearchBodyState extends State<SearchBody> {
   }
 
   Widget _suggestions(BuildContext context) {
+    final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return Consumer<SearchProvider>(
       builder: (context, search, child) {
         if (search.isSearching) {
@@ -270,10 +272,8 @@ class _SearchBodyState extends State<SearchBody> {
             builder: (context, constraints) => ListView(
               children: [
                 Container(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight / 2,
-                  ),
-                  child: const LoadingSpinner(),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: LoadingSpinner(color: darkModeIsOn ? Colors.white : Colors.black),
                 ),
               ],
             ),

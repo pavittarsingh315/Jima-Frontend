@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
@@ -12,6 +13,11 @@ import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/show_alert.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 import 'package:nerajima/utils/button_styles.dart';
+
+import 'package:nerajima/pages/profile/components/edit/edit_username.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_name.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_bio.dart';
+import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const String route = "/editProfile";
@@ -213,13 +219,29 @@ class EditProfilePage extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (fieldName == "Username") {
-          // TODO: push EditUsername
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const EditUsernamePage(),
+            settings: const RouteSettings(name: EditUsernamePage.route),
+          );
         } else if (fieldName == "Name") {
-          // TODO: push EditName
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const EditNamePage(),
+            settings: const RouteSettings(name: EditNamePage.route),
+          );
         } else if (fieldName == "Bio") {
-          // TODO: push EditBio
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const EditBioPage(),
+            settings: const RouteSettings(name: EditBioPage.route),
+          );
         } else if (fieldName == "Blacklist Msg") {
-          // TODO: push EditBlacklistMsg
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const EditBlacklistMessagePage(),
+            settings: const RouteSettings(name: EditBlacklistMessagePage.route),
+          );
         } else if (fieldName == "Manage Whitelist") {}
       },
       child: Container(

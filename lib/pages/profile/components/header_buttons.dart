@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/profile/settings.dart';
 
 enum Button { back, settings, more }
 
@@ -22,7 +24,11 @@ class HeaderButtons extends StatelessWidget {
     } else if (buttonType == Button.settings) {
       return _wrapper(
         onPress: () {
-          // TODO: push SettingsPage
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const SettingsPage(),
+            settings: const RouteSettings(name: SettingsPage.route),
+          );
         },
         icon: CupertinoIcons.gear,
       );

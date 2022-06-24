@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
+
+import 'package:nerajima/components/visit_profile.dart';
 
 class ProfilePreviewCard extends StatelessWidget {
   final String profileId, name, username, imageUrl;
@@ -47,7 +50,11 @@ class ProfilePreviewCard extends StatelessWidget {
         if (onTap != null) {
           onTap!();
         }
-        // TODO: push VisitProfile
+        pushNewScreenWithRouteSettings(
+          context,
+          screen: VisitProfile(profileId: profileId),
+          settings: const RouteSettings(name: VisitProfile.route),
+        );
       },
       contentPadding: const EdgeInsets.all(5),
     );

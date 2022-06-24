@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
+import 'package:nerajima/router.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
 import 'package:nerajima/pages/home/home.dart';
@@ -37,15 +38,21 @@ class _AppTrunkState extends State<AppTrunk> {
       context,
       controller: _controller,
       itemCount: mainScreens.length,
+      screens: mainScreens,
       stateManagement: true,
       popAllScreensOnTapOfSelectedTab: true,
       handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: false,
+      hideNavigationBarWhenKeyboardShows: false,
+      routeAndNavigatorSettings: const CustomWidgetRouteAndNavigatorSettings(
+        initialRoute: "/",
+        onGenerateRoute: RouteGenerator.generateRoute,
+      ),
       screenTransitionAnimation: const ScreenTransitionAnimation(
         animateTabTransition: true,
         curve: Curves.ease,
         duration: Duration(milliseconds: 300),
       ),
-      screens: mainScreens,
       customWidget: (NavBarEssentials navBarEssentials) {
         return GlassWrapper(
           child: Container(
@@ -80,7 +87,7 @@ class _AppTrunkState extends State<AppTrunk> {
         behavior: HitTestBehavior.translucent,
         onTap: () {
           if (isActive) {
-            HapticFeedback.mediumImpact();
+            HapticFeedback.lightImpact();
           } else {
             _controller.index = index;
             setState(() {});

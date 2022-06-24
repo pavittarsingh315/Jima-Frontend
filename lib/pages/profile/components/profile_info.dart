@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/profile/edit_profile.dart';
 import 'package:nerajima/components/pill_button.dart';
 
 class ProfileInformation extends StatefulWidget {
@@ -117,7 +119,11 @@ class _ProfileInformationState extends State<ProfileInformation> {
         Expanded(
           child: PillButton(
             onTap: () {
-              // TODO: push EditPage
+              pushNewScreenWithRouteSettings(
+                context,
+                screen: const EditProfilePage(),
+                settings: const RouteSettings(name: EditProfilePage.route),
+              );
             },
             color: primary,
             margin: 0,

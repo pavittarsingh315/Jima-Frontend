@@ -9,7 +9,6 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: const SearchBody(),
       floatingActionButton: _backButton(context),
@@ -17,27 +16,22 @@ class SearchPage extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.red,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Icon(
-                CupertinoIcons.xmark,
-                color: Colors.white,
-              ),
-            ),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        Navigator.of(context).pop();
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.red,
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Icon(
+            CupertinoIcons.xmark,
+            color: Colors.white,
           ),
         ),
       ),
