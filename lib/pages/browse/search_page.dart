@@ -10,18 +10,9 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return SizedBox(
-      height: size.height,
-      width: size.width,
-      child: Stack(
-        children: [
-          const SearchBody(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: _backButton(context),
-          )
-        ],
-      ),
+    return Scaffold(
+      body: const SearchBody(),
+      floatingActionButton: _backButton(context),
     );
   }
 

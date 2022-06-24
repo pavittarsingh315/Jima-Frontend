@@ -12,26 +12,19 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          const Center(
-            child: Text(
-              "Home Page",
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: _floatingActionButton(context),
-          ),
-        ],
+      body: const Center(
+        child: Text(
+          "Home Page",
+          style: TextStyle(fontSize: 25),
+        ),
       ),
+      floatingActionButton: _floatingActionButton(context),
     );
   }
 
   Widget _floatingActionButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15, bottom: 95),
+      padding: const EdgeInsets.only(bottom: 50.0), // 50 is height of bottom nav bar
       child: SpeedDial(
         icon: Icons.more_horiz,
         backgroundColor: primary,
