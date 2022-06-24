@@ -34,6 +34,7 @@ class _AppTrunkState extends State<AppTrunk> {
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
     return PersistentTabView.custom(
       context,
       controller: _controller,
@@ -54,8 +55,8 @@ class _AppTrunkState extends State<AppTrunk> {
         curve: Curves.ease,
         duration: Duration(milliseconds: 300),
       ),
-      navBarHeight: 80,
-      bottomScreenMargin: 40,
+      navBarHeight: bottomPadding == 0 ? kBottomNavigationBarHeight : bottomPadding * 2.35,
+      bottomScreenMargin: bottomPadding == 0 ? kBottomNavigationBarHeight : bottomPadding * 1.22,
       customWidget: (NavBarEssentials navBarEssentials) {
         return GlassWrapper(
           child: Container(
