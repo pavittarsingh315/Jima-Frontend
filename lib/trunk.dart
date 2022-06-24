@@ -33,43 +33,41 @@ class _AppTrunkState extends State<AppTrunk> {
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
-    return Scaffold(
-      body: PersistentTabView.custom(
-        context,
-        controller: _controller,
-        itemCount: mainScreens.length,
-        stateManagement: true,
-        popAllScreensOnTapOfSelectedTab: true,
-        handleAndroidBackButtonPress: true,
-        screenTransitionAnimation: const ScreenTransitionAnimation(
-          animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 300),
-        ),
-        screens: mainScreens,
-        customWidget: (NavBarEssentials navBarEssentials) {
-          return GlassWrapper(
-            child: Container(
-              decoration: BoxDecoration(
-                color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
-                border: Border(
-                  top: BorderSide(
-                    width: 0.1,
-                    color: Colors.grey.shade400,
-                  ),
+    return PersistentTabView.custom(
+      context,
+      controller: _controller,
+      itemCount: mainScreens.length,
+      stateManagement: true,
+      popAllScreensOnTapOfSelectedTab: true,
+      handleAndroidBackButtonPress: true,
+      screenTransitionAnimation: const ScreenTransitionAnimation(
+        animateTabTransition: true,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 300),
+      ),
+      screens: mainScreens,
+      customWidget: (NavBarEssentials navBarEssentials) {
+        return GlassWrapper(
+          child: Container(
+            decoration: BoxDecoration(
+              color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
+              border: Border(
+                top: BorderSide(
+                  width: 0.1,
+                  color: Colors.grey.shade400,
                 ),
               ),
-              child: Row(
-                children: [
-                  _navItem(context, 0, CupertinoIcons.bell_fill, CupertinoIcons.bell),
-                  _navItem(context, 1, CupertinoIcons.house_fill, CupertinoIcons.house),
-                  _navItem(context, 2, CupertinoIcons.person_fill, CupertinoIcons.person),
-                ],
-              ),
             ),
-          );
-        },
-      ),
+            child: Row(
+              children: [
+                _navItem(context, 0, CupertinoIcons.bell_fill, CupertinoIcons.bell),
+                _navItem(context, 1, CupertinoIcons.house_fill, CupertinoIcons.house),
+                _navItem(context, 2, CupertinoIcons.person_fill, CupertinoIcons.person),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
