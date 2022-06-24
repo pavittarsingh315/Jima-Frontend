@@ -32,7 +32,6 @@ dependencies:
 
    cupertino_icons: ^1.0.4
 
-   auto_route: ^4.0.1
    provider: ^6.0.3
    swipeable_page_route: ^0.2.6
    http: ^0.13.4
@@ -58,14 +57,13 @@ dependencies:
    path_provider: ^2.0.11
    animations: ^2.0.3
    flutter_speed_dial: ^6.0.0
+   persistent_bottom_nav_bar_v2: ^4.2.3
 
 dev_dependencies:
    flutter_test:
       sdk: flutter
 
    flutter_lints: ^2.0.1
-   auto_route_generator: ^4.0.0
-   build_runner: ^2.1.11
 
 flutter:
    uses-material-design: true

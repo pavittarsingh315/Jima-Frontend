@@ -8,6 +8,7 @@ import 'package:nerajima/trunk.dart';
 import 'package:nerajima/pages/authentication/login.dart';
 
 class AppRoot extends StatelessWidget {
+  static const String route = "/";
   const AppRoot({Key? key}) : super(key: key);
 
   @override

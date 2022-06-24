@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_uploader/flutter_uploader.dart';
 
-import 'package:nerajima/router/router.gr.dart';
+import 'package:nerajima/router.dart';
+
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/search_provider.dart';
@@ -18,13 +19,11 @@ void backgroundHandler() {
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterUploader().setBackgroundHandler(backgroundHandler);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-
-  final _appRouter = AppRouter();
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +50,14 @@ class MyApp extends StatelessWidget {
             return FutureBuilder(
               future: _getTheme(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return MaterialApp.router(
+                return MaterialApp(
                   debugShowCheckedModeBanner: false,
                   title: "NeraJima",
                   themeMode: themeProvider.themeMode,
                   theme: ThemeProvider.lightTheme,
                   darkTheme: ThemeProvider.darkTheme,
-                  routeInformationParser: _appRouter.defaultRouteParser(),
-                  routerDelegate: _appRouter.delegate(),
+                  initialRoute: "/",
+                  onGenerateRoute: RouteGenerator.generateRoute,
                 );
               },
             );
