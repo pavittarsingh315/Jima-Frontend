@@ -105,7 +105,11 @@ class _AppTrunkState extends State<AppTrunk> {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          HapticFeedback.mediumImpact();
+          if (isActive) {
+            HapticFeedback.mediumImpact();
+          } else {
+            HapticFeedback.lightImpact();
+          }
           setState(() {
             navBarEssentials.onItemSelected!(index);
           });
