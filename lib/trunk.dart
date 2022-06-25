@@ -55,8 +55,8 @@ class _AppTrunkState extends State<AppTrunk> {
         curve: Curves.ease,
         duration: Duration(milliseconds: 300),
       ),
-      navBarHeight: bottomPadding == 0 ? kBottomNavigationBarHeight : bottomPadding * 2.35,
-      bottomScreenMargin: bottomPadding == 0 ? kBottomNavigationBarHeight : bottomPadding * 1.22,
+      navBarHeight: bottomPadding + 50, // 50 is the height of each _navItem
+      bottomScreenMargin: 50,
       customWidget: (NavBarEssentials navBarEssentials) {
         return GlassWrapper(
           child: Container(
@@ -98,8 +98,8 @@ class _AppTrunkState extends State<AppTrunk> {
           }
         },
         child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 11),
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.only(top: 20),
           child: Icon(
             isActive ? activeIcon : inactiveIcon,
             size: 27,
