@@ -27,6 +27,10 @@ class _EditBioPageState extends State<EditBioPage> {
     final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void popPage() {
+      Navigator.of(context).pop();
+    }
+
     Future<void> _onSave() async {
       if (isSaving) return; // prevents spam
       final form = formKey.currentState;
@@ -42,7 +46,7 @@ class _EditBioPageState extends State<EditBioPage> {
           final res = await userProvider.changeBio(newBio: bio);
           isSaving = false;
           if (res["status"]) {
-            Navigator.of(context).pop();
+            popPage();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

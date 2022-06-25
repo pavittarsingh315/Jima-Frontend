@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/authentication/verify_registration.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
@@ -68,6 +70,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void pushVerifyRegistration({required String originalContact, required String formattedContact}) {
+      pushNewScreenWithRouteSettings(
+        context,
+        screen: VerifyRegistration(
+          originalContact: originalContact,
+          formattedContact: formattedContact,
+          username: usernameController.text,
+          name: nameController.text,
+          password: passwordController.text,
+        ),
+        settings: const RouteSettings(name: VerifyRegistration.route),
+      );
+    }
+
     Future<void> _onRegisterTap() async {
       if (isRegistering) return; // prevents spam
       final form = formKey.currentState;
@@ -80,7 +96,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           final res = await authProvider.initiateRegistration(contact: contact, username: usernameController.text, name: nameController.text, password: passwordController.text);
           isRegistering = false;
           if (res["status"]) {
-            // TODO: push VerifyRegistration
+            pushVerifyRegistration(originalContact: contactController.text, formattedContact: contact);
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

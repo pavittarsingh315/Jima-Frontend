@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/authentication/reset_password.dart';
 import 'package:nerajima/components/resend_code.dart';
 import 'package:nerajima/utils/show_alert.dart';
 
@@ -18,11 +20,19 @@ class VerifyPasswordResetCode extends StatelessWidget {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void pushPasswordReset({required String code}) {
+      pushNewScreenWithRouteSettings(
+        context,
+        screen: ResetPassword(code: code, contact: formattedContact),
+        settings: const RouteSettings(name: ResetPassword.route),
+      );
+    }
+
     Future<void> _onCodeInputted(String code) async {
       try {
         final res = await authProvider.verifyPasswordResetCode(code: code, contact: formattedContact);
         if (res["status"]) {
-          // TODO: push named replacement ResetPassword
+          pushPasswordReset(code: code);
         } else {
           showAlert(msg: res["message"], context: context, isError: true);
         }

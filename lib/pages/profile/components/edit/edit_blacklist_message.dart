@@ -28,6 +28,10 @@ class _EditBlacklistMessagePageState extends State<EditBlacklistMessagePage> {
     final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void popPage() {
+      Navigator.of(context).pop();
+    }
+
     Future<void> _onSave() async {
       if (isSaving) return; // prevents spam
       final form = formKey.currentState;
@@ -35,7 +39,7 @@ class _EditBlacklistMessagePageState extends State<EditBlacklistMessagePage> {
       if (form!.validate()) {
         form.save();
         if (blacklistMessage == userProvider.user.blacklistMessage || (blacklistMessage == "" && userProvider.user.blacklistMessage == defaultBlacklistMessage)) {
-          Navigator.of(context).pop();
+          popPage();
           return;
         }
         try {
@@ -43,7 +47,7 @@ class _EditBlacklistMessagePageState extends State<EditBlacklistMessagePage> {
           final res = await userProvider.changeBlacklistMessage(newBlacklistMessage: blacklistMessage);
           isSaving = false;
           if (res["status"]) {
-            Navigator.of(context).pop();
+            popPage();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/pages/authentication/login.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/utils/custom_dialog.dart';
 
@@ -20,9 +21,13 @@ class LogoutButton extends StatelessWidget {
             Navigator.of(context).pop();
           }
 
+          void popToLogin() {
+            Navigator.of(context).pushNamedAndRemoveUntil(LoginPage.route, (Route<dynamic> route) => false);
+          }
+
           Future<void> logout() async {
             await authProvider.logout();
-            // TODO: push LoginPage and remove until root
+            popToLogin();
           }
 
           return CustomDialog(

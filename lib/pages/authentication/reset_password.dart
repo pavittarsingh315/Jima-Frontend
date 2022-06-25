@@ -4,6 +4,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/trunk.dart';
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/pill_button.dart';
@@ -60,6 +61,10 @@ class _ResetPasswordState extends State<ResetPassword> {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final size = MediaQuery.of(context).size;
 
+    void pushAppTrunk() {
+      Navigator.of(context).pushNamedAndRemoveUntil(AppTrunk.route, (Route<dynamic> route) => false);
+    }
+
     Future<void> _onResetTap() async {
       if (isResetting) return;
       final form = formKey.currentState;
@@ -73,7 +78,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           if (res["status"]) {
             User user = res['user'];
             userProvider.setUser(user);
-            // TODO: push AppTrunk and remove until root
+            pushAppTrunk();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }
@@ -98,6 +103,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: TextFormField(
+                    autofocus: true,
                     controller: passwordController,
                     textInputAction: TextInputAction.go,
                     obscureText: isPasswordHidden,

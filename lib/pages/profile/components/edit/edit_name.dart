@@ -26,6 +26,10 @@ class _EditNamePageState extends State<EditNamePage> {
     final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void popPage() {
+      Navigator.of(context).pop();
+    }
+
     Future<void> _onSave() async {
       if (isSaving) return; // prevents spam
       final form = formKey.currentState;
@@ -33,7 +37,7 @@ class _EditNamePageState extends State<EditNamePage> {
       if (form!.validate()) {
         form.save();
         if (name == userProvider.user.name) {
-          Navigator.of(context).pop();
+          popPage();
           return;
         }
         try {
@@ -41,7 +45,7 @@ class _EditNamePageState extends State<EditNamePage> {
           final res = await userProvider.changeName(newName: name);
           isSaving = false;
           if (res["status"]) {
-            Navigator.of(context).pop();
+            popPage();
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }

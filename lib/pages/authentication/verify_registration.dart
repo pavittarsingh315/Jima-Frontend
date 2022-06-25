@@ -5,6 +5,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/trunk.dart';
 import 'package:nerajima/models/user_model.dart';
 import 'package:nerajima/components/resend_code.dart';
 import 'package:nerajima/utils/show_alert.dart';
@@ -28,13 +29,17 @@ class VerifyRegistration extends StatelessWidget {
     final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
+    void pushAppTrunk() {
+      Navigator.of(context).pushNamedAndRemoveUntil(AppTrunk.route, (Route<dynamic> route) => false);
+    }
+
     Future<void> _onCodeInputted(String code) async {
       try {
         final res = await authProvider.finalizeRegistration(code: code, contact: formattedContact, username: username, name: name, password: password);
         if (res["status"]) {
           User user = res['user'];
           userProvider.setUser(user);
-          // TODO: push AppTrunk
+          pushAppTrunk();
         } else {
           showAlert(msg: res["message"], context: context, isError: true);
         }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/authentication/verify_reset_code.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/utils/phone_validator.dart';
@@ -57,6 +59,16 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final size = MediaQuery.of(context).size;
 
+    void pushVerifyCode({required String originalContact, required String formattedContact}) {
+      // original contact is the formatted string which multi_formatter formats
+      // formatted contact is the contact without any spaces which is what the backend expects
+      pushNewScreenWithRouteSettings(
+        context,
+        screen: VerifyPasswordResetCode(originalContact: originalContact, formattedContact: formattedContact),
+        settings: const RouteSettings(name: VerifyPasswordResetCode.route),
+      );
+    }
+
     Future<void> _requestReset() async {
       if (isRequesting) return;
       final form = formKey.currentState;
@@ -69,7 +81,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
           final res = await authProvider.requestPasswordReset(contact: contact);
           isRequesting = false;
           if (res["status"]) {
-            // TODO: push VerifyPasswordResetCode
+            pushVerifyCode(originalContact: contactController.text, formattedContact: contact);
           } else {
             showAlert(msg: res["message"], context: context, isError: true);
           }
@@ -99,6 +111,7 @@ class _RequestPasswordResetState extends State<RequestPasswordReset> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: TextFormField(
+                    autofocus: true,
                     controller: contactController,
                     textInputAction: TextInputAction.go,
                     keyboardType: contactIsPhone ? TextInputType.number : TextInputType.emailAddress,

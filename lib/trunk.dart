@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
+import 'package:nerajima/router.dart';
+
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
 import 'package:nerajima/pages/home/home.dart';
@@ -71,6 +73,10 @@ class _AppTrunkState extends State<AppTrunk> {
         animateTabTransition: true,
         curve: Curves.ease,
         duration: Duration(milliseconds: 300),
+      ),
+      routeAndNavigatorSettings: const CustomWidgetRouteAndNavigatorSettings(
+        initialRoute: "/",
+        onGenerateRoute: RouteGenerator.generateRoute,
       ),
       navBarHeight: bottomPadding + 50, // 50 is the height of each _navItem
       bottomScreenMargin: 50,
