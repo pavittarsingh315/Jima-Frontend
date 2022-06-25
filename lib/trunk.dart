@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
-import 'package:nerajima/router.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
 import 'package:nerajima/pages/home/home.dart';
@@ -31,6 +30,27 @@ class _AppTrunkState extends State<AppTrunk> {
 
   final List<Widget> mainScreens = const [InboxPage(), HomePage(), ProfilePage()];
 
+  final List<PersistentBottomNavBarItem> _navbarItems = [
+    PersistentBottomNavBarItem(
+      icon: const Icon(CupertinoIcons.bell_fill),
+      inactiveIcon: const Icon(CupertinoIcons.bell),
+      activeColorPrimary: primary,
+      inactiveColorPrimary: Colors.grey,
+    ),
+    PersistentBottomNavBarItem(
+      icon: const Icon(CupertinoIcons.house_fill),
+      inactiveIcon: const Icon(CupertinoIcons.house),
+      activeColorPrimary: primary,
+      inactiveColorPrimary: Colors.grey,
+    ),
+    PersistentBottomNavBarItem(
+      icon: const Icon(CupertinoIcons.person_fill),
+      inactiveIcon: const Icon(CupertinoIcons.person),
+      activeColorPrimary: primary,
+      inactiveColorPrimary: Colors.grey,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
@@ -38,7 +58,8 @@ class _AppTrunkState extends State<AppTrunk> {
     return PersistentTabView.custom(
       context,
       controller: _controller,
-      itemCount: mainScreens.length,
+      items: _navbarItems,
+      itemCount: _navbarItems.length,
       screens: mainScreens,
       stateManagement: true,
       popAllScreensOnTapOfSelectedTab: true,
@@ -46,10 +67,6 @@ class _AppTrunkState extends State<AppTrunk> {
       resizeToAvoidBottomInset: false,
       hideNavigationBarWhenKeyboardShows: false,
       confineInSafeArea: false,
-      routeAndNavigatorSettings: const CustomWidgetRouteAndNavigatorSettings(
-        initialRoute: "/",
-        onGenerateRoute: RouteGenerator.generateRoute,
-      ),
       screenTransitionAnimation: const ScreenTransitionAnimation(
         animateTabTransition: true,
         curve: Curves.ease,
@@ -70,11 +87,10 @@ class _AppTrunkState extends State<AppTrunk> {
               ),
             ),
             child: Row(
-              children: [
-                _navItem(context, 0, CupertinoIcons.bell_fill, CupertinoIcons.bell),
-                _navItem(context, 1, CupertinoIcons.house_fill, CupertinoIcons.house),
-                _navItem(context, 2, CupertinoIcons.person_fill, CupertinoIcons.person),
-              ],
+              children: _navbarItems.map((item) {
+                int index = _navbarItems.indexOf(item);
+                return _navItem(context, navBarEssentials, index, _controller.index == index, item);
+              }).toList(),
             ),
           ),
         );
@@ -82,28 +98,24 @@ class _AppTrunkState extends State<AppTrunk> {
     );
   }
 
-  Widget _navItem(BuildContext context, int index, IconData activeIcon, IconData inactiveIcon) {
-    final bool isActive = _controller.index == index;
+  Widget _navItem(BuildContext context, NavBarEssentials navBarEssentials, int index, bool isActive, PersistentBottomNavBarItem item) {
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
     return SizedBox(
-      width: MediaQuery.of(context).size.width / mainScreens.length,
+      width: MediaQuery.of(context).size.width / _navbarItems.length,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          if (isActive) {
-            HapticFeedback.mediumImpact();
-          } else {
-            HapticFeedback.lightImpact();
-            _controller.index = index;
-            setState(() {});
-          }
+          HapticFeedback.mediumImpact();
+          setState(() {
+            navBarEssentials.onItemSelected!(index);
+          });
         },
         child: Container(
           alignment: Alignment.topCenter,
-          padding: const EdgeInsets.only(top: 20),
-          child: Icon(
-            isActive ? activeIcon : inactiveIcon,
-            size: 27,
-            color: isActive ? primary : Colors.grey,
+          padding: EdgeInsets.only(top: (bottomPadding + 50) * 0.22), // twenty-two percent of navbar height
+          child: IconTheme(
+            data: IconThemeData(size: 27, color: isActive ? item.activeColorPrimary : item.inactiveColorPrimary),
+            child: isActive ? item.icon : item.inactiveIcon!,
           ),
         ),
       ),
