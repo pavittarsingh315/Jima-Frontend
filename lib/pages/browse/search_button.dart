@@ -13,7 +13,6 @@ class SearchButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return OpenContainer(
-      useRootNavigator: true,
       transitionDuration: const Duration(milliseconds: 500),
       transitionType: ContainerTransitionType.fadeThrough,
       middleColor: darkModeIsOn ? Colors.black : Colors.white,

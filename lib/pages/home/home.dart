@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
@@ -45,16 +46,25 @@ class HomePage extends StatelessWidget {
   Widget _floatingActionButton(BuildContext context) {
     return SpeedDial(
       icon: Icons.more_horiz,
+      activeIcon: Icons.close,
       backgroundColor: primary,
       iconTheme: const IconThemeData(color: Colors.white),
+      animationDuration: const Duration(milliseconds: 50),
+      animationCurve: Curves.easeIn,
       overlayOpacity: 0,
       spacing: 4,
       spaceBetweenChildren: 0,
       childrenButtonSize: const Size(64, 64),
+      renderOverlay: false,
       children: [
         SpeedDialChild(
           backgroundColor: primary,
-          child: const SearchButton(),
+          child: Stack(
+            children: const [
+              Positioned.fill(child: Icon(CupertinoIcons.search, color: Colors.white)),
+              SearchButton(),
+            ],
+          ),
         ),
         SpeedDialChild(
           backgroundColor: primary,
