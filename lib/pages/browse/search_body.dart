@@ -203,7 +203,7 @@ class _SearchBodyState extends State<SearchBody> {
         return ListView.builder(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: search.recentSearches.length,
-          padding: const EdgeInsets.only(bottom: 50),
+          padding: EdgeInsets.only(bottom: navBarHeight(context)),
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int index) {
             return Row(
@@ -283,7 +283,7 @@ class _SearchBodyState extends State<SearchBody> {
         return ListView.builder(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: search.searchSuggestions.length,
-          padding: const EdgeInsets.only(bottom: 50),
+          padding: EdgeInsets.only(bottom: navBarHeight(context)),
           itemBuilder: (context, index) {
             return ProfilePreviewCard(
               profileId: search.searchSuggestions[index].profileId,

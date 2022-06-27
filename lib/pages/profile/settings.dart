@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/settings/logout.dart';
 import 'package:nerajima/pages/profile/components/settings/theme_switch.dart';
 
@@ -17,7 +18,7 @@ class SettingsPage extends StatelessWidget {
           child: SizedBox(
             width: size.width * 0.8,
             child: ListView(
-              padding: const EdgeInsets.only(bottom: 50),
+              padding: EdgeInsets.only(bottom: navBarHeight(context)),
               children: [
                 const SizedBox(height: 10),
                 const ThemeSwitcher(),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:nerajima/providers/theme_provider.dart';
+
 class Archives extends StatefulWidget {
   const Archives({Key? key}) : super(key: key);
 
@@ -28,7 +30,7 @@ class _ArchivesState extends State<Archives> {
       removeTop: true,
       child: ListView.builder(
         itemCount: 69,
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
         itemBuilder: (BuildContext context, int index) {
           return Container(
             height: 50,

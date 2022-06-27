@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:nerajima/providers/theme_provider.dart';
+
 class PrivatePosts extends StatelessWidget {
   final String profileId, profileBlacklistMessage;
   final bool areWhitelisted;
@@ -69,7 +71,7 @@ class _PrivatePostsBodyState extends State<PrivatePostsBody> {
       removeTop: true,
       child: ListView.builder(
         itemCount: 69,
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
         itemBuilder: (BuildContext context, int index) {
           return Container(
             height: 50,

@@ -56,7 +56,6 @@ class _AppTrunkState extends State<AppTrunk> {
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
-    final double bottomPadding = MediaQuery.of(context).padding.bottom;
     return PersistentTabView.custom(
       context,
       controller: _controller,
@@ -78,7 +77,7 @@ class _AppTrunkState extends State<AppTrunk> {
         initialRoute: "/",
         onGenerateRoute: RouteGenerator.generateRoute,
       ),
-      navBarHeight: bottomPadding + 50, // 50 is the height of each _navItem
+      navBarHeight: navBarHeight(context),
       bottomScreenMargin: 0,
       backgroundColor: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
       customWidget: (NavBarEssentials navBarEssentials) {
@@ -105,7 +104,6 @@ class _AppTrunkState extends State<AppTrunk> {
   }
 
   Widget _navItem(BuildContext context, NavBarEssentials navBarEssentials, int index, bool isActive, PersistentBottomNavBarItem item) {
-    final double bottomPadding = MediaQuery.of(context).padding.bottom;
     return SizedBox(
       width: MediaQuery.of(context).size.width / _navbarItems.length,
       child: GestureDetector(
@@ -122,7 +120,7 @@ class _AppTrunkState extends State<AppTrunk> {
         },
         child: Container(
           alignment: Alignment.topCenter,
-          padding: EdgeInsets.only(top: (bottomPadding + 50) * 0.22), // twenty-two percent of navbar height
+          padding: EdgeInsets.only(top: (navBarHeight(context)) * 0.22), // twenty-two percent of navbar height
           child: IconTheme(
             data: IconThemeData(size: 27, color: isActive ? item.activeColorPrimary : item.inactiveColorPrimary),
             child: isActive ? item.icon : item.inactiveIcon!,

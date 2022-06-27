@@ -11,6 +11,7 @@ const Color lightModeBackgroundContrast = Color(0xFFf6f6f6);
 
 const double glassSigmaValue = 11;
 const double glassOpacity = 0.75;
+double navBarHeight(context) => MediaQuery.of(context).padding.bottom + 50;
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
