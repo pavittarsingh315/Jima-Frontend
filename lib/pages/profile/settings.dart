@@ -17,6 +17,7 @@ class SettingsPage extends StatelessWidget {
           child: SizedBox(
             width: size.width * 0.8,
             child: ListView(
+              padding: const EdgeInsets.only(bottom: 50),
               children: [
                 const SizedBox(height: 10),
                 const ThemeSwitcher(),

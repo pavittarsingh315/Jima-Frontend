@@ -69,6 +69,7 @@ class _PrivatePostsBodyState extends State<PrivatePostsBody> {
       removeTop: true,
       child: ListView.builder(
         itemCount: 69,
+        padding: const EdgeInsets.only(bottom: 50),
         itemBuilder: (BuildContext context, int index) {
           return Container(
             height: 50,
