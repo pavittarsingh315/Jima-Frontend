@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'package:nerajima/pages/browse/search_body.dart';
 
@@ -11,29 +12,23 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: const SearchBody(),
-      floatingActionButton: _backButton(context),
-    );
-  }
-
-  Widget _backButton(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        HapticFeedback.mediumImpact();
-        Navigator.of(context).pop();
-      },
-      child: Container(
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.red,
-        ),
-        child: const Padding(
-          padding: EdgeInsets.all(15.0),
-          child: Icon(
-            CupertinoIcons.xmark,
-            color: Colors.white,
-          ),
-        ),
+      floatingActionButton: KeyboardVisibilityBuilder(
+        builder: (context, isKeyboardVisible) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : 50),
+            child: FloatingActionButton(
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                Navigator.of(context).pop();
+              },
+              backgroundColor: Colors.red,
+              child: const Icon(
+                CupertinoIcons.xmark,
+                color: Colors.white,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

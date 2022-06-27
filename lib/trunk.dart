@@ -79,12 +79,12 @@ class _AppTrunkState extends State<AppTrunk> {
         onGenerateRoute: RouteGenerator.generateRoute,
       ),
       navBarHeight: bottomPadding + 50, // 50 is the height of each _navItem
-      bottomScreenMargin: 50,
+      bottomScreenMargin: 0,
+      backgroundColor: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
       customWidget: (NavBarEssentials navBarEssentials) {
         return GlassWrapper(
           child: Container(
             decoration: BoxDecoration(
-              color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
               border: Border(
                 top: BorderSide(
                   width: 0.1,

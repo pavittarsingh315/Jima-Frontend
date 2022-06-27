@@ -44,33 +44,35 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _floatingActionButton(BuildContext context) {
-    return SpeedDial(
-      icon: Icons.more_horiz,
-      activeIcon: Icons.close,
-      backgroundColor: primary,
-      iconTheme: const IconThemeData(color: Colors.white),
-      animationDuration: const Duration(milliseconds: 50),
-      animationCurve: Curves.easeIn,
-      overlayOpacity: 0,
-      spacing: 4,
-      spaceBetweenChildren: 0,
-      childrenButtonSize: const Size(64, 64),
-      renderOverlay: false,
-      children: [
-        SpeedDialChild(
-          backgroundColor: primary,
-          child: Stack(
-            children: const [
-              Positioned.fill(child: Icon(CupertinoIcons.search, color: Colors.white)),
-              SearchButton(),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 50.0),
+      child: SpeedDial(
+        icon: Icons.more_horiz,
+        activeIcon: Icons.close,
+        backgroundColor: primary,
+        iconTheme: const IconThemeData(color: Colors.white),
+        animationCurve: Curves.easeIn,
+        overlayOpacity: 0,
+        spacing: 4,
+        spaceBetweenChildren: 0,
+        childrenButtonSize: const Size(64, 64),
+        renderOverlay: false,
+        children: [
+          SpeedDialChild(
+            backgroundColor: primary,
+            child: Stack(
+              children: const [
+                Positioned.fill(child: Icon(CupertinoIcons.search, color: Colors.white)),
+                SearchButton(),
+              ],
+            ),
           ),
-        ),
-        SpeedDialChild(
-          backgroundColor: primary,
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
-      ],
+          SpeedDialChild(
+            backgroundColor: primary,
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }
