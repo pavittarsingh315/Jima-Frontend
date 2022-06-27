@@ -161,7 +161,6 @@ class _SearchBodyState extends State<SearchBody> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                flex: 85,
                 child: Container(
                   height: 50,
                   alignment: Alignment.centerLeft,
@@ -172,21 +171,19 @@ class _SearchBodyState extends State<SearchBody> {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 15,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    search.clearRecentSearches(authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-                  },
-                  child: Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: const Text(
-                      "Clear",
-                      style: TextStyle(color: Colors.red),
-                    ),
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  search.clearRecentSearches(authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 22),
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Clear",
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
               ),
@@ -210,7 +207,6 @@ class _SearchBodyState extends State<SearchBody> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 85,
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
@@ -241,19 +237,17 @@ class _SearchBodyState extends State<SearchBody> {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 15,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      search.removeRecentSearch(index: index, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-                    },
-                    child: Container(
-                      height: 50,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.clear, size: 17, color: Colors.grey),
-                    ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    search.removeRecentSearch(index: index, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.clear, size: 17, color: Colors.grey),
                   ),
                 ),
               ],
