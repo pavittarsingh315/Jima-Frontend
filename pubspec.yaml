@@ -47,7 +47,9 @@ dependencies:
          url: https://github.com/idootop/custom_nested_scroll_view.git
 
    flutter_multi_formatter: ^2.5.7
-   form_field_validator: ^1.1.0
+   form_field_validator:
+      git:
+          url: https://github.com/pavittarsingh315/form_field_validator.git
    pin_code_fields: ^7.4.0
    image_picker: ^0.8.5+3
    image_cropper: ^2.0.3

@@ -77,7 +77,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
                     onEditingComplete: filledOutForm ? _onSave : null,
                     maxLength: 30,
                     onChanged: (v) {
-                      if (v.trim().replaceAll(" ", "").length < 6) {
+                      if (v.trim().replaceAll(" ", "").runes.length < 6) {
                         if (filledOutForm) {
                           setState(() {
                             filledOutForm = false;
