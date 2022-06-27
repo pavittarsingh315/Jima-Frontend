@@ -5,8 +5,16 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'package:nerajima/pages/browse/search_body.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  bool isClosing = false;
+  double currentFABPadding = 0; // autofocus == true => isKeyboardVisible == true => padding == 0
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +22,12 @@ class SearchPage extends StatelessWidget {
       body: const SearchBody(),
       floatingActionButton: KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) {
+          if (!isClosing) currentFABPadding = isKeyboardVisible ? 0 : 50; // if screen is closing, don't change the padding
           return Padding(
-            padding: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : 50),
+            padding: EdgeInsets.only(bottom: currentFABPadding),
             child: FloatingActionButton(
               onPressed: () {
+                isClosing = true;
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).pop();
               },
