@@ -16,6 +16,8 @@ class ProfileLayout extends StatefulWidget {
   final String profileId, username, name, bio, blacklistMessage, profilePicture, dateJoined;
   final int numFollowers, numWhitelisted, numFollowing;
   final bool areWhitelisted, isCurrentUserProfile, areFollowing, showBackButton;
+  final ScrollController scrollController;
+  final VoidCallback? onHeaderTap;
 
   const ProfileLayout({
     Key? key,
@@ -33,6 +35,8 @@ class ProfileLayout extends StatefulWidget {
     required this.isCurrentUserProfile,
     required this.areFollowing,
     required this.showBackButton,
+    required this.scrollController,
+    required this.onHeaderTap,
   }) : super(key: key);
 
   @override
@@ -43,7 +47,6 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
   final GlobalKey infoKey = GlobalKey();
   late TabController _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void didUpdateWidget(covariant ProfileLayout oldWidget) {
@@ -54,12 +57,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void scrollToTop() {
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 750), curve: Curves.decelerate);
   }
 
   @override
@@ -69,7 +67,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
     final double opacityIncreaseSlope = calculateOpacitySlope(maxOpacity: (maxExtent - minExtent) * (1 - percentScrollForOpacity));
     return Scaffold(
       body: CustomNestedScrollView(
-        controller: _scrollController,
+        controller: widget.scrollController,
         physics: const BouncingScrollPhysics(),
         overscrollType: CustomOverscroll.outer,
         headerSliverBuilder: (context, outerBoxIsScrolled) {
@@ -87,7 +85,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
                 isCurrentUserProfile: widget.isCurrentUserProfile,
                 leading: widget.showBackButton ? const HeaderButtons(buttonType: Button.back) : null,
                 action: widget.isCurrentUserProfile ? const HeaderButtons(buttonType: Button.settings) : const HeaderButtons(buttonType: Button.more),
-                onHeaderTap: scrollToTop,
+                onHeaderTap: widget.onHeaderTap,
                 onStrech: null,
               ),
             ),
@@ -103,7 +101,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
             SliverPinnedHeader(
               child: ProfileTabs(
                 tabController: _tabController,
-                scrollController: _scrollController,
+                scrollController: widget.scrollController,
                 infoKey: infoKey,
               ),
             ),

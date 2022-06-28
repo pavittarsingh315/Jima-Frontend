@@ -23,6 +23,7 @@ class AppTrunk extends StatefulWidget {
 
 class _AppTrunkState extends State<AppTrunk> {
   late PersistentTabController _controller;
+  final GlobalKey<ProfilePageState> profileKey = GlobalKey<ProfilePageState>();
 
   @override
   void initState() {
@@ -30,37 +31,41 @@ class _AppTrunkState extends State<AppTrunk> {
     _controller = PersistentTabController(initialIndex: 1);
   }
 
-  final List<Widget> mainScreens = const [InboxPage(), HomePage(), ProfilePage()];
-
-  final List<PersistentBottomNavBarItem> _navbarItems = [
-    PersistentBottomNavBarItem(
-      icon: const Icon(CupertinoIcons.bell_fill),
-      inactiveIcon: const Icon(CupertinoIcons.bell),
-      activeColorPrimary: primary,
-      inactiveColorPrimary: Colors.grey,
-    ),
-    PersistentBottomNavBarItem(
-      icon: const Icon(CupertinoIcons.house_fill),
-      inactiveIcon: const Icon(CupertinoIcons.house),
-      activeColorPrimary: primary,
-      inactiveColorPrimary: Colors.grey,
-    ),
-    PersistentBottomNavBarItem(
-      icon: const Icon(CupertinoIcons.person_fill),
-      inactiveIcon: const Icon(CupertinoIcons.person),
-      activeColorPrimary: primary,
-      inactiveColorPrimary: Colors.grey,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
+    final List<Widget> mainScreens = [const InboxPage(), const HomePage(), ProfilePage(key: profileKey)];
+    final List<PersistentBottomNavBarItem> navbarItems = [
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.bell_fill),
+        inactiveIcon: const Icon(CupertinoIcons.bell),
+        activeColorPrimary: primary,
+        inactiveColorPrimary: Colors.grey,
+        onSelectedTabPressWhenNoScreensPushed: () {},
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.house_fill),
+        inactiveIcon: const Icon(CupertinoIcons.house),
+        activeColorPrimary: primary,
+        inactiveColorPrimary: Colors.grey,
+        onSelectedTabPressWhenNoScreensPushed: () {},
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.person_fill),
+        inactiveIcon: const Icon(CupertinoIcons.person),
+        activeColorPrimary: primary,
+        inactiveColorPrimary: Colors.grey,
+        onSelectedTabPressWhenNoScreensPushed: () {
+          profileKey.currentState!.scrollToTop();
+        },
+      ),
+    ];
+
     return PersistentTabView.custom(
       context,
       controller: _controller,
-      items: _navbarItems,
-      itemCount: _navbarItems.length,
+      items: navbarItems,
+      itemCount: navbarItems.length,
       screens: mainScreens,
       stateManagement: true,
       popAllScreensOnTapOfSelectedTab: true,
@@ -92,8 +97,8 @@ class _AppTrunkState extends State<AppTrunk> {
               ),
             ),
             child: Row(
-              children: _navbarItems.map((item) {
-                int index = _navbarItems.indexOf(item);
+              children: navbarItems.map((item) {
+                int index = navbarItems.indexOf(item);
                 return _navItem(context, navBarEssentials, index, _controller.index == index, item);
               }).toList(),
             ),
@@ -105,7 +110,7 @@ class _AppTrunkState extends State<AppTrunk> {
 
   Widget _navItem(BuildContext context, NavBarEssentials navBarEssentials, int index, bool isActive, PersistentBottomNavBarItem item) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width / _navbarItems.length,
+      width: MediaQuery.of(context).size.width / 3, // length of navbarItems
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {

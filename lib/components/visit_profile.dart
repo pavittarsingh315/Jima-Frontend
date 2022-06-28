@@ -19,6 +19,7 @@ class VisitProfile extends StatefulWidget {
 }
 
 class _VisitProfileState extends State<VisitProfile> {
+  final ScrollController _scrollController = ScrollController();
   Profile profile = loadingProfilePlaceholder;
   late UserProvider _userProvider;
 
@@ -50,6 +51,16 @@ class _VisitProfileState extends State<VisitProfile> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void scrollToTop() {
+    _scrollController.animateTo(0, duration: const Duration(milliseconds: 750), curve: Curves.decelerate);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ProfileLayout(
       profileId: profile.profileId,
@@ -66,6 +77,8 @@ class _VisitProfileState extends State<VisitProfile> {
       isCurrentUserProfile: profile.profileId == _userProvider.user.profileId,
       areFollowing: profile.areFollowing,
       showBackButton: true, // default to true since this widget is shown in nested routes only
+      scrollController: _scrollController,
+      onHeaderTap: scrollToTop,
     );
   }
 }

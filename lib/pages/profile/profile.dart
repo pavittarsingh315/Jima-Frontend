@@ -5,8 +5,25 @@ import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_layout.dart';
 
 // TODO: set areWhitelisted to true.
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => ProfilePageState();
+}
+
+class ProfilePageState extends State<ProfilePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void scrollToTop() {
+    _scrollController.animateTo(0, duration: const Duration(milliseconds: 750), curve: Curves.decelerate);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +43,8 @@ class ProfilePage extends StatelessWidget {
       isCurrentUserProfile: true, // default true for user's own profile. Otherwise, profileId == userProvider.user.profileId
       areFollowing: true, // value does not matter when isCurrentUserProfile == true
       showBackButton: false, // profile is root of ProfileRouter so it will not show back button
+      scrollController: _scrollController,
+      onHeaderTap: scrollToTop,
     );
   }
 }
