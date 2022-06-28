@@ -24,6 +24,7 @@ class AppTrunk extends StatefulWidget {
 class _AppTrunkState extends State<AppTrunk> {
   late PersistentTabController _controller;
   final GlobalKey<ProfilePageState> profileKey = GlobalKey<ProfilePageState>();
+  bool ranInitialBuild = false; // helper to make sure _mainScreens and _navbarItems are only defined once
 
   @override
   void initState() {
@@ -31,42 +32,48 @@ class _AppTrunkState extends State<AppTrunk> {
     _controller = PersistentTabController(initialIndex: 1);
   }
 
+  late final List<Widget> _mainScreens;
+  late final List<PersistentBottomNavBarItem> _navbarItems;
+
   @override
   Widget build(BuildContext context) {
     final bool darkModeIsOn = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
-    final List<Widget> mainScreens = [const InboxPage(), const HomePage(), ProfilePage(key: profileKey)];
-    final List<PersistentBottomNavBarItem> navbarItems = [
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.bell_fill),
-        inactiveIcon: const Icon(CupertinoIcons.bell),
-        activeColorPrimary: primary,
-        inactiveColorPrimary: Colors.grey,
-        onSelectedTabPressWhenNoScreensPushed: () {},
-      ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.house_fill),
-        inactiveIcon: const Icon(CupertinoIcons.house),
-        activeColorPrimary: primary,
-        inactiveColorPrimary: Colors.grey,
-        onSelectedTabPressWhenNoScreensPushed: () {},
-      ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.person_fill),
-        inactiveIcon: const Icon(CupertinoIcons.person),
-        activeColorPrimary: primary,
-        inactiveColorPrimary: Colors.grey,
-        onSelectedTabPressWhenNoScreensPushed: () {
-          profileKey.currentState!.scrollToTop();
-        },
-      ),
-    ];
+    if (!ranInitialBuild) {
+      _mainScreens = [const InboxPage(), const HomePage(), ProfilePage(key: profileKey)];
+      _navbarItems = [
+        PersistentBottomNavBarItem(
+          icon: const Icon(CupertinoIcons.bell_fill),
+          inactiveIcon: const Icon(CupertinoIcons.bell),
+          activeColorPrimary: primary,
+          inactiveColorPrimary: Colors.grey,
+          onSelectedTabPressWhenNoScreensPushed: () {},
+        ),
+        PersistentBottomNavBarItem(
+          icon: const Icon(CupertinoIcons.house_fill),
+          inactiveIcon: const Icon(CupertinoIcons.house),
+          activeColorPrimary: primary,
+          inactiveColorPrimary: Colors.grey,
+          onSelectedTabPressWhenNoScreensPushed: () {},
+        ),
+        PersistentBottomNavBarItem(
+          icon: const Icon(CupertinoIcons.person_fill),
+          inactiveIcon: const Icon(CupertinoIcons.person),
+          activeColorPrimary: primary,
+          inactiveColorPrimary: Colors.grey,
+          onSelectedTabPressWhenNoScreensPushed: () {
+            profileKey.currentState!.scrollToTop();
+          },
+        ),
+      ];
+      ranInitialBuild = true;
+    }
 
     return PersistentTabView.custom(
       context,
       controller: _controller,
-      items: navbarItems,
-      itemCount: navbarItems.length,
-      screens: mainScreens,
+      items: _navbarItems,
+      itemCount: _navbarItems.length,
+      screens: _mainScreens,
       stateManagement: true,
       popAllScreensOnTapOfSelectedTab: true,
       handleAndroidBackButtonPress: true,
@@ -97,8 +104,8 @@ class _AppTrunkState extends State<AppTrunk> {
               ),
             ),
             child: Row(
-              children: navbarItems.map((item) {
-                int index = navbarItems.indexOf(item);
+              children: _navbarItems.map((item) {
+                int index = _navbarItems.indexOf(item);
                 return _navItem(context, navBarEssentials, index, _controller.index == index, item);
               }).toList(),
             ),
@@ -110,7 +117,7 @@ class _AppTrunkState extends State<AppTrunk> {
 
   Widget _navItem(BuildContext context, NavBarEssentials navBarEssentials, int index, bool isActive, PersistentBottomNavBarItem item) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width / 3, // length of navbarItems
+      width: MediaQuery.of(context).size.width / _navbarItems.length, // length of navbarItems
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {

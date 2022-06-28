@@ -12,6 +12,7 @@ import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
 import 'package:nerajima/utils/opacity_slope_calculator.dart';
 
+// TODO: keep track of the farthest position the user scrolls. Then once the position decreases say 50px, show an FAB that'll take the user back to that farthest position. you can access scroll position with scroll controller
 class ProfileLayout extends StatefulWidget {
   final String profileId, username, name, bio, blacklistMessage, profilePicture, dateJoined;
   final int numFollowers, numWhitelisted, numFollowing;
