@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
-import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
-import 'package:nerajima/pages/browse/search_button.dart';
 import 'package:nerajima/components/visit_profile.dart';
+import 'package:nerajima/components/expandable_fab.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,40 +36,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: _floatingActionButton(context),
-    );
-  }
-
-  Widget _floatingActionButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 50.0),
-      child: SpeedDial(
-        icon: Icons.more_horiz,
-        activeIcon: Icons.close,
-        backgroundColor: primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-        animationCurve: Curves.easeIn,
-        overlayOpacity: 0,
-        spacing: 4,
-        spaceBetweenChildren: 0,
-        childrenButtonSize: const Size(64, 64),
-        renderOverlay: false,
-        children: [
-          SpeedDialChild(
-            backgroundColor: primary,
-            child: Stack(
-              children: const [
-                Positioned.fill(child: Icon(CupertinoIcons.search, color: Colors.white)),
-                SearchButton(),
-              ],
-            ),
-          ),
-          SpeedDialChild(
-            backgroundColor: primary,
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
-      ),
+      floatingActionButton: const ExpandableFAB(),
     );
   }
 }
