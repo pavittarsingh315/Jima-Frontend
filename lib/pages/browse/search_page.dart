@@ -23,8 +23,10 @@ class _SearchPageState extends State<SearchPage> {
       floatingActionButton: KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) {
           if (!isClosing) currentFABPadding = isKeyboardVisible ? 0 : 50; // if screen is closing, don't change the padding
-          return Padding(
+          return AnimatedPadding(
             padding: EdgeInsets.only(bottom: currentFABPadding),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.bounceOut,
             child: FloatingActionButton(
               onPressed: () {
                 isClosing = true;
