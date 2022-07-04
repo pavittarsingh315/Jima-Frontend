@@ -49,6 +49,31 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void incrementFollowing() {
+    _user.numFollowing++;
+    notifyListeners();
+  }
+
+  void decrementFollowing() {
+    _user.numFollowing--;
+    notifyListeners();
+  }
+
+  void incrementWhitelisted() {
+    _user.numWhitelisted++;
+    notifyListeners();
+  }
+
+  void decrementWhitelisted() {
+    _user.numWhitelisted--;
+    notifyListeners();
+  }
+
+  void decrementFollowers() {
+    _user.numFollowers--;
+    notifyListeners();
+  }
+
   /// Success map keys: [status]. Error map keys: [status, message].
   Future<Map<String, dynamic>> changeProfilePicture() async {
     try {
@@ -251,5 +276,44 @@ class UserProvider extends ChangeNotifier {
     // stopwatch.stop(); // uncomment to print exec. time of function
     // print('Executed in ${stopwatch.elapsed.inMilliseconds}'); // uncomment to print exec. time of function
     return result;
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> followUser({required String profileId}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.followAUser}/$profileId");
+      Response response = await post(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        incrementFollowing();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong following the name...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> unfollowUser({required String profileId}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.unfollowAUser}/$profileId");
+      Response response = await delete(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        decrementFollowing();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong unfollowing the name...");
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 }

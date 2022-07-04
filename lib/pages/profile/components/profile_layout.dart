@@ -141,6 +141,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
     if (!widget.isCurrentUserProfile) {
       return ProfileInformation(
         key: infoKey,
+        profileId: widget.profileId,
         name: widget.name,
         bio: widget.bio,
         numFollowers: widget.numFollowers,
@@ -155,6 +156,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
       builder: (context, user, child) {
         return ProfileInformation(
           key: infoKey,
+          profileId: user.user.profileId,
           name: user.user.name,
           bio: user.user.bio,
           numFollowers: user.user.numFollowers,

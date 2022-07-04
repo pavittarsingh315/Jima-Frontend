@@ -21,21 +21,39 @@ class ApiEndpoints {
 
   static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
 
-  static const String searchForUser = "$_profileUrl/search/user"; // Append query to the end of the url.
+  /// Append query to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
+  static const String searchForUser = "$_profileUrl/search/user";
   static const String getSearchHistory = "$_profileUrl/search/history/get";
   static const String clearSearchHistory = "$_profileUrl/search/history/clear";
-  static const String addToSearchHistory = "$_profileUrl/search/history/add"; // Append query to end of the url
-  static const String removeFromSearchHistory = "$_profileUrl/search/history/remove"; // Append index of search to remove to the end of the url
 
-  static const String getAProfile = "$_profileUrl/get"; // Append profileId of profile to get to the end of the url
+  /// Append query to end of the url
+  static const String addToSearchHistory = "$_profileUrl/search/history/add";
 
-  static const String addToWhitelist = "$_profileUrl/whitelist/add"; // Append the profileId of profile to whitelist to the end of the url
-  static const String removeFromWhitelist = "$_profileUrl/whitelist/remove"; // Append the profileId of profile to blacklist to the end of the url
+  /// Append index of search to remove to the end of the url
+  static const String removeFromSearchHistory = "$_profileUrl/search/history/remove";
+
+  /// Append profileId of profile to get to the end of the url
+  static const String getAProfile = "$_profileUrl/get";
+
+  /// Append the profileId of profile to whitelist to the end of the url
+  static const String addToWhitelist = "$_profileUrl/whitelist/add";
+
+  /// Append the profileId of profile to blacklist to the end of the url
+  static const String removeFromWhitelist = "$_profileUrl/whitelist/remove";
   static const String getWhitelist = "$_profileUrl/whitelist/get";
 
-  static const String followAUser = "$_profileUrl/follow"; // Append the profileId of profile to follow to the end of the url
-  static const String unfollowAUser = "$_profileUrl/unfollow"; // Append the profileId of profile to unfollow to the end of the url
-  static const String removeAFollower = "$_profileUrl/followers/remove"; // Append the profileId of profile to remove to the end of the url
-  static const String getAProfilesFollowers = "$_profileUrl/followers"; // Append the profileId of profile to get followers for to the end of the url
-  static const String getAProfilesFollowing = "$_profileUrl/following"; // Append the profileId of profile to get followings for to the end of the url
+  /// Append the profileId of profile to follow to the end of the url
+  static const String followAUser = "$_profileUrl/follow";
+
+  /// Append the profileId of profile to unfollow to the end of the url
+  static const String unfollowAUser = "$_profileUrl/unfollow";
+
+  /// Append the profileId of profile to remove to the end of the url
+  static const String removeAFollower = "$_profileUrl/followers/remove";
+
+  /// Append the profileId of profile to get followers for to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
+  static const String getAProfilesFollowers = "$_profileUrl/followers";
+
+  /// Append the profileId of profile to get followings for to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
+  static const String getAProfilesFollowing = "$_profileUrl/following";
 }

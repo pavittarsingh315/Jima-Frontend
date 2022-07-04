@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
+import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/profile/edit_profile.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/components/loading_spinner.dart';
 
 class ProfileInformation extends StatefulWidget {
-  final String name, bio;
+  final String profileId, name, bio;
   final int numFollowers, numWhitelisted, numFollowing;
   final bool isCurrentUserProfile, areFollowing;
 
   const ProfileInformation({
     Key? key,
+    required this.profileId,
     required this.name,
     required this.bio,
     required this.numFollowers,
@@ -30,6 +34,15 @@ class ProfileInformation extends StatefulWidget {
 
 class _ProfileInformationState extends State<ProfileInformation> {
   late bool areFollowing = widget.areFollowing;
+  late int numFollowers = widget.numFollowers;
+  bool arePerformingAction = false;
+
+  @override
+  void didUpdateWidget(covariant ProfileInformation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    areFollowing = widget.areFollowing;
+    numFollowers = widget.numFollowers;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +56,15 @@ class _ProfileInformationState extends State<ProfileInformation> {
             if (widget.name != "") _name(widget.name),
             Row(
               children: [
-                _statItem(context, 0, 'Followers', (widget.numFollowers < 1000) ? widget.numFollowers.toString() : ProfileInformation.numberFormat.format(widget.numFollowers)),
+                _statItem(context, 0, 'Followers', (numFollowers < 1000) ? numFollowers.toString() : ProfileInformation.numberFormat.format(numFollowers)),
                 Container(
                   width: 1,
                   height: 40,
                   margin: EdgeInsets.symmetric(horizontal: statsMargin),
                   color: Colors.grey,
                 ),
-                _statItem(context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
+                _statItem(
+                    context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
                 Container(
                   width: 1,
                   height: 40,
@@ -147,19 +161,27 @@ class _ProfileInformationState extends State<ProfileInformation> {
   }
 
   Widget _actions(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     if (!areFollowing) {
       return Row(
         children: [
           Expanded(
             child: PillButton(
-              onTap: () {
-                areFollowing = true;
+              onTap: () async {
+                if (arePerformingAction) return; // prevents spam
+                arePerformingAction = true;
                 setState(() {});
-                // make api call to follow user
+                final res = await userProvider.followUser(profileId: widget.profileId);
+                if (res["status"]) {
+                  areFollowing = true;
+                  numFollowers++;
+                }
+                arePerformingAction = false;
+                setState(() {});
               },
               color: primary,
               margin: 0,
-              child: const Text("Follow"),
+              child: arePerformingAction ? const LoadingSpinner() : const Text("Follow"),
             ),
           ),
         ],
@@ -169,14 +191,21 @@ class _ProfileInformationState extends State<ProfileInformation> {
         children: [
           Expanded(
             child: PillButton(
-              onTap: () {
-                areFollowing = false;
+              onTap: () async {
+                if (arePerformingAction) return; // prevents spam
+                arePerformingAction = true;
                 setState(() {});
-                // make api call to unfollow user
+                final res = await userProvider.unfollowUser(profileId: widget.profileId);
+                if (res["status"]) {
+                  areFollowing = false;
+                  numFollowers--;
+                }
+                arePerformingAction = false;
+                setState(() {});
               },
               color: Colors.red,
               margin: 0,
-              child: const Text("Unfollow"),
+              child: arePerformingAction ? const LoadingSpinner() : const Text("Unfollow"),
             ),
           ),
         ],

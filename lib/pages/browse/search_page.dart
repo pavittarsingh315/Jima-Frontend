@@ -26,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
           return AnimatedPadding(
             padding: EdgeInsets.only(bottom: currentFABPadding),
             duration: const Duration(milliseconds: 400),
-            curve: Curves.bounceOut,
+            curve: Curves.linear,
             child: FloatingActionButton(
               onPressed: () {
                 isClosing = true;
