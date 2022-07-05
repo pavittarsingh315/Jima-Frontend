@@ -6,17 +6,19 @@ import 'package:provider/provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/pages/profile/edit_profile.dart';
+import 'package:nerajima/pages/profile/components/relations/relations.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 
 class ProfileInformation extends StatefulWidget {
-  final String profileId, name, bio;
+  final String profileId, username, name, bio;
   final int numFollowers, numWhitelisted, numFollowing;
   final bool isCurrentUserProfile, areFollowing;
 
   const ProfileInformation({
     Key? key,
     required this.profileId,
+    required this.username,
     required this.name,
     required this.bio,
     required this.numFollowers,
@@ -64,7 +66,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                   color: Colors.grey,
                 ),
                 _statItem(
-                    context, 1, 'Whitelisted', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
+                    context, 1, 'Whitelist', (widget.numWhitelisted < 1000) ? widget.numWhitelisted.toString() : ProfileInformation.numberFormat.format(widget.numWhitelisted)),
                 Container(
                   width: 1,
                   height: 40,
@@ -101,27 +103,36 @@ class _ProfileInformationState extends State<ProfileInformation> {
 
   Widget _statItem(BuildContext context, int index, String label, String value) {
     // index for openning correct tab when click on the item
-    // context for UserProvider
     return Expanded(
-      child: Column(
-        children: [
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: Relations(initialTabIndex: index, profileId: widget.profileId, profileUsername: widget.username),
+            settings: const RouteSettings(name: Relations.route),
+          );
+        },
+        child: Column(
+          children: [
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

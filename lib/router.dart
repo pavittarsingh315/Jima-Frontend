@@ -20,6 +20,8 @@ import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.da
 
 import 'package:nerajima/components/visit_profile.dart';
 
+import 'package:nerajima/pages/profile/components/relations/relations.dart';
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>?;
@@ -66,6 +68,9 @@ class RouteGenerator {
     } else if (settings.name == VisitProfile.route) {
       if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(builder: (_) => VisitProfile(profileId: args["profileId"]));
+    } else if (settings.name == Relations.route) {
+      if (args == null) return _notEnoughArgs();
+      return MaterialPageRoute(builder: (_) => Relations(initialTabIndex: args["initialTabIndex"], profileId: args["profileId"], profileUsername: args["profileUsername"]));
     }
     return _notFoundRoute();
   }
