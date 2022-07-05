@@ -62,7 +62,6 @@ class _RelationsState extends State<Relations> with SingleTickerProviderStateMix
           ),
         ],
       ),
-      floatingActionButton: floatingActionButton(context),
     );
   }
 
@@ -77,23 +76,6 @@ class _RelationsState extends State<Relations> with SingleTickerProviderStateMix
         style: TextStyle(
           fontWeight: FontWeight.w400,
           color: darkModeIsOn ? Colors.white : Colors.black,
-        ),
-      ),
-    );
-  }
-
-  Widget floatingActionButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 50.0),
-      child: FloatingActionButton(
-        onPressed: () {
-          HapticFeedback.mediumImpact();
-          Navigator.of(context).pop();
-        },
-        backgroundColor: Colors.red,
-        child: const Icon(
-          CupertinoIcons.xmark,
-          color: Colors.white,
         ),
       ),
     );

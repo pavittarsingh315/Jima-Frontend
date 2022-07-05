@@ -103,11 +103,24 @@ class _AppTrunkState extends State<AppTrunk> {
                 ),
               ),
             ),
-            child: Row(
-              children: _navbarItems.map((item) {
-                int index = _navbarItems.indexOf(item);
-                return _navItem(context, navBarEssentials, index, _controller.index == index, item);
-              }).toList(),
+            child: Stack(
+              children: [
+                AnimatedPadding(
+                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * (_controller.index / _navbarItems.length)),
+                  duration: const Duration(milliseconds: 300), // duration same as ScreenTransitionAnimation
+                  child: Container(
+                    height: 1,
+                    width: MediaQuery.of(context).size.width / _navbarItems.length,
+                    color: primary,
+                  ),
+                ),
+                Row(
+                  children: _navbarItems.map((item) {
+                    int index = _navbarItems.indexOf(item);
+                    return _navItem(context, navBarEssentials, index, _controller.index == index, item);
+                  }).toList(),
+                ),
+              ],
             ),
           ),
         );
