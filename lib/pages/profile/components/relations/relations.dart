@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:nerajima/pages/profile/components/relations/followers_list.dart';
-import 'package:nerajima/pages/profile/components/relations/following_list.dart';
-import 'package:nerajima/pages/profile/components/relations/whitelist_list.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/profile/components/relations/followers_list.dart';
+import 'package:nerajima/pages/profile/components/relations/following_list.dart';
+import 'package:nerajima/pages/profile/components/relations/whitelist_list.dart';
 
 class Relations extends StatefulWidget {
   static const String route = "/relations";

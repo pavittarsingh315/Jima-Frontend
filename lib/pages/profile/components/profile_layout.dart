@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/profile/components/profile_header.dart';
 import 'package:nerajima/pages/profile/components/profile_info.dart';
-import 'package:nerajima/pages/profile/components/profile_tabs.dart';
 import 'package:nerajima/pages/profile/components/profile_body.dart';
 import 'package:nerajima/pages/profile/components/profile_picture.dart';
 import 'package:nerajima/pages/profile/components/header_buttons.dart';
@@ -100,11 +101,7 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
               ),
             ),
             SliverPinnedHeader(
-              child: ProfileTabs(
-                tabController: _tabController,
-                scrollController: widget.scrollController,
-                infoKey: infoKey,
-              ),
+              child: _tabs(context),
             ),
           ];
         },
@@ -166,6 +163,35 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
           numFollowing: user.user.numFollowing,
           isCurrentUserProfile: widget.isCurrentUserProfile,
           areFollowing: widget.areFollowing,
+        );
+      },
+    );
+  }
+
+  Widget _tabs(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, theme, child) {
+        return Container(
+          height: 38,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(width: 0.2, color: Colors.grey.shade400),
+              bottom: BorderSide(width: 0.2, color: Colors.grey.shade400),
+            ),
+            color: theme.isDarkModeEnabled ? Colors.black : Colors.white,
+          ),
+          child: TabBar(
+            controller: _tabController,
+            indicator: const UnderlineTabIndicator(
+              borderSide: BorderSide(width: 0.66, color: primary),
+              insets: EdgeInsets.symmetric(horizontal: 33.0),
+            ),
+            tabs: [
+              Tab(icon: Icon(CupertinoIcons.lock_open, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black)),
+              Tab(icon: Icon(CupertinoIcons.lock, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black)),
+              if (_tabController.length == 3) Tab(icon: Icon(CupertinoIcons.cube_box, size: 21, color: theme.isDarkModeEnabled ? Colors.white : Colors.black))
+            ],
+          ),
         );
       },
     );

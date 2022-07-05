@@ -9,8 +9,6 @@ const Color tertiary = Color(0xFFF1E6FF);
 const Color darkModeBackgroundContrast = Color(0xFF151515);
 const Color lightModeBackgroundContrast = Color(0xFFf6f6f6);
 
-const double glassSigmaValue = 11;
-const double glassOpacity = 0.75;
 double navBarHeight(context) => MediaQuery.of(context).padding.bottom + 50;
 
 class ThemeProvider extends ChangeNotifier {

@@ -49,14 +49,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
         child: Stack(
           children: [
             Positioned.fill(
-              child: ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: glassSigmaValue, sigmaY: glassSigmaValue),
-                  child: Container(
-                    color: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
-                  ),
-                ),
-              ),
+              child: Container(color: darkModeIsOn ? Colors.black : Colors.white),
             ),
             Positioned.fill(
               child: Opacity(

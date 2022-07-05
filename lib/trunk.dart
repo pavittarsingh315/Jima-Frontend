@@ -10,7 +10,6 @@ import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/pages/inbox/inbox.dart';
 import 'package:nerajima/pages/home/home.dart';
 import 'package:nerajima/pages/profile/profile.dart';
-import 'package:nerajima/utils/glass_wrapper.dart';
 
 class AppTrunk extends StatefulWidget {
   static const String route = "/trunk";
@@ -91,37 +90,35 @@ class _AppTrunkState extends State<AppTrunk> {
       ),
       navBarHeight: navBarHeight(context),
       bottomScreenMargin: 0,
-      backgroundColor: darkModeIsOn ? Colors.black.withOpacity(glassOpacity) : Colors.white.withOpacity(glassOpacity),
+      backgroundColor: darkModeIsOn ? Colors.black : Colors.white,
       customWidget: (NavBarEssentials navBarEssentials) {
-        return GlassWrapper(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  width: 0.1,
-                  color: Colors.grey.shade400,
-                ),
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                width: 0.1,
+                color: Colors.grey.shade400,
               ),
             ),
-            child: Stack(
-              children: [
-                AnimatedPadding(
-                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * (_controller.index / _navbarItems.length)),
-                  duration: const Duration(milliseconds: 300), // duration same as ScreenTransitionAnimation
-                  child: Container(
-                    height: 1,
-                    width: MediaQuery.of(context).size.width / _navbarItems.length,
-                    color: primary,
-                  ),
+          ),
+          child: Stack(
+            children: [
+              AnimatedPadding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * (_controller.index / _navbarItems.length)),
+                duration: const Duration(milliseconds: 300), // duration same as ScreenTransitionAnimation
+                child: Container(
+                  height: 1,
+                  width: MediaQuery.of(context).size.width / _navbarItems.length,
+                  color: primary,
                 ),
-                Row(
-                  children: _navbarItems.map((item) {
-                    int index = _navbarItems.indexOf(item);
-                    return _navItem(context, navBarEssentials, index, _controller.index == index, item);
-                  }).toList(),
-                ),
-              ],
-            ),
+              ),
+              Row(
+                children: _navbarItems.map((item) {
+                  int index = _navbarItems.indexOf(item);
+                  return _navItem(context, navBarEssentials, index, _controller.index == index, item);
+                }).toList(),
+              ),
+            ],
           ),
         );
       },

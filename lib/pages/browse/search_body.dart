@@ -178,7 +178,7 @@ class _SearchBodyState extends State<SearchBody> {
                   search.clearRecentSearches(authToken: _userProvider.user.access, userId: _userProvider.user.userId);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
+                  padding: const EdgeInsets.only(left: 22, right: 5),
                   height: 50,
                   alignment: Alignment.center,
                   child: const Text(
@@ -244,7 +244,7 @@ class _SearchBodyState extends State<SearchBody> {
                     search.removeRecentSearch(index: index, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.only(left: 30, right: 14.5),
                     height: 50,
                     alignment: Alignment.center,
                     child: const Icon(Icons.clear, size: 17, color: Colors.grey),
