@@ -101,6 +101,7 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
     }
     return ListView.builder(
       controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: followersList.length + 1,
       padding: EdgeInsets.only(bottom: navBarHeight(context)),
       itemBuilder: (BuildContext context, int index) {
@@ -137,17 +138,22 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
 
   Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
     final size = MediaQuery.of(context).size;
-    return Column(
+    return ListView(
       children: [
-        SizedBox(height: size.height / 3.33),
-        icon,
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 35),
+        Column(
+          children: [
+            SizedBox(height: size.height / 3.33),
+            icon,
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 35),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(description, textAlign: TextAlign.center),
+          ],
         ),
-        const SizedBox(height: 10),
-        Text(description),
       ],
     );
   }
