@@ -29,6 +29,7 @@ class UserProvider extends ChangeNotifier {
   UserStatus get userStatus => _userStatus;
   File? get newProfilePicture => _newProfilePicture;
   bool get savedNewProfilePicture => _savedNewProfilePicture;
+  Map<String, String> get requestHeaders => _requestHeaders;
 
   void setUser(User user) {
     _user = user;

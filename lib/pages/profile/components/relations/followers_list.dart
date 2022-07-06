@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart';
+import 'dart:convert' as convert;
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/models/search_models.dart';
+import 'package:nerajima/utils/api_endpoints.dart';
+import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
 
 class FollowersList extends StatefulWidget {
   final String profileId;
@@ -11,34 +20,135 @@ class FollowersList extends StatefulWidget {
 }
 
 class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveClientMixin {
+  final ScrollController _scrollController = ScrollController();
+  final int limit = 10;
+  int page = 1;
+  bool isLoading = false, hasError = false, hasMore = true;
+  List<SearchUser> followersList = [];
+
   @override
   void initState() {
     super.initState();
     _getFollowers();
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
+        if (!hasError) _getFollowers();
+      }
+    });
   }
 
   Future<void> _getFollowers() async {
-    // make api request to get followers.
+    try {
+      if (isLoading || !hasMore) return; // prevents excess requests being performed.
+      isLoading = true;
+
+      UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+      final url = Uri.parse("${ApiEndpoints.getAProfilesFollowers}/${widget.profileId}?page=$page&limit=$limit");
+      Response response = await get(url, headers: userProvider.requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        List resArray = resData["data"]["data"];
+        List<SearchUser> parsedRes = resArray.map((e) {
+          return SearchUser.fromJson(e);
+        }).toList();
+
+        setState(() {
+          hasMore = parsedRes.length == limit;
+          isLoading = false;
+          page++;
+          followersList.addAll(parsedRes);
+        });
+      } else if (resData["message"] == "Error") {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    if (isLoading) {
+      return loadingBody(context);
+    } else if (hasError) {
+      return errorBody(context);
+    }
+    return Center(child: SizedBox(width: MediaQuery.of(context).size.width * 0.95, child: followersBody(context)));
+  }
+
+  Widget followersBody(BuildContext context) {
+    if (followersList.isEmpty) {
+      return nonErrorMessageBody(
+        context,
+        const Icon(CupertinoIcons.person, size: 50),
+        "No Followers",
+        "This user currently has no followers. Help them out?",
+      );
+    }
     return ListView.builder(
-      itemCount: 69,
+      controller: _scrollController,
+      itemCount: followersList.length + 1,
       padding: EdgeInsets.only(bottom: navBarHeight(context)),
       itemBuilder: (BuildContext context, int index) {
-        return Container(
-          height: 50,
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 11),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: index % 2 == 0 ? Colors.orange.shade200 : Colors.purple.shade100,
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Text(index.toString()),
+        if (index == followersList.length) {
+          return Container(
+            padding: EdgeInsets.only(top: hasMore ? 25.0 : 0),
+            child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+          );
+        }
+        return ProfilePreviewCard(
+          profileId: followersList[index].profileId,
+          name: followersList[index].name,
+          username: followersList[index].username,
+          imageUrl: followersList[index].miniProfilePicture,
         );
       },
+    );
+  }
+
+  Widget loadingBody(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, theme, child) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 50.0),
+          child: LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black),
+        );
+      },
+    );
+  }
+
+  Widget errorBody(BuildContext context) {
+    return const Center(child: Text("Error..."));
+  }
+
+  Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        SizedBox(height: size.height / 3.33),
+        icon,
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 35),
+        ),
+        const SizedBox(height: 10),
+        Text(description),
+      ],
     );
   }
 
