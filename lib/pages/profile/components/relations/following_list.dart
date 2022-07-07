@@ -97,7 +97,10 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);
     if (isLoading) {
-      return loadingBody(context);
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: loadingBody(context),
+      );
     } else if (hasError) {
       return errorBody(context);
     }
@@ -121,7 +124,7 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
       itemBuilder: (BuildContext context, int index) {
         if (index == followingList.length) {
           return Container(
-            padding: EdgeInsets.only(top: hasMore ? 25.0 : 0),
+            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
             child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
@@ -142,10 +145,7 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
   Widget loadingBody(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, theme, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 50.0),
-          child: LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black),
-        );
+        return LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black);
       },
     );
   }

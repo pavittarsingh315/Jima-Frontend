@@ -113,10 +113,7 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
       child: CustomBottomSheet(
         children: [
           _option(context, "Camera", CupertinoIcons.camera, _onCameraTap),
-          const Divider(color: Colors.grey),
           _option(context, "Choose an image ", CupertinoIcons.photo, _onImageTap),
-          const Divider(color: Colors.grey),
-          _cancelBtn(context),
         ],
       ),
     );
@@ -136,28 +133,6 @@ class _EditPictureOptionsState extends State<EditPictureOptions> {
             Text(label, style: const TextStyle(fontSize: 15)),
             Icon(icon, size: 20),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _cancelBtn(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        Navigator.of(context).pop();
-      },
-      child: const SizedBox(
-        height: 60,
-        width: double.infinity,
-        child: Center(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 16,
-            ),
-          ),
         ),
       ),
     );

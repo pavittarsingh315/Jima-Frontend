@@ -10,6 +10,7 @@ import 'package:nerajima/models/search_models.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
 
 class WhitelistList extends StatefulWidget {
   final String profileId;
@@ -93,7 +94,10 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);
     if (isLoading) {
-      return loadingBody(context);
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: loadingBody(context),
+      );
     } else if (hasError) {
       return errorBody(context);
     } else if (!accessGranted) {
@@ -124,7 +128,7 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
       itemBuilder: (BuildContext context, int index) {
         if (index == whitelistedList.length) {
           return Container(
-            padding: EdgeInsets.only(top: hasMore ? 25.0 : 0),
+            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
             child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
@@ -133,6 +137,7 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
           name: whitelistedList[index].name,
           username: whitelistedList[index].username,
           imageUrl: whitelistedList[index].miniProfilePicture,
+          trailingWidget: RemoveButton(whitelistedUserId: whitelistedList[index].profileId),
         );
       },
     );
@@ -141,10 +146,7 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
   Widget loadingBody(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, theme, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 50.0),
-          child: LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black),
-        );
+        return LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black);
       },
     );
   }
@@ -177,4 +179,45 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
 
   @override
   bool get wantKeepAlive => true;
+}
+
+enum ButtonType { add, remove }
+
+class RemoveButton extends StatefulWidget {
+  final String whitelistedUserId;
+  const RemoveButton({Key? key, required this.whitelistedUserId}) : super(key: key);
+
+  @override
+  State<RemoveButton> createState() => _RemoveButtonState();
+}
+
+class _RemoveButtonState extends State<RemoveButton> {
+  bool arePerformingAction = false;
+  ButtonType buttonType = ButtonType.remove;
+
+  @override
+  Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return; // prevents spam
+        arePerformingAction = true;
+        setState(() {});
+
+        if (buttonType == ButtonType.remove) {
+          final res = await userProvider.blacklistUser(profileId: widget.whitelistedUserId);
+          if (res["status"]) buttonType = ButtonType.add;
+        } else {
+          final res = await userProvider.whitelistUser(profileId: widget.whitelistedUserId);
+          if (res["status"]) buttonType = ButtonType.remove;
+        }
+
+        arePerformingAction = false;
+        setState(() {});
+      },
+      color: buttonType == ButtonType.remove ? Colors.red : primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : Text(buttonType == ButtonType.remove ? "Remove" : "Add"),
+    );
+  }
 }

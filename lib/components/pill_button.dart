@@ -8,7 +8,7 @@ class PillButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color color, textColor;
   final bool enabled;
-  final double margin;
+  final double margin, width;
   const PillButton({
     Key? key,
     required this.child,
@@ -17,6 +17,7 @@ class PillButton extends StatelessWidget {
     this.enabled = true,
     this.textColor = Colors.white,
     this.margin = 10,
+    this.width = double.infinity,
   }) : super(key: key);
 
   @override
@@ -24,16 +25,18 @@ class PillButton extends StatelessWidget {
     final bool darkModeIsEnabled = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return Container(
       margin: EdgeInsets.symmetric(vertical: margin),
-      width: double.infinity,
+      width: width,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(11),
         child: TextButton(
           style: ButtonStyle(
-            backgroundColor: enabled ? MaterialStateProperty.all<Color>(color) : MaterialStateProperty.all<Color>(darkModeIsEnabled ? const Color.fromRGBO(44, 44, 44, 1) : const Color.fromRGBO(210, 210, 210, 1)),
+            backgroundColor: enabled
+                ? MaterialStateProperty.all<Color>(color)
+                : MaterialStateProperty.all<Color>(darkModeIsEnabled ? const Color.fromRGBO(44, 44, 44, 1) : const Color.fromRGBO(210, 210, 210, 1)),
             foregroundColor: MaterialStateProperty.all<Color>(textColor),
             overlayColor: enabled ? null : MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) => Colors.transparent),
           ),
-          onPressed: enabled ? onTap : null,
+          onPressed: enabled ? onTap : () {},
           child: child,
         ),
       ),

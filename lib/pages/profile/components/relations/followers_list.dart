@@ -10,6 +10,8 @@ import 'package:nerajima/models/search_models.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class FollowersList extends StatefulWidget {
   final String profileId;
@@ -83,7 +85,10 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);
     if (isLoading) {
-      return loadingBody(context);
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: loadingBody(context),
+      );
     } else if (hasError) {
       return errorBody(context);
     }
@@ -107,7 +112,7 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
       itemBuilder: (BuildContext context, int index) {
         if (index == followersList.length) {
           return Container(
-            padding: EdgeInsets.only(top: hasMore ? 25.0 : 0),
+            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
             child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
@@ -116,6 +121,11 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
           name: followersList[index].name,
           username: followersList[index].username,
           imageUrl: followersList[index].miniProfilePicture,
+          trailingWidget: RemoveButton(
+            profileId: widget.profileId,
+            followerId: followersList[index].profileId,
+            followerUsername: followersList[index].username,
+          ),
         );
       },
     );
@@ -124,10 +134,7 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
   Widget loadingBody(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, theme, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 50.0),
-          child: LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black),
-        );
+        return LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black);
       },
     );
   }
@@ -160,4 +167,97 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class RemoveButton extends StatefulWidget {
+  final String profileId, followerId, followerUsername;
+  const RemoveButton({Key? key, required this.profileId, required this.followerId, required this.followerUsername}) : super(key: key);
+
+  @override
+  State<RemoveButton> createState() => _RemoveButtonState();
+}
+
+class _RemoveButtonState extends State<RemoveButton> {
+  bool arePerformingAction = false;
+  bool didRemoveFollower = false;
+
+  @override
+  Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    // if we're one of the followers, show an unfollow button
+    if (userProvider.user.profileId == widget.followerId) return _unfollowButton(context);
+
+    // if the profile's whose followers we're viewing isn't ours, show nothing
+    if (userProvider.user.profileId != widget.profileId) return const SizedBox();
+
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmRemove = await showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          enableDrag: true,
+          useRootNavigator: true,
+          builder: (context) {
+            return CustomBottomSheet(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(true),
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text("Confirm ${widget.followerUsername}'s removal", style: const TextStyle(fontSize: 17, color: Colors.red)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmRemove ?? false) {
+          arePerformingAction = true;
+          setState(() {});
+
+          final res = await userProvider.removeFollower(profileId: widget.followerId);
+          if (res["status"]) didRemoveFollower = true;
+
+          arePerformingAction = false;
+          setState(() {});
+        }
+      },
+      color: Colors.red,
+      width: 100,
+      enabled: !didRemoveFollower,
+      child: arePerformingAction ? const LoadingSpinner() : Text(!didRemoveFollower ? "Remove" : "Removed"),
+    );
+  }
+
+  bool areFollowing = true;
+
+  Widget _unfollowButton(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return; // prevents spam
+        arePerformingAction = true;
+        setState(() {});
+
+        if (areFollowing) {
+          final res = await userProvider.unfollowUser(profileId: widget.profileId);
+          if (res["status"]) areFollowing = false;
+        } else {
+          final res = await userProvider.followUser(profileId: widget.profileId);
+          if (res["status"]) areFollowing = true;
+        }
+
+        arePerformingAction = false;
+        setState(() {});
+      },
+      color: areFollowing ? Colors.red : primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : Text(areFollowing ? "Unfollow" : "Follow"),
+    );
+  }
 }

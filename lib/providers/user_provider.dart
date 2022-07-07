@@ -293,12 +293,13 @@ class UserProvider extends ChangeNotifier {
         return {"status": false, "message": resData["data"]["data"]};
       }
 
-      throw Exception("Something went wrong following the name...");
+      throw Exception("Something went wrong following the user...");
     } catch (e) {
       return Future.error(e);
     }
   }
 
+  /// Success map keys: [status]. Error map keys: [status, message].
   Future<Map<String, dynamic>> unfollowUser({required String profileId}) async {
     try {
       final url = Uri.parse("${ApiEndpoints.unfollowAUser}/$profileId");
@@ -312,7 +313,67 @@ class UserProvider extends ChangeNotifier {
         return {"status": false, "message": resData["data"]["data"]};
       }
 
-      throw Exception("Something went wrong unfollowing the name...");
+      throw Exception("Something went wrong unfollowing the user...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> removeFollower({required String profileId}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.removeAFollower}/$profileId");
+      Response response = await delete(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        decrementFollowers();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong removing the user...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> whitelistUser({required String profileId}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.addToWhitelist}/$profileId");
+      Response response = await post(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        incrementWhitelisted();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong whitelisting the user...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> blacklistUser({required String profileId}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.removeFromWhitelist}/$profileId");
+      Response response = await delete(url, headers: _requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        decrementWhitelisted();
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong blacklisting the user...");
     } catch (e) {
       return Future.error(e);
     }
