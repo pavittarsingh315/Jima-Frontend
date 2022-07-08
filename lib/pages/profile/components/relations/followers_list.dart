@@ -245,9 +245,11 @@ class _RemoveButtonState extends State<RemoveButton> {
         setState(() {});
 
         if (areFollowing) {
+          // _unfollowButton is rendered when we are in someone else's followers meaning to unfollow them, we need the id of the profile whose followers we're viewing
           final res = await userProvider.unfollowUser(profileId: widget.profileId);
           if (res["status"]) areFollowing = false;
         } else {
+          // _unfollowButton is rendered when we are in someone else's followers meaning to unfollow them, we need the id of the profile whose followers we're viewing
           final res = await userProvider.followUser(profileId: widget.profileId);
           if (res["status"]) areFollowing = true;
         }

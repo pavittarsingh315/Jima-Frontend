@@ -96,7 +96,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
                       const SizedBox(height: 4),
                       if (dateJoined != "")
                         Text(
-                          "EST. $dateJoined",
+                          "Joined $dateJoined",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 11,

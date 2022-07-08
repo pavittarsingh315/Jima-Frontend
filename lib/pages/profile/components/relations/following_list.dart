@@ -10,20 +10,7 @@ import 'package:nerajima/models/search_models.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
-
-class MockData {
-  late final int price;
-  late final String name;
-
-  MockData({required this.price, required this.name});
-
-  factory MockData.fromJson(Map<String, dynamic> json) {
-    return MockData(
-      price: json['price'],
-      name: json['name'],
-    );
-  }
-}
+import 'package:nerajima/components/pill_button.dart';
 
 class FollowingList extends StatefulWidget {
   final String profileId;
@@ -38,7 +25,7 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
   final int limit = 15;
   int page = 1;
   bool isLoading = false, hasError = false, hasMore = true;
-  List<MockData> followingList = [];
+  List<SearchUser> followingList = [];
 
   @override
   void initState() {
@@ -57,14 +44,14 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
       isLoading = true;
 
       UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-      final url = Uri.parse("https://testing-jima.herokuapp.com/api/dev/getMockData?page=$page&limit=$limit");
+      final url = Uri.parse("${ApiEndpoints.getAProfilesFollowing}/${widget.profileId}?page=$page&limit=$limit");
       Response response = await get(url, headers: userProvider.requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
         List resArray = resData["data"]["data"];
-        List<MockData> parsedRes = resArray.map((e) {
-          return MockData.fromJson(e);
+        List<SearchUser> parsedRes = resArray.map((e) {
+          return SearchUser.fromJson(e);
         }).toList();
 
         setState(() {
@@ -128,15 +115,12 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
             child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
-        return Container(
-          height: 50,
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 11),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: index % 2 == 0 ? Colors.blue.shade100 : Colors.pink.shade100,
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Text(followingList[index].name),
+        return ProfilePreviewCard(
+          profileId: followingList[index].profileId,
+          name: followingList[index].name,
+          username: followingList[index].username,
+          imageUrl: followingList[index].miniProfilePicture,
+          trailingWidget: UnfollowButton(followingId: followingList[index].profileId),
         );
       },
     );
@@ -178,4 +162,43 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class UnfollowButton extends StatefulWidget {
+  final String followingId;
+  const UnfollowButton({Key? key, required this.followingId}) : super(key: key);
+
+  @override
+  State<UnfollowButton> createState() => _UnfollowButtonState();
+}
+
+class _UnfollowButtonState extends State<UnfollowButton> {
+  bool arePerformingAction = false;
+  bool areFollowing = true;
+
+  @override
+  Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return; // prevents spam
+        arePerformingAction = true;
+        setState(() {});
+
+        if (areFollowing) {
+          final res = await userProvider.unfollowUser(profileId: widget.followingId);
+          if (res["status"]) areFollowing = false;
+        } else {
+          final res = await userProvider.followUser(profileId: widget.followingId);
+          if (res["status"]) areFollowing = true;
+        }
+
+        arePerformingAction = false;
+        setState(() {});
+      },
+      color: areFollowing ? Colors.red : primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : Text(areFollowing ? "Unfollow" : "Follow"),
+    );
+  }
 }
