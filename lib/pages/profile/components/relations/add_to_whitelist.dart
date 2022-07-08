@@ -114,11 +114,12 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
           return ConstrainedBox(
             constraints: BoxConstraints(maxHeight: constraints.maxHeight),
             child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
                 AnimatedPadding(
                   curve: Curves.linear,
                   duration: const Duration(milliseconds: 50),
-                  padding: EdgeInsets.only(top: constraints.maxHeight / 3.33),
+                  padding: EdgeInsets.symmetric(vertical: constraints.maxHeight / 4),
                   child: Column(
                     children: const [
                       Icon(CupertinoIcons.search, size: 50),

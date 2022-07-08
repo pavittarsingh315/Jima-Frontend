@@ -166,7 +166,7 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
       children: [
         Column(
           children: [
-            SizedBox(height: size.height / 3.33),
+            SizedBox(height: size.height / 4),
             icon,
             const SizedBox(height: 10),
             Text(
