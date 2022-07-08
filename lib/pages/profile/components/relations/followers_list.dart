@@ -209,7 +209,7 @@ class _RemoveButtonState extends State<RemoveButton> {
                     height: 60,
                     width: double.infinity,
                     alignment: Alignment.center,
-                    child: Text("Confirm ${widget.followerUsername}'s removal", style: const TextStyle(fontSize: 17, color: Colors.red)),
+                    child: Text("🥾 ${widget.followerUsername} ⁉️", style: const TextStyle(fontSize: 17)),
                   ),
                 ),
               ],

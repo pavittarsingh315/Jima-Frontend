@@ -55,7 +55,7 @@ class _RelationsState extends State<Relations> with SingleTickerProviderStateMix
               children: [
                 FollowersList(profileId: widget.profileId),
                 WhitelistList(profileId: widget.profileId),
-                FollowingList(profileId: widget.profileId),
+                FollowingList(profileId: widget.profileId, profileUsername: widget.profileUsername),
               ],
             ),
           ),

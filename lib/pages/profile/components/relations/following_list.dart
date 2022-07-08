@@ -11,10 +11,11 @@ import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class FollowingList extends StatefulWidget {
-  final String profileId;
-  const FollowingList({Key? key, required this.profileId}) : super(key: key);
+  final String profileId, profileUsername;
+  const FollowingList({Key? key, required this.profileId, required this.profileUsername}) : super(key: key);
 
   @override
   State<FollowingList> createState() => _FollowingListState();
@@ -123,6 +124,7 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
           trailingWidget: UnfollowButton(
             profileId: widget.profileId,
             followingId: followingList[index].profileId,
+            profileUsername: widget.profileUsername,
           ),
         );
       },
@@ -168,8 +170,8 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
 }
 
 class UnfollowButton extends StatefulWidget {
-  final String profileId, followingId;
-  const UnfollowButton({Key? key, required this.profileId, required this.followingId}) : super(key: key);
+  final String profileId, followingId, profileUsername;
+  const UnfollowButton({Key? key, required this.profileId, required this.followingId, required this.profileUsername}) : super(key: key);
 
   @override
   State<UnfollowButton> createState() => _UnfollowButtonState();
@@ -218,14 +220,39 @@ class _UnfollowButtonState extends State<UnfollowButton> {
     return PillButton(
       onTap: () async {
         if (arePerformingAction) return; // prevents spam
-        arePerformingAction = true;
-        setState(() {});
+        bool? confirmRemove = await showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          enableDrag: true,
+          useRootNavigator: true,
+          builder: (context) {
+            return CustomBottomSheet(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(true),
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text("🥾 ${widget.profileUsername} ⁉️", style: const TextStyle(fontSize: 17)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
 
-        final res = await userProvider.removeFollower(profileId: widget.profileId);
-        if (res["status"]) didRemoveFollower = true;
+        if (confirmRemove ?? false) {
+          arePerformingAction = true;
+          setState(() {});
 
-        arePerformingAction = false;
-        setState(() {});
+          final res = await userProvider.removeFollower(profileId: widget.profileId);
+          if (res["status"]) didRemoveFollower = true;
+
+          arePerformingAction = false;
+          setState(() {});
+        }
       },
       color: Colors.red,
       width: 100,
