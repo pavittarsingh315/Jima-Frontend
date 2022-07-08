@@ -120,7 +120,10 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
           name: followingList[index].name,
           username: followingList[index].username,
           imageUrl: followingList[index].miniProfilePicture,
-          trailingWidget: UnfollowButton(followingId: followingList[index].profileId),
+          trailingWidget: UnfollowButton(
+            profileId: widget.profileId,
+            followingId: followingList[index].profileId,
+          ),
         );
       },
     );
@@ -165,8 +168,8 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
 }
 
 class UnfollowButton extends StatefulWidget {
-  final String followingId;
-  const UnfollowButton({Key? key, required this.followingId}) : super(key: key);
+  final String profileId, followingId;
+  const UnfollowButton({Key? key, required this.profileId, required this.followingId}) : super(key: key);
 
   @override
   State<UnfollowButton> createState() => _UnfollowButtonState();
@@ -179,6 +182,13 @@ class _UnfollowButtonState extends State<UnfollowButton> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    // this case is only met when viewing someone else's followings and the current user is in that followings
+    if (userProvider.user.profileId == widget.followingId) return _removeButton(context);
+
+    // if the profile whose followings we're viewing isn't ours, show nothing
+    if (userProvider.user.profileId != widget.profileId) return const SizedBox();
+
     return PillButton(
       onTap: () async {
         if (arePerformingAction) return; // prevents spam
@@ -199,6 +209,28 @@ class _UnfollowButtonState extends State<UnfollowButton> {
       color: areFollowing ? Colors.red : primary,
       width: 100,
       child: arePerformingAction ? const LoadingSpinner() : Text(areFollowing ? "Unfollow" : "Follow"),
+    );
+  }
+
+  bool didRemoveFollower = false;
+  Widget _removeButton(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return; // prevents spam
+        arePerformingAction = true;
+        setState(() {});
+
+        final res = await userProvider.removeFollower(profileId: widget.profileId);
+        if (res["status"]) didRemoveFollower = true;
+
+        arePerformingAction = false;
+        setState(() {});
+      },
+      color: Colors.red,
+      width: 100,
+      enabled: !didRemoveFollower,
+      child: arePerformingAction ? const LoadingSpinner() : Text(!didRemoveFollower ? "Remove" : "Removed"),
     );
   }
 }

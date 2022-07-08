@@ -184,10 +184,11 @@ class _RemoveButtonState extends State<RemoveButton> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-    // if we're one of the followers, show an unfollow button
+
+    // this case is only met when viewing someone else's followers and the current user is in that followers
     if (userProvider.user.profileId == widget.followerId) return _unfollowButton(context);
 
-    // if the profile's whose followers we're viewing isn't ours, show nothing
+    // if the profile whose followers we're viewing isn't ours, show nothing
     if (userProvider.user.profileId != widget.profileId) return const SizedBox();
 
     return PillButton(
@@ -245,11 +246,9 @@ class _RemoveButtonState extends State<RemoveButton> {
         setState(() {});
 
         if (areFollowing) {
-          // _unfollowButton is rendered when we are in someone else's followers meaning to unfollow them, we need the id of the profile whose followers we're viewing
           final res = await userProvider.unfollowUser(profileId: widget.profileId);
           if (res["status"]) areFollowing = false;
         } else {
-          // _unfollowButton is rendered when we are in someone else's followers meaning to unfollow them, we need the id of the profile whose followers we're viewing
           final res = await userProvider.followUser(profileId: widget.profileId);
           if (res["status"]) areFollowing = true;
         }
