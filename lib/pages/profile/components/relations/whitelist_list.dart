@@ -7,7 +7,7 @@ import 'dart:convert' as convert;
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/models/search_models.dart';
-import 'package:nerajima/pages/profile/components/relations/add_to_whitelist.dart';
+import 'package:nerajima/pages/profile/components/relations/whitelist_button.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
@@ -110,26 +110,9 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
       );
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(child: SizedBox(width: MediaQuery.of(context).size.width * 0.95, child: whitelistBody(context))),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.13),
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(11))),
-              builder: (context) {
-                return const AddToWhitelist();
-              },
-            );
-          },
-          backgroundColor: primary,
-          enableFeedback: true,
-          child: const Icon(CupertinoIcons.person_add_solid, color: Colors.white),
-        ),
-      ),
+      floatingActionButton: const Padding(padding: EdgeInsets.only(bottom: 50), child: WhitelistButton()),
     );
   }
 

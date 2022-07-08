@@ -70,11 +70,7 @@ class _SearchBodyState extends State<SearchBody> {
   }
 
   void _onSearchTypingStop(value) {
-    if (searchTimer != null) {
-      setState(() {
-        searchTimer?.cancel();
-      });
-    }
+    if (searchTimer != null) searchTimer?.cancel();
     setState(() {
       searchTimer = Timer(const Duration(milliseconds: 500), () {
         _searchProvider.makeSearch(query: value, authToken: _userProvider.user.access, userId: _userProvider.user.userId);

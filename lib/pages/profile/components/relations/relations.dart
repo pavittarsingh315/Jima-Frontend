@@ -32,6 +32,7 @@ class _RelationsState extends State<Relations> with SingleTickerProviderStateMix
       appBar: AppBar(
         title: Text("${widget.profileUsername}'s"),
       ),
+      resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
