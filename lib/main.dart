@@ -7,6 +7,7 @@ import 'package:nerajima/router.dart';
 import 'package:nerajima/providers/auth_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/search_provider.dart';
+import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 
 void backgroundHandler() {
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => WhitelistProvider()),
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
           builder: (BuildContext context, _) {

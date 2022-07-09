@@ -50,27 +50,27 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void incrementFollowing() {
+  void _incrementFollowing() {
     _user.numFollowing++;
     notifyListeners();
   }
 
-  void decrementFollowing() {
+  void _decrementFollowing() {
     _user.numFollowing--;
     notifyListeners();
   }
 
-  void incrementWhitelisted() {
+  void _incrementWhitelisted() {
     _user.numWhitelisted++;
     notifyListeners();
   }
 
-  void decrementWhitelisted() {
+  void _decrementWhitelisted() {
     _user.numWhitelisted--;
     notifyListeners();
   }
 
-  void decrementFollowers() {
+  void _decrementFollowers() {
     _user.numFollowers--;
     notifyListeners();
   }
@@ -287,7 +287,7 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        incrementFollowing();
+        _incrementFollowing();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -307,7 +307,7 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        decrementFollowing();
+        _decrementFollowing();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -327,7 +327,7 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        decrementFollowers();
+        _decrementFollowers();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -347,7 +347,7 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        incrementWhitelisted();
+        _incrementWhitelisted();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
@@ -367,7 +367,7 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        decrementWhitelisted();
+        _decrementWhitelisted();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart';
-import 'dart:convert' as convert;
 
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/providers/user_provider.dart';
-import 'package:nerajima/models/search_models.dart';
-import 'package:nerajima/pages/profile/components/relations/whitelist_button.dart';
+import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
-import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/pages/profile/components/relations/whitelist_button.dart';
 import 'package:nerajima/components/pill_button.dart';
-import 'package:nerajima/utils/api_endpoints.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
 
 class WhitelistList extends StatefulWidget {
   final String profileId;
@@ -22,20 +19,27 @@ class WhitelistList extends StatefulWidget {
 }
 
 class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveClientMixin {
-  final ScrollController _scrollController = ScrollController();
-  final int limit = 10;
-  int page = 1;
-  bool isLoading = false, hasError = false, hasMore = true, accessGranted = false;
-  List<SearchUser> whitelistedList = [];
+  final ScrollController scrollController = ScrollController();
+  bool accessGranted = false;
 
   @override
   void initState() {
     super.initState();
     accessGranted = _checkAccessStatus();
-    if (accessGranted) _getWhitelist();
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
-        if (!hasError) _getWhitelist();
+    Future.delayed(Duration.zero, () async {
+      if (accessGranted) {
+        UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+        WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
+
+        // so that when we reopen this page, no new request is made until user scrolls to bottom
+        if (whitelistProvider.page == 1) {
+          await whitelistProvider.getWhitelist(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+        }
+        scrollController.addListener(() async {
+          if (scrollController.position.maxScrollExtent == scrollController.offset) {
+            await whitelistProvider.getWhitelist(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          }
+        });
       }
     });
   }
@@ -49,75 +53,46 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
     }
   }
 
-  Future<void> _getWhitelist() async {
-    try {
-      if (isLoading || !hasMore) return; // prevents excess requests being performed.
-      isLoading = true;
-
-      UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-      final url = Uri.parse("${ApiEndpoints.getWhitelist}?page=$page&limit=$limit");
-      Response response = await get(url, headers: userProvider.requestHeaders);
-      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
-
-      if (resData["message"] == "Success") {
-        List resArray = resData["data"]["data"];
-        List<SearchUser> parsedRes = resArray.map((e) {
-          return SearchUser.fromJson(e);
-        }).toList();
-
-        setState(() {
-          hasMore = parsedRes.length == limit;
-          isLoading = false;
-          page++;
-          whitelistedList.addAll(parsedRes);
-        });
-      } else if (resData["message"] == "Error") {
-        setState(() {
-          isLoading = false;
-          hasError = true;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        hasError = true;
-      });
-    }
-  }
-
   @override
   void dispose() {
-    _scrollController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
-        child: loadingBody(context),
-      );
-    } else if (hasError) {
-      return errorBody(context);
-    } else if (!accessGranted) {
+    if (!accessGranted) {
       return nonErrorMessageBody(
         context,
         const Icon(CupertinoIcons.nosign, size: 50, color: Colors.red),
         "Access Denied",
         "You are only allowed to view your own whitelist.",
       );
+    } else {
+      return Consumer<WhitelistProvider>(
+        builder: (context, whitelist, child) {
+          if (whitelist.isLoading) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 50.0),
+              child: loadingBody(context),
+            );
+          } else if (whitelist.hasError) {
+            return errorBody(context);
+          } else {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              body: Center(child: SizedBox(width: MediaQuery.of(context).size.width * 0.95, child: whitelistBody(context, whitelist))),
+              floatingActionButton: const Padding(padding: EdgeInsets.only(bottom: 50), child: WhitelistButton()),
+            );
+          }
+        },
+      );
     }
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Center(child: SizedBox(width: MediaQuery.of(context).size.width * 0.95, child: whitelistBody(context))),
-      floatingActionButton: const Padding(padding: EdgeInsets.only(bottom: 50), child: WhitelistButton()),
-    );
   }
 
-  Widget whitelistBody(BuildContext context) {
-    if (whitelistedList.isEmpty) {
+  Widget whitelistBody(BuildContext context, WhitelistProvider whitelist) {
+    if (whitelist.whitelistedList.isEmpty) {
       return nonErrorMessageBody(
         context,
         const Icon(CupertinoIcons.person, size: 50),
@@ -126,23 +101,23 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
       );
     }
     return ListView.builder(
-      controller: _scrollController,
+      controller: scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: whitelistedList.length + 1,
+      itemCount: whitelist.whitelistedList.length + 1,
       padding: EdgeInsets.only(bottom: navBarHeight(context)),
       itemBuilder: (BuildContext context, int index) {
-        if (index == whitelistedList.length) {
+        if (index == whitelist.whitelistedList.length) {
           return Container(
-            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
-            child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            padding: EdgeInsets.symmetric(vertical: whitelist.hasMore ? 25.0 : 0),
+            child: whitelist.hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
         return ProfilePreviewCard(
-          profileId: whitelistedList[index].profileId,
-          name: whitelistedList[index].name,
-          username: whitelistedList[index].username,
-          imageUrl: whitelistedList[index].miniProfilePicture,
-          trailingWidget: RemoveButton(whitelistedUserId: whitelistedList[index].profileId),
+          profileId: whitelist.whitelistedList[index].profileId,
+          name: whitelist.whitelistedList[index].name,
+          username: whitelist.whitelistedList[index].username,
+          imageUrl: whitelist.whitelistedList[index].miniProfilePicture,
+          trailingWidget: RemoveButton(whitelistedUserId: whitelist.whitelistedList[index].profileId),
         );
       },
     );
