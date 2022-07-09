@@ -39,10 +39,12 @@ class WhitelistProvider extends ChangeNotifier {
         _page++;
         whitelistedList.addAll(parsedRes);
         notifyListeners();
+        return;
       } else if (resData["message"] == "Error") {
         _isLoading = false;
         _hasError = true;
         notifyListeners();
+        return;
       }
 
       throw Exception("Failed to load whitelist...");
