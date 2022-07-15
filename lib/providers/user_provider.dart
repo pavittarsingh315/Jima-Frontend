@@ -340,9 +340,9 @@ class UserProvider extends ChangeNotifier {
   }
 
   /// Success map keys: [status]. Error map keys: [status, message].
-  Future<Map<String, dynamic>> whitelistUser({required String profileId}) async {
+  Future<Map<String, dynamic>> inviteToWhitelist({required String profileId}) async {
     try {
-      final url = Uri.parse("${ApiEndpoints.addToWhitelist}/$profileId");
+      final url = Uri.parse("${ApiEndpoints.inviteToWhitelist}/$profileId");
       Response response = await post(url, headers: _requestHeaders);
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 

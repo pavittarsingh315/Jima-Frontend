@@ -21,39 +21,30 @@ class ApiEndpoints {
 
   static const String getProfilePicUploadUrl = "$_utilUrl/getPresignUrl/profilePicture";
 
-  /// Append query to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
-  static const String searchForUser = "$_profileUrl/search/user";
+  static const String searchForUser = "$_profileUrl/search/user"; // append "/query". endpoint also takes ?page= and ?limit= url params
   static const String getSearchHistory = "$_profileUrl/search/history/get";
   static const String clearSearchHistory = "$_profileUrl/search/history/clear";
+  static const String addToSearchHistory = "$_profileUrl/search/history/add"; // append "/toBeAddedSearch"
+  static const String removeFromSearchHistory = "$_profileUrl/search/history/remove"; // append "/toBeDeletedIndex"
 
-  /// Append query to end of the url
-  static const String addToSearchHistory = "$_profileUrl/search/history/add";
+  static const String getAProfile = "$_profileUrl/get"; // append "/profileOwnerProfileId"
 
-  /// Append index of search to remove to the end of the url
-  static const String removeFromSearchHistory = "$_profileUrl/search/history/remove";
+  static const String inviteToWhitelist = "$_profileUrl/whitelist/invite"; // append "/toBeInvitedProfileId"
+  static const String revokeWhitelistInvite = "$_profileUrl/whitelist/invite/revoke"; // append "/toBeDeletedInviteId"
+  static const String acceptWhitelistInvite = "$_profileUrl/whitelist/invite/accept"; // append "/toBeAcceptedInviteId"
+  static const String declineWhitelistInvite = "$_profileUrl/whitelist/invite/decline"; // append "/toBeDeclinedInviteId"
+  static const String requestWhitelistEntry = "$_profileUrl/whitelist/request"; // append "/toRequestProfileId"
+  static const String cancelWhitelistEntryRequest = "$_profileUrl/whitelist/request/cancel"; // append "/toBeDeletedRequestId"
+  static const String acceptWhitelistEntryRequest = "$_profileUrl/whitelist/request/accept"; // append "/toBeAcceptedRequestId"
+  static const String declineWhitelistEntryRequest = "$_profileUrl/whitelist/request/decline"; // append "/toBeDeclinedRequestId"
+  static const String removeFromWhitelist = "$_profileUrl/whitelist/remove"; // append "/toBeRemovedProfileId"
+  static const String leaveWhitelist = "$_profileUrl/whitelist/leave"; // append "/whitelistOwnerProfileId"
+  static const String getWhitelist = "$_profileUrl/whitelist/get"; // endpoint takes ?page= and ?limit= url params
+  static const String getWhitelistSubscriptions = "$_profileUrl/whitelist/subscriptions/get"; // endpoint takes ?page= and ?limit= url params
 
-  /// Append profileId of profile to get to the end of the url
-  static const String getAProfile = "$_profileUrl/get";
-
-  /// Append the profileId of profile to whitelist to the end of the url
-  static const String addToWhitelist = "$_profileUrl/whitelist/add";
-
-  /// Append the profileId of profile to blacklist to the end of the url
-  static const String removeFromWhitelist = "$_profileUrl/whitelist/remove";
-  static const String getWhitelist = "$_profileUrl/whitelist/get";
-
-  /// Append the profileId of profile to follow to the end of the url
-  static const String followAUser = "$_profileUrl/follow";
-
-  /// Append the profileId of profile to unfollow to the end of the url
-  static const String unfollowAUser = "$_profileUrl/unfollow";
-
-  /// Append the profileId of profile to remove to the end of the url
-  static const String removeAFollower = "$_profileUrl/followers/remove";
-
-  /// Append the profileId of profile to get followers for to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
-  static const String getAProfilesFollowers = "$_profileUrl/followers";
-
-  /// Append the profileId of profile to get followings for to the end of the url. Endpoint also takes optional limit and page parameters. If not provided, they're defaults are page=1 and limit=10
-  static const String getAProfilesFollowing = "$_profileUrl/following";
+  static const String followAUser = "$_profileUrl/follow"; // append "/profileIdToFollow"
+  static const String unfollowAUser = "$_profileUrl/unfollow"; // append "/profileIdToUnfollow"
+  static const String removeAFollower = "$_profileUrl/followers/remove"; // append "/profileIdToRemove"
+  static const String getAProfilesFollowers = "$_profileUrl/followers"; // endpoint takes ?page= and ?limit= url params
+  static const String getAProfilesFollowing = "$_profileUrl/following"; // endpoint takes ?page= and ?limit= url params
 }

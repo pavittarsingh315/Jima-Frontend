@@ -121,7 +121,7 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
           name: followingList[index].name,
           username: followingList[index].username,
           imageUrl: followingList[index].miniProfilePicture,
-          trailingWidget: UnfollowButton(
+          trailingWidget: FollowingsActionButton(
             profileId: widget.profileId,
             followingId: followingList[index].profileId,
             profileUsername: widget.profileUsername,
@@ -169,15 +169,15 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 }
 
-class UnfollowButton extends StatefulWidget {
+class FollowingsActionButton extends StatefulWidget {
   final String profileId, followingId, profileUsername;
-  const UnfollowButton({Key? key, required this.profileId, required this.followingId, required this.profileUsername}) : super(key: key);
+  const FollowingsActionButton({Key? key, required this.profileId, required this.followingId, required this.profileUsername}) : super(key: key);
 
   @override
-  State<UnfollowButton> createState() => _UnfollowButtonState();
+  State<FollowingsActionButton> createState() => _FollowingsActionButtonState();
 }
 
-class _UnfollowButtonState extends State<UnfollowButton> {
+class _FollowingsActionButtonState extends State<FollowingsActionButton> {
   bool arePerformingAction = false;
   bool areFollowing = true;
 
@@ -235,7 +235,7 @@ class _UnfollowButtonState extends State<UnfollowButton> {
                     height: 60,
                     width: double.infinity,
                     alignment: Alignment.center,
-                    child: Text("🥾 ${widget.profileUsername} ⁉️", style: const TextStyle(fontSize: 17)),
+                    child: Text("Remove ${widget.profileUsername}", style: const TextStyle(fontSize: 17, color: Colors.red)),
                   ),
                 ),
               ],

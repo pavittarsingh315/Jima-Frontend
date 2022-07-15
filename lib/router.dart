@@ -21,6 +21,7 @@ import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.da
 import 'package:nerajima/components/visit_profile.dart';
 
 import 'package:nerajima/pages/profile/components/relations/relations.dart';
+import 'package:nerajima/pages/profile/components/whitelist/manage_whitelist.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -71,6 +72,8 @@ class RouteGenerator {
     } else if (settings.name == Relations.route) {
       if (args == null) return _notEnoughArgs();
       return MaterialPageRoute(builder: (_) => Relations(initialTabIndex: args["initialTabIndex"], profileId: args["profileId"], profileUsername: args["profileUsername"]));
+    } else if (settings.name == ManageWhitelist.route) {
+      return MaterialPageRoute(builder: (_) => const ManageWhitelist());
     }
     return _notFoundRoute();
   }

@@ -9,6 +9,7 @@ import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/pages/profile/components/relations/whitelist_button.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class WhitelistList extends StatefulWidget {
   final String profileId;
@@ -117,7 +118,10 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
           name: whitelist.whitelistedList[index].name,
           username: whitelist.whitelistedList[index].username,
           imageUrl: whitelist.whitelistedList[index].miniProfilePicture,
-          trailingWidget: RemoveButton(whitelistedUserId: whitelist.whitelistedList[index].profileId),
+          trailingWidget: WhitelistActionButton(
+            whitelistedUserId: whitelist.whitelistedList[index].profileId,
+            whitelistedUsername: whitelist.whitelistedList[index].username,
+          ),
         );
       },
     );
@@ -161,43 +165,88 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 }
 
-enum ButtonType { add, remove }
-
-class RemoveButton extends StatefulWidget {
-  final String whitelistedUserId;
-  const RemoveButton({Key? key, required this.whitelistedUserId}) : super(key: key);
+class WhitelistActionButton extends StatefulWidget {
+  final String whitelistedUserId, whitelistedUsername;
+  const WhitelistActionButton({Key? key, required this.whitelistedUserId, required this.whitelistedUsername}) : super(key: key);
 
   @override
-  State<RemoveButton> createState() => _RemoveButtonState();
+  State<WhitelistActionButton> createState() => _WhitelistActionButtonState();
 }
 
-class _RemoveButtonState extends State<RemoveButton> {
+class _WhitelistActionButtonState extends State<WhitelistActionButton> {
   bool arePerformingAction = false;
-  ButtonType buttonType = ButtonType.remove;
+  bool didBlacklistUser = false;
 
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (didBlacklistUser) {
+      return _inviteButton(context, userProvider);
+    } else {
+      return _removeButton(context, userProvider);
+    }
+  }
+
+  bool didInviteUser = false;
+  Widget _inviteButton(BuildContext context, UserProvider userProvider) {
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return;
+        setState(() => arePerformingAction = true);
+
+        final res = await userProvider.inviteToWhitelist(profileId: widget.whitelistedUserId);
+        if (res["status"]) didInviteUser = true;
+
+        setState(() => arePerformingAction = false);
+      },
+      color: primary,
+      width: 100,
+      enabled: !didInviteUser,
+      child: arePerformingAction ? const LoadingSpinner() : Text(!didInviteUser ? "Invite" : "Invited"),
+    );
+  }
+
+  Widget _removeButton(BuildContext context, UserProvider userProvider) {
     return PillButton(
       onTap: () async {
         if (arePerformingAction) return; // prevents spam
-        arePerformingAction = true;
-        setState(() {});
+        bool? confirmRemove = await showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          enableDrag: true,
+          useRootNavigator: true,
+          builder: (context) {
+            return CustomBottomSheet(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(true),
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text("Remove ${widget.whitelistedUsername}", style: const TextStyle(fontSize: 17, color: Colors.red)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
 
-        if (buttonType == ButtonType.remove) {
+        if (confirmRemove ?? false) {
+          arePerformingAction = true;
+          setState(() {});
+
           final res = await userProvider.blacklistUser(profileId: widget.whitelistedUserId);
-          if (res["status"]) buttonType = ButtonType.add;
-        } else {
-          final res = await userProvider.whitelistUser(profileId: widget.whitelistedUserId);
-          if (res["status"]) buttonType = ButtonType.remove;
-        }
+          if (res["status"]) didBlacklistUser = true;
 
-        arePerformingAction = false;
-        setState(() {});
+          arePerformingAction = false;
+          setState(() {});
+        }
       },
-      color: buttonType == ButtonType.remove ? Colors.red : primary,
+      color: Colors.red,
       width: 100,
-      child: arePerformingAction ? const LoadingSpinner() : Text(buttonType == ButtonType.remove ? "Remove" : "Add"),
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Remove"),
     );
   }
 }

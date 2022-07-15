@@ -18,6 +18,7 @@ import 'package:nerajima/pages/profile/components/edit/edit_username.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_name.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_bio.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.dart';
+import 'package:nerajima/pages/profile/components/whitelist/manage_whitelist.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const String route = "/editProfile";
@@ -135,7 +136,7 @@ class EditProfilePage extends StatelessWidget {
                                 SizedBox(height: size.height * 0.03),
                                 _field(context, "Blacklist Msg", user.user.blacklistMessage),
                                 SizedBox(height: size.height * 0.03),
-                                _field(context, "Manage Whitelist", user.user.numWhitelisted.toString()),
+                                _field(context, "Manage Whitelist", ""),
                               ],
                             );
                           },
@@ -242,7 +243,13 @@ class EditProfilePage extends StatelessWidget {
             screen: const EditBlacklistMessagePage(),
             settings: const RouteSettings(name: EditBlacklistMessagePage.route),
           );
-        } else if (fieldName == "Manage Whitelist") {}
+        } else if (fieldName == "Manage Whitelist") {
+          pushNewScreenWithRouteSettings(
+            context,
+            screen: const ManageWhitelist(),
+            settings: const RouteSettings(name: ManageWhitelist.route),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -258,15 +265,18 @@ class EditProfilePage extends StatelessWidget {
               fieldName,
               style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(
-              width: size.width * 0.42,
-              child: Text(
-                fieldValue,
-                overflow: TextOverflow.clip,
-                textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: 17),
-              ),
-            ),
+            if (fieldName != "Manage Whitelist")
+              SizedBox(
+                width: size.width * 0.42,
+                child: Text(
+                  fieldValue,
+                  overflow: TextOverflow.clip,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(fontSize: 17),
+                ),
+              )
+            else
+              const Icon(Icons.arrow_forward_ios_rounded, size: 16),
           ],
         ),
       ),
