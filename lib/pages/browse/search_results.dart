@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
@@ -17,6 +18,9 @@ class _SearchResultsState extends State<SearchResults> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) HapticFeedback.lightImpact();
+    });
   }
 
   @override

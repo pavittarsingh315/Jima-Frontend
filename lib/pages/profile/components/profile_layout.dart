@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:custom_nested_scroll_view/custom_nested_scroll_view.dart';
@@ -53,7 +54,11 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
   @override
   void didUpdateWidget(covariant ProfileLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _tabController.dispose(); // dispose previous controller
     _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) HapticFeedback.lightImpact();
+    });
   }
 
   @override
