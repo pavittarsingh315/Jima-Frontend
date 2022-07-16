@@ -32,14 +32,15 @@ class ProfilePreviewCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  name != "" ? name : username,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  username,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
-                ),
+                if (name != "")
+                  Text(
+                    username,
+                    style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  ),
               ],
             ),
           ),
