@@ -64,8 +64,8 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final double minExtent = 103, maxExtent = size.height / 2.2;
+    final double minExtent = MediaQuery.of(context).padding.top + kToolbarHeight;
+    final double maxExtent = MediaQuery.of(context).size.height / 2.1;
     final double opacityIncreaseSlope = calculateOpacitySlope(maxOpacity: (maxExtent - minExtent) * (1 - percentScrollForOpacity));
     return Scaffold(
       body: CustomNestedScrollView(

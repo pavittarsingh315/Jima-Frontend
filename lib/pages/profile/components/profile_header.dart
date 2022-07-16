@@ -59,7 +59,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
             if (leading != null)
               Positioned(
-                top: 50,
+                top: minExtent / 3.2,
                 left: 0,
                 child: _buttonWrapper(
                   opacity: opacity,
@@ -69,7 +69,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             if (action != null)
               Positioned(
-                top: 50,
+                top: minExtent / 3.2,
                 right: 0,
                 child: _buttonWrapper(
                   opacity: opacity,
@@ -79,9 +79,8 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             Positioned(
               child: Align(
-                alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: minExtent / 12),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

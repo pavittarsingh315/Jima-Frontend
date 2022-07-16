@@ -121,7 +121,7 @@ class EditProfilePage extends StatelessWidget {
                   [
                     Center(
                       child: SizedBox(
-                        width: size.width * 0.8,
+                        width: size.width * 0.85,
                         child: Consumer<UserProvider>(
                           builder: (context, user, child) {
                             return Column(
