@@ -59,7 +59,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
             if (leading != null)
               Positioned(
-                top: minExtent / 2,
+                top: MediaQuery.of(context).padding.top,
                 left: 0,
                 child: _buttonWrapper(
                   opacity: opacity,
@@ -69,7 +69,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             if (action != null)
               Positioned(
-                top: minExtent / 2,
+                top: MediaQuery.of(context).padding.top,
                 right: 0,
                 child: _buttonWrapper(
                   opacity: opacity,
