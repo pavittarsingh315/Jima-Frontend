@@ -53,6 +53,10 @@ class ThemeProvider extends ChangeNotifier {
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: Colors.black,
     hintColor: Colors.grey[400],
+    scrollbarTheme: ScrollbarThemeData(
+      radius: const Radius.circular(22),
+      thumbColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(66, 66, 66, 1)),
+    ),
   );
 
   static final lightTheme = ThemeData(
@@ -70,5 +74,9 @@ class ThemeProvider extends ChangeNotifier {
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: Colors.white,
+    scrollbarTheme: ScrollbarThemeData(
+      radius: const Radius.circular(22),
+      thumbColor: MaterialStateProperty.all<Color>(Colors.grey.shade400),
+    ),
   );
 }

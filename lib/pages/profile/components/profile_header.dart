@@ -80,7 +80,7 @@ class ProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
             Positioned(
               child: Align(
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: minExtent / 12),
+                  padding: EdgeInsets.only(bottom: minExtent / (dateJoined == "" ? 6 : 12)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

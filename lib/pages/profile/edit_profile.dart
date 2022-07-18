@@ -17,12 +17,12 @@ import 'package:nerajima/utils/button_styles.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_username.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_name.dart';
 import 'package:nerajima/pages/profile/components/edit/edit_bio.dart';
-import 'package:nerajima/pages/profile/components/edit/edit_blacklist_message.dart';
 import 'package:nerajima/pages/profile/components/whitelist/manage_whitelist.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const String route = "/editProfile";
   const EditProfilePage({Key? key}) : super(key: key);
+  final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +45,15 @@ class EditProfilePage extends StatelessWidget {
   }
 
   Widget _header(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final double opacityIncreaseSlope = calculateOpacitySlope(maxOpacity: ((size.height / 2.2) - 103) * (1 - 0.75));
+    final double minExtent = MediaQuery.of(context).padding.top + kToolbarHeight;
+    final double maxExtent = MediaQuery.of(context).size.height / 2.1;
+    final double opacityIncreaseSlope = calculateOpacitySlope(maxOpacity: (maxExtent - minExtent) * (1 - percentScrollForOpacity));
 
     return SliverPersistentHeader(
       pinned: true,
       delegate: ProfileHeaderDelegate(
-        minExtentParam: 103,
-        maxExtentParam: size.height / 2.2,
+        minExtentParam: minExtent,
+        maxExtentParam: maxExtent,
         opacityIncreaseSlope: opacityIncreaseSlope,
         percentScrollForOpacity: 0.75,
         username: "Edit Profile",
@@ -133,8 +134,6 @@ class EditProfilePage extends StatelessWidget {
                                 _field(context, "Name", user.user.name),
                                 SizedBox(height: size.height * 0.03),
                                 _field(context, "Bio", user.user.bio),
-                                SizedBox(height: size.height * 0.03),
-                                _field(context, "Blacklist Msg", user.user.blacklistMessage),
                                 SizedBox(height: size.height * 0.03),
                                 _field(context, "Manage Whitelist", ""),
                               ],
@@ -236,12 +235,6 @@ class EditProfilePage extends StatelessWidget {
             context,
             screen: const EditBioPage(),
             settings: const RouteSettings(name: EditBioPage.route),
-          );
-        } else if (fieldName == "Blacklist Msg") {
-          pushNewScreenWithRouteSettings(
-            context,
-            screen: const EditBlacklistMessagePage(),
-            settings: const RouteSettings(name: EditBlacklistMessagePage.route),
           );
         } else if (fieldName == "Manage Whitelist") {
           pushNewScreenWithRouteSettings(

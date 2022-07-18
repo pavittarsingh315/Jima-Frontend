@@ -22,6 +22,8 @@ import 'package:nerajima/components/visit_profile.dart';
 
 import 'package:nerajima/pages/profile/components/relations/relations.dart';
 import 'package:nerajima/pages/profile/components/whitelist/manage_whitelist.dart';
+import 'package:nerajima/pages/profile/components/whitelist/whitelist_invites.dart';
+import 'package:nerajima/pages/profile/components/whitelist/whitelist_requests.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -74,7 +76,12 @@ class RouteGenerator {
       return MaterialPageRoute(builder: (_) => Relations(initialTabIndex: args["initialTabIndex"], profileId: args["profileId"], profileUsername: args["profileUsername"]));
     } else if (settings.name == ManageWhitelist.route) {
       return MaterialPageRoute(builder: (_) => const ManageWhitelist());
+    } else if (settings.name == WhitelistInvites.route) {
+      return MaterialPageRoute(builder: (_) => const WhitelistInvites());
+    } else if (settings.name == WhitelistRequests.route) {
+      return MaterialPageRoute(builder: (_) => const WhitelistRequests());
     }
+
     return _notFoundRoute();
   }
 
