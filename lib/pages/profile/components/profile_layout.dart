@@ -49,7 +49,16 @@ class ProfileLayout extends StatefulWidget {
 class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateMixin {
   final double percentScrollForOpacity = 0.75; // % header needs to scroll before its opacity kicks in
   final GlobalKey infoKey = GlobalKey();
-  late TabController _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: widget.isCurrentUserProfile ? 3 : 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) HapticFeedback.lightImpact();
+    });
+  }
 
   @override
   void didUpdateWidget(covariant ProfileLayout oldWidget) {
@@ -180,7 +189,6 @@ class _ProfileLayoutState extends State<ProfileLayout> with TickerProviderStateM
           height: 38,
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(width: 0.2, color: Colors.grey.shade400),
               bottom: BorderSide(width: 0.2, color: Colors.grey.shade400),
             ),
             color: theme.isDarkModeEnabled ? Colors.black : Colors.white,
