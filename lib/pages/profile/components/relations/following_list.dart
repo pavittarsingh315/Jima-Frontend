@@ -23,7 +23,7 @@ class FollowingList extends StatefulWidget {
 
 class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
-  final int limit = 15;
+  final int limit = 30;
   int page = 1;
   bool isLoading = false, hasError = false, hasMore = true;
   List<SearchUser> followingList = [];

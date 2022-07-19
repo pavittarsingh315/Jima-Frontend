@@ -33,7 +33,7 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
         WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
 
         // so that when we reopen this page, no new request is made until user scrolls to bottom
-        if (whitelistProvider.page == 1) {
+        if (whitelistProvider.listPage == 1) {
           await whitelistProvider.getWhitelist(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
         }
         scrollController.addListener(() async {
@@ -73,12 +73,12 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
     } else {
       return Consumer<WhitelistProvider>(
         builder: (context, whitelist, child) {
-          if (whitelist.isLoading) {
+          if (whitelist.isListLoading) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 50.0),
               child: loadingBody(context),
             );
-          } else if (whitelist.hasError) {
+          } else if (whitelist.listHasError) {
             return errorBody(context);
           } else {
             return Scaffold(
@@ -109,8 +109,8 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
       itemBuilder: (BuildContext context, int index) {
         if (index == whitelist.whitelistedList.length) {
           return Container(
-            padding: EdgeInsets.symmetric(vertical: whitelist.hasMore ? 25.0 : 0),
-            child: whitelist.hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            padding: EdgeInsets.symmetric(vertical: whitelist.listHasMore ? 25.0 : 0),
+            child: whitelist.listHasMore ? Center(child: loadingBody(context)) : const SizedBox(),
           );
         }
         return ProfilePreviewCard(

@@ -33,12 +33,19 @@ class ApiEndpoints {
   static const String revokeWhitelistInvite = "$_profileUrl/whitelist/invite/revoke"; // append "/toBeDeletedInviteId"
   static const String acceptWhitelistInvite = "$_profileUrl/whitelist/invite/accept"; // append "/toBeAcceptedInviteId"
   static const String declineWhitelistInvite = "$_profileUrl/whitelist/invite/decline"; // append "/toBeDeclinedInviteId"
+  static const String getSentWhitelistInvites = "$_profileUrl/whitelist/invites/sent/get"; // endpoint takes ?page= and ?limit= url params
+  static const String getReceivedWhitelistInvites = "$_profileUrl/whitelist/invites/received/get"; // endpoint takes ?page= and ?limit= url params
+
   static const String requestWhitelistEntry = "$_profileUrl/whitelist/request"; // append "/toRequestProfileId"
   static const String cancelWhitelistEntryRequest = "$_profileUrl/whitelist/request/cancel"; // append "/toBeDeletedRequestId"
   static const String acceptWhitelistEntryRequest = "$_profileUrl/whitelist/request/accept"; // append "/toBeAcceptedRequestId"
   static const String declineWhitelistEntryRequest = "$_profileUrl/whitelist/request/decline"; // append "/toBeDeclinedRequestId"
+  static const String getSentWhitelistRequests = "$_profileUrl/whitelist/requests/sent/get"; // endpoint takes ?page= and ?limit= url params
+  static const String getReceivedWhitelistRequests = "$_profileUrl/whitelist/requests/received/get"; // endpoint takes ?page= and ?limit= url params
+
   static const String removeFromWhitelist = "$_profileUrl/whitelist/remove"; // append "/toBeRemovedProfileId"
   static const String leaveWhitelist = "$_profileUrl/whitelist/leave"; // append "/whitelistOwnerProfileId"
+
   static const String getWhitelist = "$_profileUrl/whitelist/get"; // endpoint takes ?page= and ?limit= url params
   static const String getWhitelistSubscriptions = "$_profileUrl/whitelist/subscriptions/get"; // endpoint takes ?page= and ?limit= url params
 

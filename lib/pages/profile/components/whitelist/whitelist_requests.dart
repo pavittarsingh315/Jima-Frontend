@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/pages/profile/components/whitelist/requests_sent.dart';
+import 'package:nerajima/pages/profile/components/whitelist/requests_received.dart';
 
 class WhitelistRequests extends StatefulWidget {
   static const String route = "/whitelistRequests";
@@ -52,10 +54,7 @@ class _WhitelistRequestsState extends State<WhitelistRequests> with SingleTicker
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                Container(color: Colors.red),
-                Container(color: Colors.blue),
-              ],
+              children: const [RequestsSent(), RequestsReceived()],
             ),
           ),
         ],
