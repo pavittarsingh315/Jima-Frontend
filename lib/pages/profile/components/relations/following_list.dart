@@ -96,14 +96,8 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
   }
 
   Widget followingBody(BuildContext context) {
-    if (followingList.isEmpty) {
-      return nonErrorMessageBody(
-        context,
-        const Icon(CupertinoIcons.person, size: 50),
-        "No Followings",
-        "This user currently isn't following anyone.",
-      );
-    }
+    if (followingList.isEmpty) return emptyBody(context);
+
     return Scrollbar(
       child: ListView.builder(
         controller: _scrollController,
@@ -145,25 +139,33 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
     return const Center(child: Text("Error..."));
   }
 
-  Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
-    final size = MediaQuery.of(context).size;
-    return ListView(
-      children: [
-        Column(
+  Widget emptyBody(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
           children: [
-            SizedBox(height: size.height / 4),
-            icon,
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
+            Container(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+              alignment: Alignment.center,
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: const [
+                  Icon(CupertinoIcons.person, size: 50),
+                  SizedBox(height: 10),
+                  Text(
+                    "No Followings",
+                    style: TextStyle(fontSize: 35),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text("This user currently isn't following anyone.", textAlign: TextAlign.center),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(description, textAlign: TextAlign.center),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 

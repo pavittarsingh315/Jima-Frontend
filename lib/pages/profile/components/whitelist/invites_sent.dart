@@ -65,14 +65,8 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
   }
 
   Widget sentBody(BuildContext context, WhitelistProvider whitelist) {
-    if (whitelist.sentInvites.isEmpty) {
-      return nonErrorMessageBody(
-        context,
-        const Icon(CupertinoIcons.paperplane_fill, size: 50),
-        "No Invites",
-        "You have no invites pending.",
-      );
-    }
+    if (whitelist.sentInvites.isEmpty) return emptyBody(context);
+
     return Scrollbar(
       child: ListView.builder(
         controller: scrollController,
@@ -109,25 +103,33 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
     return const Center(child: Text("Error..."));
   }
 
-  Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
-    final size = MediaQuery.of(context).size;
-    return ListView(
-      children: [
-        Column(
+  Widget emptyBody(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
           children: [
-            SizedBox(height: size.height / 4),
-            icon,
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
+            Container(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+              alignment: Alignment.center,
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: const [
+                  Icon(CupertinoIcons.paperplane, size: 50),
+                  SizedBox(height: 10),
+                  Text(
+                    "No Invites",
+                    style: TextStyle(fontSize: 35),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text("You currently have no invites that are pending.", textAlign: TextAlign.center),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(description, textAlign: TextAlign.center),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 

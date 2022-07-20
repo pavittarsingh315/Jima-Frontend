@@ -65,14 +65,8 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
   }
 
   Widget receivedBody(BuildContext context, WhitelistProvider whitelist) {
-    if (whitelist.receivedRequests.isEmpty) {
-      return nonErrorMessageBody(
-        context,
-        const Icon(CupertinoIcons.mail_solid, size: 50),
-        "No Requests",
-        "You have no new requests.",
-      );
-    }
+    if (whitelist.receivedRequests.isEmpty) return emptyBody(context);
+
     return Scrollbar(
       child: ListView.builder(
         controller: scrollController,
@@ -109,25 +103,33 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
     return const Center(child: Text("Error..."));
   }
 
-  Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
-    final size = MediaQuery.of(context).size;
-    return ListView(
-      children: [
-        Column(
+  Widget emptyBody(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
           children: [
-            SizedBox(height: size.height / 4),
-            icon,
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
+            Container(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+              alignment: Alignment.center,
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: const [
+                  Icon(CupertinoIcons.mail, size: 50),
+                  SizedBox(height: 10),
+                  Text(
+                    "No Requests",
+                    style: TextStyle(fontSize: 35),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text("You currently have no new requests.", textAlign: TextAlign.center),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(description, textAlign: TextAlign.center),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 

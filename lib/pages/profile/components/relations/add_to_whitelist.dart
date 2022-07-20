@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nerajima/components/ui_search_bar.dart';
+import 'package:nerajima/providers/theme_provider.dart';
 
 class AddToWhitelist extends StatefulWidget {
   const AddToWhitelist({Key? key}) : super(key: key);
@@ -111,31 +112,31 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
     return Expanded(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-            child: ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [
-                AnimatedPadding(
-                  curve: Curves.linear,
-                  duration: const Duration(milliseconds: 50),
-                  padding: EdgeInsets.symmetric(vertical: constraints.maxHeight / 4),
-                  child: Column(
-                    children: const [
-                      Icon(CupertinoIcons.search, size: 50),
-                      SizedBox(height: 10),
-                      Text(
-                        "Search Users",
-                        style: TextStyle(fontSize: 35),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-                      Text("Search for a user you would like to whitelist.", textAlign: TextAlign.center),
-                    ],
-                  ),
+          return ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              AnimatedContainer(
+                curve: Curves.linear,
+                duration: const Duration(milliseconds: 50),
+                alignment: Alignment.center,
+                constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: const [
+                    Icon(CupertinoIcons.search, size: 50),
+                    SizedBox(height: 10),
+                    Text(
+                      "Search Users",
+                      style: TextStyle(fontSize: 35),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    Text("Search for a user you would like to whitelist.", textAlign: TextAlign.center),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),

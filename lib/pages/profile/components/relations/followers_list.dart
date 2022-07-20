@@ -96,14 +96,8 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
   }
 
   Widget followersBody(BuildContext context) {
-    if (followersList.isEmpty) {
-      return nonErrorMessageBody(
-        context,
-        const Icon(CupertinoIcons.person, size: 50),
-        "No Followers",
-        "This user currently has no followers. Help them out?",
-      );
-    }
+    if (followersList.isEmpty) return emptyBody(context);
+
     return Scrollbar(
       child: ListView.builder(
         controller: _scrollController,
@@ -145,25 +139,33 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
     return const Center(child: Text("Error..."));
   }
 
-  Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
-    final size = MediaQuery.of(context).size;
-    return ListView(
-      children: [
-        Column(
+  Widget emptyBody(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
           children: [
-            SizedBox(height: size.height / 4),
-            icon,
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
+            Container(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+              alignment: Alignment.center,
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: const [
+                  Icon(CupertinoIcons.person, size: 50),
+                  SizedBox(height: 10),
+                  Text(
+                    "No Followers",
+                    style: TextStyle(fontSize: 35),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text("This user currently has no followers.", textAlign: TextAlign.center),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(description, textAlign: TextAlign.center),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 

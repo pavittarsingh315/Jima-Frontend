@@ -143,23 +143,32 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
 
   Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
     final size = MediaQuery.of(context).size;
-    return ListView(
-      children: [
-        Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ListView(
           children: [
-            SizedBox(height: size.height / 4),
-            icon,
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
+            Container(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight - navBarHeight(context)),
+              alignment: Alignment.center,
+              child: Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  icon,
+                  const SizedBox(height: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 35),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(description, textAlign: TextAlign.center),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(description, textAlign: TextAlign.center),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
