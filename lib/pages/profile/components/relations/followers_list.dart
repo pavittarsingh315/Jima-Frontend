@@ -104,30 +104,32 @@ class _FollowersListState extends State<FollowersList> with AutomaticKeepAliveCl
         "This user currently has no followers. Help them out?",
       );
     }
-    return ListView.builder(
-      controller: _scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: followersList.length + 1,
-      padding: EdgeInsets.only(bottom: navBarHeight(context)),
-      itemBuilder: (BuildContext context, int index) {
-        if (index == followersList.length) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
-            child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+    return Scrollbar(
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: followersList.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (BuildContext context, int index) {
+          if (index == followersList.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
+              child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: followersList[index].profileId,
+            name: followersList[index].name,
+            username: followersList[index].username,
+            imageUrl: followersList[index].miniProfilePicture,
+            trailingWidget: FollowersActionButton(
+              profileId: widget.profileId,
+              followerId: followersList[index].profileId,
+              followerUsername: followersList[index].username,
+            ),
           );
-        }
-        return ProfilePreviewCard(
-          profileId: followersList[index].profileId,
-          name: followersList[index].name,
-          username: followersList[index].username,
-          imageUrl: followersList[index].miniProfilePicture,
-          trailingWidget: FollowersActionButton(
-            profileId: widget.profileId,
-            followerId: followersList[index].profileId,
-            followerUsername: followersList[index].username,
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

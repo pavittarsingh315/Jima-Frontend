@@ -101,29 +101,31 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
         "You currently have no one whitelisted to view your private posts.",
       );
     }
-    return ListView.builder(
-      controller: scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: whitelist.whitelistedList.length + 1,
-      padding: EdgeInsets.only(bottom: navBarHeight(context)),
-      itemBuilder: (BuildContext context, int index) {
-        if (index == whitelist.whitelistedList.length) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: whitelist.listHasMore ? 25.0 : 0),
-            child: whitelist.listHasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+    return Scrollbar(
+      child: ListView.builder(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: whitelist.whitelistedList.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (BuildContext context, int index) {
+          if (index == whitelist.whitelistedList.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: whitelist.listHasMore ? 25.0 : 0),
+              child: whitelist.listHasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: whitelist.whitelistedList[index].profileId,
+            name: whitelist.whitelistedList[index].name,
+            username: whitelist.whitelistedList[index].username,
+            imageUrl: whitelist.whitelistedList[index].miniProfilePicture,
+            trailingWidget: WhitelistActionButton(
+              whitelistedUserId: whitelist.whitelistedList[index].profileId,
+              whitelistedUsername: whitelist.whitelistedList[index].username,
+            ),
           );
-        }
-        return ProfilePreviewCard(
-          profileId: whitelist.whitelistedList[index].profileId,
-          name: whitelist.whitelistedList[index].name,
-          username: whitelist.whitelistedList[index].username,
-          imageUrl: whitelist.whitelistedList[index].miniProfilePicture,
-          trailingWidget: WhitelistActionButton(
-            whitelistedUserId: whitelist.whitelistedList[index].profileId,
-            whitelistedUsername: whitelist.whitelistedList[index].username,
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

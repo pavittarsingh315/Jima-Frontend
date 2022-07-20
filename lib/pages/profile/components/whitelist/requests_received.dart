@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
 
 class RequestsReceived extends StatefulWidget {
   const RequestsReceived({Key? key}) : super(key: key);
@@ -63,8 +65,36 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
   }
 
   Widget receivedBody(BuildContext context, WhitelistProvider whitelist) {
-    // check if received requests list is empty
-    return Container(color: Colors.blue);
+    if (whitelist.receivedRequests.isEmpty) {
+      return nonErrorMessageBody(
+        context,
+        const Icon(CupertinoIcons.mail_solid, size: 50),
+        "No Requests",
+        "You have no new requests.",
+      );
+    }
+    return Scrollbar(
+      child: ListView.builder(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: whitelist.receivedRequests.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (context, index) {
+          if (index == whitelist.receivedRequests.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: whitelist.receivedReqHasMore ? 25.0 : 0),
+              child: whitelist.receivedReqHasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: whitelist.receivedRequests[index].senderProfile!.profileId,
+            name: whitelist.receivedRequests[index].senderProfile!.name,
+            username: whitelist.receivedRequests[index].senderProfile!.username,
+            imageUrl: whitelist.receivedRequests[index].senderProfile!.miniProfilePicture,
+          );
+        },
+      ),
+    );
   }
 
   Widget loadingBody(BuildContext context) {

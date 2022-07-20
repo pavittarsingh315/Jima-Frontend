@@ -193,62 +193,64 @@ class _SearchBodyState extends State<SearchBody> {
   Widget _recentSearches(BuildContext context) {
     return Consumer<SearchProvider>(
       builder: (context, search, child) {
-        return ListView.builder(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          itemCount: search.recentSearches.length,
-          padding: EdgeInsets.only(bottom: navBarHeight(context)),
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      searchController.text = search.recentSearches[index];
-                      search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-                      // make search suggestions equal to a users results list in search provider.
-                      showResults = true;
-                      showClearButton = true;
-                      showRecents = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: 50,
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            search.recentSearches[index],
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
-                          Container(height: 0.25, color: Colors.transparent),
-                        ],
+        return Scrollbar(
+          child: ListView.builder(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: search.recentSearches.length,
+            padding: EdgeInsets.only(bottom: navBarHeight(context)),
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int index) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        searchController.text = search.recentSearches[index];
+                        search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                        // make search suggestions equal to a users results list in search provider.
+                        showResults = true;
+                        showClearButton = true;
+                        showRecents = false;
+                        setState(() {});
+                      },
+                      child: Container(
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              search.recentSearches[index],
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            // Container makes it so emojis don't render all choppy. Replace it with a button or leave it like so.
+                            Container(height: 0.25, color: Colors.transparent),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    search.removeRecentSearch(index: index, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 30, right: 14.5),
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.clear, size: 17, color: Colors.grey),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      search.removeRecentSearch(index: index, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 30, right: 14.5),
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.clear, size: 17, color: Colors.grey),
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         );
       },
     );
@@ -270,22 +272,24 @@ class _SearchBodyState extends State<SearchBody> {
             ),
           );
         }
-        return ListView.builder(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          itemCount: search.searchSuggestions.length,
-          padding: EdgeInsets.only(bottom: navBarHeight(context)),
-          itemBuilder: (context, index) {
-            return ProfilePreviewCard(
-              profileId: search.searchSuggestions[index].profileId,
-              name: search.searchSuggestions[index].name,
-              username: search.searchSuggestions[index].username,
-              imageUrl: search.searchSuggestions[index].miniProfilePicture,
-              trailingWidget: Container(),
-              onTap: () {
-                search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
-              },
-            );
-          },
+        return Scrollbar(
+          child: ListView.builder(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: search.searchSuggestions.length,
+            padding: EdgeInsets.only(bottom: navBarHeight(context)),
+            itemBuilder: (context, index) {
+              return ProfilePreviewCard(
+                profileId: search.searchSuggestions[index].profileId,
+                name: search.searchSuggestions[index].name,
+                username: search.searchSuggestions[index].username,
+                imageUrl: search.searchSuggestions[index].miniProfilePicture,
+                trailingWidget: Container(),
+                onTap: () {
+                  search.addRecentSearch(query: searchController.text, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+                },
+              );
+            },
+          ),
         );
       },
     );

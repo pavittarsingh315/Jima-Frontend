@@ -104,30 +104,32 @@ class _FollowingListState extends State<FollowingList> with AutomaticKeepAliveCl
         "This user currently isn't following anyone.",
       );
     }
-    return ListView.builder(
-      controller: _scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: followingList.length + 1,
-      padding: EdgeInsets.only(bottom: navBarHeight(context)),
-      itemBuilder: (BuildContext context, int index) {
-        if (index == followingList.length) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
-            child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+    return Scrollbar(
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: followingList.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (BuildContext context, int index) {
+          if (index == followingList.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
+              child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: followingList[index].profileId,
+            name: followingList[index].name,
+            username: followingList[index].username,
+            imageUrl: followingList[index].miniProfilePicture,
+            trailingWidget: FollowingsActionButton(
+              profileId: widget.profileId,
+              followingId: followingList[index].profileId,
+              profileUsername: widget.profileUsername,
+            ),
           );
-        }
-        return ProfilePreviewCard(
-          profileId: followingList[index].profileId,
-          name: followingList[index].name,
-          username: followingList[index].username,
-          imageUrl: followingList[index].miniProfilePicture,
-          trailingWidget: FollowingsActionButton(
-            profileId: widget.profileId,
-            followingId: followingList[index].profileId,
-            profileUsername: widget.profileUsername,
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

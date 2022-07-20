@@ -4,6 +4,7 @@ import 'dart:convert' as convert;
 
 import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/models/search_models.dart';
+import 'package:nerajima/models/whitelist_model.dart';
 
 class WhitelistProvider extends ChangeNotifier {
   final int _limit = 30;
@@ -59,6 +60,7 @@ class WhitelistProvider extends ChangeNotifier {
 
   int _sentInvPage = 1;
   bool _isSentInvLoading = false, _sentInvHasError = false, _sentInvHasMore = true;
+  List<WhitelistInvitation> sentInvites = [];
 
   int get sentInvPage => _sentInvPage;
   bool get isSentInvLoading => _isSentInvLoading;
@@ -78,8 +80,15 @@ class WhitelistProvider extends ChangeNotifier {
 
       if (resData["message"] == "Success") {
         List resArray = resData["data"]["data"];
-        print(resArray);
+        List<WhitelistInvitation> parsedRes = resArray.map((e) {
+          return WhitelistInvitation.fromJson(e);
+        }).toList();
 
+        _sentInvHasMore = parsedRes.length == _limit;
+        _isSentInvLoading = false;
+        _sentInvPage++;
+        sentInvites.addAll(parsedRes);
+        notifyListeners();
         return;
       } else if (resData["message"] == "Error") {
         _isSentInvLoading = false;
@@ -99,6 +108,7 @@ class WhitelistProvider extends ChangeNotifier {
 
   int _receivedInvPage = 1;
   bool _isReceivedInvLoading = false, _receivedInvHasError = false, _receivedInvHasMore = true;
+  List<WhitelistInvitation> receivedInvites = [];
 
   int get receivedInvPage => _receivedInvPage;
   bool get isReceivedInvLoading => _isReceivedInvLoading;
@@ -118,8 +128,15 @@ class WhitelistProvider extends ChangeNotifier {
 
       if (resData["message"] == "Success") {
         List resArray = resData["data"]["data"];
-        print(resArray);
+        List<WhitelistInvitation> parsedRes = resArray.map((e) {
+          return WhitelistInvitation.fromJson(e);
+        }).toList();
 
+        _receivedInvHasMore = parsedRes.length == _limit;
+        _isReceivedInvLoading = false;
+        _receivedInvPage++;
+        receivedInvites.addAll(parsedRes);
+        notifyListeners();
         return;
       } else if (resData["message"] == "Error") {
         _isReceivedInvLoading = false;
@@ -139,6 +156,7 @@ class WhitelistProvider extends ChangeNotifier {
 
   int _sentReqPage = 1;
   bool _isSentReqLoading = false, _sentReqHasError = false, _sentReqHasMore = true;
+  List<WhitelistRequest> sentRequests = [];
 
   int get sentReqPage => _sentReqPage;
   bool get isSentReqLoading => _isSentReqLoading;
@@ -158,8 +176,15 @@ class WhitelistProvider extends ChangeNotifier {
 
       if (resData["message"] == "Success") {
         List resArray = resData["data"]["data"];
-        print(resArray);
+        List<WhitelistRequest> parsedRes = resArray.map((e) {
+          return WhitelistRequest.fromJson(e);
+        }).toList();
 
+        _sentReqHasMore = parsedRes.length == _limit;
+        _isSentReqLoading = false;
+        _sentReqPage++;
+        sentRequests.addAll(parsedRes);
+        notifyListeners();
         return;
       } else if (resData["message"] == "Error") {
         _isSentReqLoading = false;
@@ -179,6 +204,7 @@ class WhitelistProvider extends ChangeNotifier {
 
   int _receivedReqPage = 1;
   bool _isReceivedReqLoading = false, _receivedReqHasError = false, _receivedReqHasMore = true;
+  List<WhitelistRequest> receivedRequests = [];
 
   int get receivedReqPage => _receivedReqPage;
   bool get isReceivedReqLoading => _isReceivedReqLoading;
@@ -198,8 +224,15 @@ class WhitelistProvider extends ChangeNotifier {
 
       if (resData["message"] == "Success") {
         List resArray = resData["data"]["data"];
-        print(resArray);
+        List<WhitelistRequest> parsedRes = resArray.map((e) {
+          return WhitelistRequest.fromJson(e);
+        }).toList();
 
+        _receivedReqHasMore = parsedRes.length == _limit;
+        _isReceivedReqLoading = false;
+        _receivedReqPage++;
+        receivedRequests.addAll(parsedRes);
+        notifyListeners();
         return;
       } else if (resData["message"] == "Error") {
         _isReceivedReqLoading = false;

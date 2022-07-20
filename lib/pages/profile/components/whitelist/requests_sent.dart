@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/user_provider.dart';
 import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
 
 class RequestsSent extends StatefulWidget {
   const RequestsSent({Key? key}) : super(key: key);
@@ -43,6 +45,7 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Consumer<WhitelistProvider>(
       builder: (context, whitelist, child) {
         if (whitelist.isSentReqLoading) {
@@ -62,8 +65,36 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
   }
 
   Widget sentBody(BuildContext context, WhitelistProvider whitelist) {
-    // check if sent requests list is empty
-    return Container(color: Colors.red);
+    if (whitelist.sentRequests.isEmpty) {
+      return nonErrorMessageBody(
+        context,
+        const Icon(CupertinoIcons.paperplane_fill, size: 50),
+        "No Requests",
+        "You have no requests pending.",
+      );
+    }
+    return Scrollbar(
+      child: ListView.builder(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: whitelist.sentRequests.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (context, index) {
+          if (index == whitelist.sentRequests.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: whitelist.sentReqHasMore ? 25.0 : 0),
+              child: whitelist.sentReqHasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: whitelist.sentRequests[index].receiverProfile!.profileId,
+            name: whitelist.sentRequests[index].receiverProfile!.name,
+            username: whitelist.sentRequests[index].receiverProfile!.username,
+            imageUrl: whitelist.sentRequests[index].receiverProfile!.miniProfilePicture,
+          );
+        },
+      ),
+    );
   }
 
   Widget loadingBody(BuildContext context) {
