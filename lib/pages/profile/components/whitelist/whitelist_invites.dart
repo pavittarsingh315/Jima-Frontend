@@ -35,7 +35,7 @@ class _WhitelistInvitesState extends State<WhitelistInvites> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Invites")),
+      appBar: AppBar(title: const Text("Whitelist Invites")),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

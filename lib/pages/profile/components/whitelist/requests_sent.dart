@@ -7,6 +7,7 @@ import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
 
 class RequestsSent extends StatefulWidget {
   const RequestsSent({Key? key}) : super(key: key);
@@ -85,6 +86,7 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
             name: whitelist.sentRequests[index].receiverProfile!.name,
             username: whitelist.sentRequests[index].receiverProfile!.username,
             imageUrl: whitelist.sentRequests[index].receiverProfile!.miniProfilePicture,
+            trailingWidget: SentRequestsAction(profileId: whitelist.sentRequests[index].receiverProfile!.profileId),
           );
         },
       ),
@@ -135,4 +137,52 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class SentRequestsAction extends StatefulWidget {
+  final String profileId;
+  const SentRequestsAction({Key? key, required this.profileId}) : super(key: key);
+
+  @override
+  State<SentRequestsAction> createState() => _SentRequestsActionState();
+}
+
+class _SentRequestsActionState extends State<SentRequestsAction> {
+  bool didRequestUser = true;
+  bool arePerformingAction = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (didRequestUser) {
+      return _cancelButton(context);
+    } else {
+      return _requestButton(context);
+    }
+  }
+
+  Widget _cancelButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didRequestUser = false;
+        });
+      },
+      color: Colors.red,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Cancel"),
+    );
+  }
+
+  Widget _requestButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didRequestUser = true;
+        });
+      },
+      color: primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Request"),
+    );
+  }
 }

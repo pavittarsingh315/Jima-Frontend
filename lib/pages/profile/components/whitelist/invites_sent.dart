@@ -7,6 +7,7 @@ import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
 
 class InvitesSent extends StatefulWidget {
   const InvitesSent({Key? key}) : super(key: key);
@@ -85,6 +86,7 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
             name: whitelist.sentInvites[index].receiverProfile!.name,
             username: whitelist.sentInvites[index].receiverProfile!.username,
             imageUrl: whitelist.sentInvites[index].receiverProfile!.miniProfilePicture,
+            trailingWidget: SentInvitesAction(profileId: whitelist.sentInvites[index].receiverProfile!.profileId),
           );
         },
       ),
@@ -135,4 +137,52 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class SentInvitesAction extends StatefulWidget {
+  final String profileId;
+  const SentInvitesAction({Key? key, required this.profileId}) : super(key: key);
+
+  @override
+  State<SentInvitesAction> createState() => _SentInvitesActionState();
+}
+
+class _SentInvitesActionState extends State<SentInvitesAction> {
+  bool didInviteUser = true;
+  bool arePerformingAction = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (didInviteUser) {
+      return _cancelButton(context);
+    } else {
+      return _inviteButton(context);
+    }
+  }
+
+  Widget _cancelButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didInviteUser = false;
+        });
+      },
+      color: Colors.red,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Cancel"),
+    );
+  }
+
+  Widget _inviteButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didInviteUser = true;
+        });
+      },
+      color: primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Invite"),
+    );
+  }
 }

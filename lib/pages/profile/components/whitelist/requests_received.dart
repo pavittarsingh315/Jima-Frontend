@@ -7,6 +7,7 @@ import 'package:nerajima/providers/whitelist_provider.dart';
 import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
 
 class RequestsReceived extends StatefulWidget {
   const RequestsReceived({Key? key}) : super(key: key);
@@ -85,6 +86,7 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
             name: whitelist.receivedRequests[index].senderProfile!.name,
             username: whitelist.receivedRequests[index].senderProfile!.username,
             imageUrl: whitelist.receivedRequests[index].senderProfile!.miniProfilePicture,
+            trailingWidget: ReceivedRequestsAction(profileId: whitelist.receivedRequests[index].senderProfile!.profileId),
           );
         },
       ),
@@ -135,4 +137,54 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class ReceivedRequestsAction extends StatefulWidget {
+  final String profileId;
+  const ReceivedRequestsAction({Key? key, required this.profileId}) : super(key: key);
+
+  @override
+  State<ReceivedRequestsAction> createState() => _ReceivedRequestsActionState();
+}
+
+class _ReceivedRequestsActionState extends State<ReceivedRequestsAction> {
+  bool didAccept = false, didDecline = false;
+  bool arePerformingAction = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (didAccept) {
+      return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Accepted"));
+    } else if (didDecline) {
+      return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Declined"));
+    } else {
+      return Row(children: [_acceptButton(context), const SizedBox(width: 5), _declineButton(context)]);
+    }
+  }
+
+  Widget _acceptButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didAccept = true;
+        });
+      },
+      color: primary,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Accept"),
+    );
+  }
+
+  Widget _declineButton(BuildContext context) {
+    return PillButton(
+      onTap: () async {
+        setState(() {
+          didDecline = true;
+        });
+      },
+      color: Colors.red,
+      width: 100,
+      child: arePerformingAction ? const LoadingSpinner() : const Text("Decline"),
+    );
+  }
 }

@@ -206,7 +206,7 @@ class _WhitelistActionButtonState extends State<WhitelistActionButton> {
         setState(() => arePerformingAction = true);
 
         final res = await userProvider.inviteToWhitelist(profileId: widget.whitelistedUserId);
-        if (res["status"]) didInviteUser = true;
+        if (res["status"]) didInviteUser = true; // TODO: insert this new invite into sent invites
 
         setState(() => arePerformingAction = false);
       },

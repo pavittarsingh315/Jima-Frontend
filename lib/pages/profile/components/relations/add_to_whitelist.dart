@@ -15,6 +15,7 @@ import 'package:nerajima/models/search_models.dart';
 import 'package:nerajima/utils/api_endpoints.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
+import 'package:nerajima/components/pill_button.dart';
 
 class AddToWhitelist extends StatefulWidget {
   const AddToWhitelist({Key? key}) : super(key: key);
@@ -270,9 +271,46 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
             name: searchSuggestions[index].name,
             username: searchSuggestions[index].username,
             imageUrl: searchSuggestions[index].miniProfilePicture,
+            trailingWidget: AddToWhitelistAction(profileId: searchSuggestions[index].profileId),
           );
         },
       ),
+    );
+  }
+}
+
+class AddToWhitelistAction extends StatefulWidget {
+  final String profileId;
+  const AddToWhitelistAction({Key? key, required this.profileId}) : super(key: key);
+
+  @override
+  State<AddToWhitelistAction> createState() => _AddToWhitelistActionState();
+}
+
+class _AddToWhitelistActionState extends State<AddToWhitelistAction> {
+  bool didInviteUser = false;
+  bool arePerformingAction = false;
+
+  @override
+  Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    if (widget.profileId == userProvider.user.profileId) return const SizedBox();
+
+    return PillButton(
+      onTap: () async {
+        if (arePerformingAction) return;
+        setState(() => arePerformingAction = true);
+
+        final res = await userProvider.inviteToWhitelist(profileId: widget.profileId);
+        if (res["status"] || res["message"] == "Invite already sent.") didInviteUser = true; // TODO: insert this new invite into sent invites
+
+        setState(() => arePerformingAction = false);
+      },
+      color: primary,
+      width: 100,
+      enabled: !didInviteUser,
+      child: arePerformingAction ? const LoadingSpinner() : Text(!didInviteUser ? "Invite" : "Invited"),
     );
   }
 }

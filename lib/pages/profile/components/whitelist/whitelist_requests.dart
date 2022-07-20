@@ -35,7 +35,7 @@ class _WhitelistRequestsState extends State<WhitelistRequests> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Requests")),
+      appBar: AppBar(title: const Text("Whitelist Requests")),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

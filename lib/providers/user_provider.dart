@@ -60,11 +60,6 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _incrementWhitelisted() {
-    _user.numWhitelisted++;
-    notifyListeners();
-  }
-
   void _decrementWhitelisted() {
     _user.numWhitelisted--;
     notifyListeners();
@@ -347,7 +342,6 @@ class UserProvider extends ChangeNotifier {
       final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
 
       if (resData["message"] == "Success") {
-        _incrementWhitelisted();
         return {"status": true};
       } else if (resData["message"] == "Error") {
         return {"status": false, "message": resData["data"]["data"]};
