@@ -76,7 +76,7 @@ class _ManageWhitelistState extends State<ManageWhitelist> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(11),
-          border: Border.all(color: Colors.grey, width: 1),
+          border: Border.all(color: Colors.grey, width: 0.2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

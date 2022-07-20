@@ -4,8 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:nerajima/components/ui_search_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart';
+import 'dart:convert' as convert;
+
 import 'package:nerajima/providers/theme_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/components/ui_search_bar.dart';
+import 'package:nerajima/models/search_models.dart';
+import 'package:nerajima/utils/api_endpoints.dart';
+import 'package:nerajima/components/loading_spinner.dart';
+import 'package:nerajima/components/profile_preview_card.dart';
 
 class AddToWhitelist extends StatefulWidget {
   const AddToWhitelist({Key? key}) : super(key: key);
@@ -20,9 +29,27 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
   bool isClosing = false, showClearButton = false, showSuggestions = false;
   double currentFABPadding = 0; // autofocus == true => isKeyboardVisible == true => padding == 0
 
+  // infinte scroll props
+  final int limit = 30;
+  final ScrollController _scrollController = ScrollController();
+  int page = 1;
+  bool isLoading = false, hasError = false, hasMore = true;
+  List<SearchUser> searchSuggestions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent == _scrollController.offset) {
+        if (!hasError) makeSearch();
+      }
+    });
+  }
+
   @override
   void dispose() {
     searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -46,9 +73,46 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
     if (searchTimer != null) searchTimer?.cancel();
     setState(() {
       searchTimer = Timer(const Duration(milliseconds: 500), () {
-        // _searchProvider.makeSearch(query: value, authToken: _userProvider.user.access, userId: _userProvider.user.userId);
+        page = 1;
+        isLoading = false;
+        hasError = false;
+        hasMore = true;
+        searchSuggestions = [];
+        makeSearch();
       });
     });
+  }
+
+  Future<void> makeSearch() async {
+    final String query = searchController.text;
+    if (query != "") {
+      if (isLoading || !hasMore) return; // prevents excess requests being performed.
+      isLoading = true;
+
+      UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+      final url = Uri.parse("${ApiEndpoints.searchForUser}/$query?page=$page&limit=$limit");
+      Response response = await get(url, headers: userProvider.requestHeaders);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        List resArray = resData["data"]["data"];
+        List<SearchUser> parsedRes = resArray.map((e) {
+          return SearchUser.fromJson(e);
+        }).toList();
+
+        setState(() {
+          hasMore = parsedRes.length == limit;
+          isLoading = false;
+          page++;
+          searchSuggestions.addAll(parsedRes);
+        });
+      } else if (resData["message"] == "Error") {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+      }
+    }
   }
 
   @override
@@ -73,13 +137,7 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
                   _onSearchTypingStop(v);
                 },
               ),
-              if (!showSuggestions)
-                _noSearchValue(context)
-              else
-                Container(
-                  height: 100,
-                  color: Colors.blue,
-                ),
+              if (!showSuggestions) _noSearchValue(context) else _suggestions(context),
             ],
           ),
         ),
@@ -165,6 +223,56 @@ class _AddToWhitelistState extends State<AddToWhitelist> {
           ),
         );
       },
+    );
+  }
+
+  Widget loadingBody(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, theme, child) {
+        return LoadingSpinner(color: theme.isDarkModeEnabled ? Colors.white : Colors.black);
+      },
+    );
+  }
+
+  Widget errorBody(BuildContext context) {
+    return const Center(child: Text("Error..."));
+  }
+
+  Widget _suggestions(BuildContext context) {
+    if (hasError) {
+      return errorBody(context);
+    }
+    return Expanded(
+      child: Center(
+        child: SizedBox(width: MediaQuery.of(context).size.width * 0.95, child: results(context)),
+      ),
+    );
+  }
+
+  Widget results(BuildContext context) {
+    if (searchSuggestions.isEmpty) return const SizedBox();
+
+    return Scrollbar(
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: searchSuggestions.length + 1,
+        padding: EdgeInsets.only(bottom: navBarHeight(context)),
+        itemBuilder: (context, index) {
+          if (index == searchSuggestions.length) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: hasMore ? 25.0 : 0),
+              child: hasMore ? Center(child: loadingBody(context)) : const SizedBox(),
+            );
+          }
+          return ProfilePreviewCard(
+            profileId: searchSuggestions[index].profileId,
+            name: searchSuggestions[index].name,
+            username: searchSuggestions[index].username,
+            imageUrl: searchSuggestions[index].miniProfilePicture,
+          );
+        },
+      ),
     );
   }
 }
