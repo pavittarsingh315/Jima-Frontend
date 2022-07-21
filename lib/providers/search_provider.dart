@@ -94,4 +94,11 @@ class SearchProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void resetProvider() {
+    _isSearching = false;
+    _fetchedRecents = false;
+    _recentSearches = [];
+    _searchSuggestions = [];
+  }
 }

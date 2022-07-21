@@ -95,6 +95,8 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
+      _authStatus = AuthStatus.badAuth;
+      _resetPasswordStatus = AuthStatus.nil;
       await _secureStorage.delete(key: "access");
       await _secureStorage.delete(key: "refresh");
     } catch (e) {
@@ -129,7 +131,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   /// Success map keys: [status, user]. Error map keys: [status, message]
-  Future<Map<String, dynamic>> finalizeRegistration({required String code, required String contact, required String username, required String name, required String password}) async {
+  Future<Map<String, dynamic>> finalizeRegistration(
+      {required String code, required String contact, required String username, required String name, required String password}) async {
     try {
       Map<String, String> requestData = {"code": code, "contact": contact, "username": username, "name": name, "password": password};
       var url = Uri.parse(ApiEndpoints.confRegistration);

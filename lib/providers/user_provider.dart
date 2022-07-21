@@ -372,4 +372,12 @@ class UserProvider extends ChangeNotifier {
       return Future.error(e);
     }
   }
+
+  void resetProvider() {
+    // no need to reset _user, _requestHeader, and _uploader since they're updated each time a user is authenticated
+    _userStatus = UserStatus.nil;
+    _newProfilePicture = null;
+    _savedNewProfilePicture = true;
+    imgIndex = 0;
+  }
 }

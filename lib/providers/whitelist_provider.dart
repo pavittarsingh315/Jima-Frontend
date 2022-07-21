@@ -249,4 +249,36 @@ class WhitelistProvider extends ChangeNotifier {
       return Future.error(e);
     }
   }
+
+  void resetProvider() {
+    _listPage = 1;
+    _isListLoading = false;
+    _listHasError = false;
+    _listHasMore = true;
+    whitelistedList = [];
+
+    _sentInvPage = 1;
+    _isSentInvLoading = false;
+    _sentInvHasError = false;
+    _sentInvHasMore = true;
+    sentInvites = [];
+
+    _receivedInvPage = 1;
+    _isReceivedInvLoading = false;
+    _receivedInvHasError = false;
+    _receivedInvHasMore = true;
+    receivedInvites = [];
+
+    _sentReqPage = 1;
+    _isSentReqLoading = false;
+    _sentReqHasError = false;
+    _sentReqHasMore = true;
+    sentRequests = [];
+
+    _receivedReqPage = 1;
+    _isReceivedReqLoading = false;
+    _receivedReqHasError = false;
+    _receivedReqHasMore = true;
+    receivedRequests = [];
+  }
 }

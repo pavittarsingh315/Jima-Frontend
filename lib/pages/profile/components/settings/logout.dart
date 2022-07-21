@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nerajima/providers/auth_provider.dart';
+import 'package:nerajima/providers/user_provider.dart';
+import 'package:nerajima/providers/search_provider.dart';
+import 'package:nerajima/providers/whitelist_provider.dart';
+
 import 'package:nerajima/pages/authentication/login.dart';
 import 'package:nerajima/components/pill_button.dart';
 import 'package:nerajima/utils/custom_dialog.dart';
@@ -12,6 +16,9 @@ class LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
+    SearchProvider searchProvider = Provider.of<SearchProvider>(context, listen: false);
 
     Future<void> _onLogoutPress() async {
       showDialog(
@@ -27,6 +34,9 @@ class LogoutButton extends StatelessWidget {
 
           Future<void> logout() async {
             await authProvider.logout();
+            userProvider.resetProvider();
+            whitelistProvider.resetProvider();
+            searchProvider.resetProvider();
             popToLogin();
           }
 
