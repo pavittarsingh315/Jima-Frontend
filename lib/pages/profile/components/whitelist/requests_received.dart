@@ -8,6 +8,7 @@ import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class RequestsReceived extends StatefulWidget {
   const RequestsReceived({Key? key}) : super(key: key);
@@ -88,6 +89,7 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
             imageUrl: whitelist.receivedRequests[index].senderProfile!.miniProfilePicture,
             trailingWidget: ReceivedRequestsAction(
               index: index,
+              requestId: whitelist.receivedRequests[index].requestId,
               profileId: whitelist.receivedRequests[index].senderProfile!.profileId,
               didAccept: whitelist.receivedRequests[index].didAccept,
               didDecline: whitelist.receivedRequests[index].didDecline,
@@ -146,9 +148,16 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
 
 class ReceivedRequestsAction extends StatefulWidget {
   final int index;
-  final String profileId;
+  final String requestId, profileId;
   final bool didAccept, didDecline;
-  const ReceivedRequestsAction({Key? key, required this.index, required this.profileId, required this.didAccept, required this.didDecline}) : super(key: key);
+  const ReceivedRequestsAction({
+    Key? key,
+    required this.index,
+    required this.requestId,
+    required this.profileId,
+    required this.didAccept,
+    required this.didDecline,
+  }) : super(key: key);
 
   @override
   State<ReceivedRequestsAction> createState() => _ReceivedRequestsActionState();
@@ -160,23 +169,61 @@ class _ReceivedRequestsActionState extends State<ReceivedRequestsAction> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didAccept) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Accepted"));
     } else if (didDecline) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Declined"));
     } else {
-      return Row(children: [_acceptButton(context, whitelistProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider)]);
+      return Row(children: [_acceptButton(context, whitelistProvider, userProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider, userProvider)]);
     }
   }
 
-  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Future<bool?> showConfirmModal({required String message}) async {
+    bool? value = await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      enableDrag: true,
+      useRootNavigator: true,
+      builder: (context) {
+        return CustomBottomSheet(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => Navigator.of(context).pop(true),
+              child: Container(
+                height: 60,
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Text(message, style: const TextStyle(fontSize: 17, color: Colors.red)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    return value;
+  }
+
+  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider, UserProvider userProvider) {
     return PillButton(
       onTap: () async {
-        setState(() {
-          didAccept = true;
-        });
-        whitelistProvider.receivedRequests[widget.index].didAccept = true;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmAccept = await showConfirmModal(message: "Accept Request");
+
+        if (confirmAccept ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.acceptWhitelistRequest(requestId: widget.requestId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didAccept = true;
+            whitelistProvider.receivedRequests[widget.index].didAccept = true;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: primary,
       width: 100,
@@ -184,13 +231,23 @@ class _ReceivedRequestsActionState extends State<ReceivedRequestsAction> {
     );
   }
 
-  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider, UserProvider userProvider) {
     return PillButton(
       onTap: () async {
-        setState(() {
-          didDecline = true;
-        });
-        whitelistProvider.receivedRequests[widget.index].didDecline = true;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmDecline = await showConfirmModal(message: "Decline Request");
+
+        if (confirmDecline ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.declineWhitelistRequest(requestId: widget.requestId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didDecline = true;
+            whitelistProvider.receivedRequests[widget.index].didDecline = true;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: Colors.red,
       width: 100,

@@ -8,6 +8,7 @@ import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class RequestsSent extends StatefulWidget {
   const RequestsSent({Key? key}) : super(key: key);
@@ -88,6 +89,7 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
             imageUrl: whitelist.sentRequests[index].receiverProfile!.miniProfilePicture,
             trailingWidget: SentRequestsAction(
               index: index,
+              requestId: whitelist.sentRequests[index].requestId,
               profileId: whitelist.sentRequests[index].receiverProfile!.profileId,
               didRequestUser: whitelist.sentRequests[index].didRequestUser,
             ),
@@ -145,9 +147,9 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
 
 class SentRequestsAction extends StatefulWidget {
   final int index;
-  final String profileId;
+  final String requestId, profileId;
   final bool didRequestUser;
-  const SentRequestsAction({Key? key, required this.index, required this.profileId, required this.didRequestUser}) : super(key: key);
+  const SentRequestsAction({Key? key, required this.index, required this.requestId, required this.profileId, required this.didRequestUser}) : super(key: key);
 
   @override
   State<SentRequestsAction> createState() => _SentRequestsActionState();
@@ -159,39 +161,57 @@ class _SentRequestsActionState extends State<SentRequestsAction> {
 
   @override
   Widget build(BuildContext context) {
-    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didRequestUser) {
-      return _cancelButton(context, whitelistProvider);
+      return _cancelButton(context);
     } else {
-      return _requestButton(context, whitelistProvider);
+      return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Canceled"));
     }
   }
 
-  Widget _cancelButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Widget _cancelButton(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     return PillButton(
       onTap: () async {
-        setState(() {
-          didRequestUser = false;
-        });
-        whitelistProvider.sentRequests[widget.index].didRequestUser = false;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmCancel = await showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          enableDrag: true,
+          useRootNavigator: true,
+          builder: (context) {
+            return CustomBottomSheet(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(true),
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: const Text("Cancel Request", style: TextStyle(fontSize: 17, color: Colors.red)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmCancel ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.cancelWhitelistRequest(requestId: widget.requestId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didRequestUser = false;
+            whitelistProvider.sentRequests[widget.index].didRequestUser = false;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: Colors.red,
       width: 100,
       child: arePerformingAction ? const LoadingSpinner() : const Text("Cancel"),
-    );
-  }
-
-  Widget _requestButton(BuildContext context, WhitelistProvider whitelistProvider) {
-    return PillButton(
-      onTap: () async {
-        setState(() {
-          didRequestUser = true;
-        });
-        whitelistProvider.sentRequests[widget.index].didRequestUser = true;
-      },
-      color: primary,
-      width: 100,
-      child: arePerformingAction ? const LoadingSpinner() : const Text("Request"),
     );
   }
 }

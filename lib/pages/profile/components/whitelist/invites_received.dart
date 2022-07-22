@@ -8,6 +8,7 @@ import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class InvitesReceived extends StatefulWidget {
   const InvitesReceived({Key? key}) : super(key: key);
@@ -88,6 +89,7 @@ class _InvitesReceivedState extends State<InvitesReceived> with AutomaticKeepAli
             imageUrl: whitelist.receivedInvites[index].senderProfile!.miniProfilePicture,
             trailingWidget: ReceivedInvitesAction(
               index: index,
+              inviteId: whitelist.receivedInvites[index].invitationId,
               profileId: whitelist.receivedInvites[index].senderProfile!.profileId,
               didAccept: whitelist.receivedInvites[index].didAccept,
               didDecline: whitelist.receivedInvites[index].didDecline,
@@ -146,9 +148,16 @@ class _InvitesReceivedState extends State<InvitesReceived> with AutomaticKeepAli
 
 class ReceivedInvitesAction extends StatefulWidget {
   final int index;
-  final String profileId;
+  final String inviteId, profileId;
   final bool didAccept, didDecline;
-  const ReceivedInvitesAction({Key? key, required this.index, required this.profileId, required this.didAccept, required this.didDecline}) : super(key: key);
+  const ReceivedInvitesAction({
+    Key? key,
+    required this.index,
+    required this.inviteId,
+    required this.profileId,
+    required this.didAccept,
+    required this.didDecline,
+  }) : super(key: key);
 
   @override
   State<ReceivedInvitesAction> createState() => _ReceivedInvitesActionState();
@@ -160,23 +169,61 @@ class _ReceivedInvitesActionState extends State<ReceivedInvitesAction> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didAccept) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Accepted"));
     } else if (didDecline) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Declined"));
     } else {
-      return Row(children: [_acceptButton(context, whitelistProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider)]);
+      return Row(children: [_acceptButton(context, whitelistProvider, userProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider, userProvider)]);
     }
   }
 
-  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Future<bool?> showConfirmModal({required String message}) async {
+    bool? value = await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      enableDrag: true,
+      useRootNavigator: true,
+      builder: (context) {
+        return CustomBottomSheet(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => Navigator.of(context).pop(true),
+              child: Container(
+                height: 60,
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Text(message, style: const TextStyle(fontSize: 17, color: Colors.red)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    return value;
+  }
+
+  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider, UserProvider userProvider) {
     return PillButton(
       onTap: () async {
-        setState(() {
-          didAccept = true;
-        });
-        whitelistProvider.receivedInvites[widget.index].didAccept = true;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmAccept = await showConfirmModal(message: "Accept Invite");
+
+        if (confirmAccept ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.acceptWhitelistInvite(inviteId: widget.inviteId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didAccept = true;
+            whitelistProvider.receivedInvites[widget.index].didAccept = true;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: primary,
       width: 100,
@@ -184,13 +231,23 @@ class _ReceivedInvitesActionState extends State<ReceivedInvitesAction> {
     );
   }
 
-  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider, UserProvider userProvider) {
     return PillButton(
       onTap: () async {
-        setState(() {
-          didDecline = true;
-        });
-        whitelistProvider.receivedInvites[widget.index].didDecline = true;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmDecline = await showConfirmModal(message: "Decline Invite");
+
+        if (confirmDecline ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.declineWhitelistInvite(inviteId: widget.inviteId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didDecline = true;
+            whitelistProvider.receivedInvites[widget.index].didDecline = true;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: Colors.red,
       width: 100,

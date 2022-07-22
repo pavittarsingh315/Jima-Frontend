@@ -142,7 +142,6 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
   }
 
   Widget nonErrorMessageBody(BuildContext context, Icon icon, String title, String description) {
-    final size = MediaQuery.of(context).size;
     return LayoutBuilder(
       builder: (context, constraints) {
         return ListView(
@@ -192,29 +191,10 @@ class _WhitelistActionButtonState extends State<WhitelistActionButton> {
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     if (didBlacklistUser) {
-      return _inviteButton(context, userProvider);
+      return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Removed"));
     } else {
       return _removeButton(context, userProvider);
     }
-  }
-
-  bool didInviteUser = false;
-  Widget _inviteButton(BuildContext context, UserProvider userProvider) {
-    return PillButton(
-      onTap: () async {
-        if (arePerformingAction) return;
-        setState(() => arePerformingAction = true);
-
-        final res = await userProvider.inviteToWhitelist(profileId: widget.whitelistedUserId);
-        if (res["status"]) didInviteUser = true; // TODO: insert this new invite into sent invites
-
-        setState(() => arePerformingAction = false);
-      },
-      color: primary,
-      width: 100,
-      enabled: !didInviteUser,
-      child: arePerformingAction ? const LoadingSpinner() : Text(!didInviteUser ? "Invite" : "Invited"),
-    );
   }
 
   Widget _removeButton(BuildContext context, UserProvider userProvider) {

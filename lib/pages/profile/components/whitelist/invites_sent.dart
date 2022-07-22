@@ -8,6 +8,7 @@ import 'package:nerajima/providers/theme_provider.dart';
 import 'package:nerajima/components/loading_spinner.dart';
 import 'package:nerajima/components/profile_preview_card.dart';
 import 'package:nerajima/components/pill_button.dart';
+import 'package:nerajima/utils/custom_bottom_sheet.dart';
 
 class InvitesSent extends StatefulWidget {
   const InvitesSent({Key? key}) : super(key: key);
@@ -88,6 +89,7 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
             imageUrl: whitelist.sentInvites[index].receiverProfile!.miniProfilePicture,
             trailingWidget: SentInvitesAction(
               index: index,
+              inviteId: whitelist.sentInvites[index].invitationId,
               profileId: whitelist.sentInvites[index].receiverProfile!.profileId,
               didInviteUser: whitelist.sentInvites[index].didInviteUser,
             ),
@@ -145,9 +147,15 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
 
 class SentInvitesAction extends StatefulWidget {
   final int index;
-  final String profileId;
+  final String inviteId, profileId;
   final bool didInviteUser;
-  const SentInvitesAction({Key? key, required this.index, required this.profileId, required this.didInviteUser}) : super(key: key);
+  const SentInvitesAction({
+    Key? key,
+    required this.index,
+    required this.inviteId,
+    required this.profileId,
+    required this.didInviteUser,
+  }) : super(key: key);
 
   @override
   State<SentInvitesAction> createState() => _SentInvitesActionState();
@@ -159,39 +167,57 @@ class _SentInvitesActionState extends State<SentInvitesAction> {
 
   @override
   Widget build(BuildContext context) {
-    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didInviteUser) {
-      return _cancelButton(context, whitelistProvider);
+      return _cancelButton(context);
     } else {
-      return _inviteButton(context, whitelistProvider);
+      return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Canceled"));
     }
   }
 
-  Widget _cancelButton(BuildContext context, WhitelistProvider whitelistProvider) {
+  Widget _cancelButton(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     return PillButton(
       onTap: () async {
-        setState(() {
-          didInviteUser = false;
-        });
-        whitelistProvider.sentInvites[widget.index].didInviteUser = false;
+        if (arePerformingAction) return; // prevents spam
+        bool? confirmCancel = await showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          enableDrag: true,
+          useRootNavigator: true,
+          builder: (context) {
+            return CustomBottomSheet(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(true),
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: const Text("Cancel Invite", style: TextStyle(fontSize: 17, color: Colors.red)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmCancel ?? false) {
+          setState(() => arePerformingAction = true);
+
+          final res = await whitelistProvider.cancelWhitelistInvite(inviteId: widget.inviteId, headers: userProvider.requestHeaders);
+          if (res['status']) {
+            didInviteUser = false;
+            whitelistProvider.sentInvites[widget.index].didInviteUser = false;
+          }
+
+          setState(() => arePerformingAction = false);
+        }
       },
       color: Colors.red,
       width: 100,
       child: arePerformingAction ? const LoadingSpinner() : const Text("Cancel"),
-    );
-  }
-
-  Widget _inviteButton(BuildContext context, WhitelistProvider whitelistProvider) {
-    return PillButton(
-      onTap: () async {
-        setState(() {
-          didInviteUser = true;
-        });
-        whitelistProvider.sentInvites[widget.index].didInviteUser = true;
-      },
-      color: primary,
-      width: 100,
-      child: arePerformingAction ? const LoadingSpinner() : const Text("Invite"),
     );
   }
 }
