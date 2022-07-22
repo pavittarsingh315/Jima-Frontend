@@ -28,11 +28,11 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
 
       // so that when we reopen this page, no new request is made until user scrolls to bottom
       if (whitelistProvider.sentReqPage == 1) {
-        await whitelistProvider.getSentRequests(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+        await whitelistProvider.getSentRequests(headers: userProvider.requestHeaders);
       }
       scrollController.addListener(() async {
         if (scrollController.position.maxScrollExtent == scrollController.offset) {
-          await whitelistProvider.getSentRequests(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          await whitelistProvider.getSentRequests(headers: userProvider.requestHeaders);
         }
       });
     });
@@ -86,7 +86,11 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
             name: whitelist.sentRequests[index].receiverProfile!.name,
             username: whitelist.sentRequests[index].receiverProfile!.username,
             imageUrl: whitelist.sentRequests[index].receiverProfile!.miniProfilePicture,
-            trailingWidget: SentRequestsAction(profileId: whitelist.sentRequests[index].receiverProfile!.profileId),
+            trailingWidget: SentRequestsAction(
+              index: index,
+              profileId: whitelist.sentRequests[index].receiverProfile!.profileId,
+              didRequestUser: whitelist.sentRequests[index].didRequestUser,
+            ),
           );
         },
       ),
@@ -140,32 +144,36 @@ class _RequestsSentState extends State<RequestsSent> with AutomaticKeepAliveClie
 }
 
 class SentRequestsAction extends StatefulWidget {
+  final int index;
   final String profileId;
-  const SentRequestsAction({Key? key, required this.profileId}) : super(key: key);
+  final bool didRequestUser;
+  const SentRequestsAction({Key? key, required this.index, required this.profileId, required this.didRequestUser}) : super(key: key);
 
   @override
   State<SentRequestsAction> createState() => _SentRequestsActionState();
 }
 
 class _SentRequestsActionState extends State<SentRequestsAction> {
-  bool didRequestUser = true;
+  late bool didRequestUser = widget.didRequestUser;
   bool arePerformingAction = false;
 
   @override
   Widget build(BuildContext context) {
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didRequestUser) {
-      return _cancelButton(context);
+      return _cancelButton(context, whitelistProvider);
     } else {
-      return _requestButton(context);
+      return _requestButton(context, whitelistProvider);
     }
   }
 
-  Widget _cancelButton(BuildContext context) {
+  Widget _cancelButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didRequestUser = false;
         });
+        whitelistProvider.sentRequests[widget.index].didRequestUser = false;
       },
       color: Colors.red,
       width: 100,
@@ -173,12 +181,13 @@ class _SentRequestsActionState extends State<SentRequestsAction> {
     );
   }
 
-  Widget _requestButton(BuildContext context) {
+  Widget _requestButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didRequestUser = true;
         });
+        whitelistProvider.sentRequests[widget.index].didRequestUser = true;
       },
       color: primary,
       width: 100,

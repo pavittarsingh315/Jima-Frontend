@@ -34,11 +34,11 @@ class _WhitelistListState extends State<WhitelistList> with AutomaticKeepAliveCl
 
         // so that when we reopen this page, no new request is made until user scrolls to bottom
         if (whitelistProvider.listPage == 1) {
-          await whitelistProvider.getWhitelist(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          await whitelistProvider.getWhitelist(headers: userProvider.requestHeaders);
         }
         scrollController.addListener(() async {
           if (scrollController.position.maxScrollExtent == scrollController.offset) {
-            await whitelistProvider.getWhitelist(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+            await whitelistProvider.getWhitelist(headers: userProvider.requestHeaders);
           }
         });
       }

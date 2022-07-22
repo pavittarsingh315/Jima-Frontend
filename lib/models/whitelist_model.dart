@@ -2,7 +2,8 @@ import 'package:nerajima/models/search_models.dart';
 
 class WhitelistInvitation {
   late final String invitationId;
-  late SearchUser? senderProfile, receiverProfile;
+  late final SearchUser? senderProfile, receiverProfile;
+  bool didInviteUser = true, didAccept = false, didDecline = false;
 
   WhitelistInvitation({required this.invitationId, required this.senderProfile, required this.receiverProfile});
 
@@ -18,7 +19,8 @@ class WhitelistInvitation {
 
 class WhitelistRequest {
   late final String requestId;
-  late SearchUser? senderProfile, receiverProfile;
+  late final SearchUser? senderProfile, receiverProfile;
+  bool didRequestUser = true, didAccept = false, didDecline = false;
 
   WhitelistRequest({required this.requestId, required this.senderProfile, required this.receiverProfile});
 

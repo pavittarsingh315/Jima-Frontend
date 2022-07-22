@@ -28,11 +28,11 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
 
       // so that when we reopen this page, no new request is made until user scrolls to bottom
       if (whitelistProvider.receivedReqPage == 1) {
-        await whitelistProvider.getReceivedRequests(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+        await whitelistProvider.getReceivedRequests(headers: userProvider.requestHeaders);
       }
       scrollController.addListener(() async {
         if (scrollController.position.maxScrollExtent == scrollController.offset) {
-          await whitelistProvider.getReceivedRequests(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          await whitelistProvider.getReceivedRequests(headers: userProvider.requestHeaders);
         }
       });
     });
@@ -86,7 +86,12 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
             name: whitelist.receivedRequests[index].senderProfile!.name,
             username: whitelist.receivedRequests[index].senderProfile!.username,
             imageUrl: whitelist.receivedRequests[index].senderProfile!.miniProfilePicture,
-            trailingWidget: ReceivedRequestsAction(profileId: whitelist.receivedRequests[index].senderProfile!.profileId),
+            trailingWidget: ReceivedRequestsAction(
+              index: index,
+              profileId: whitelist.receivedRequests[index].senderProfile!.profileId,
+              didAccept: whitelist.receivedRequests[index].didAccept,
+              didDecline: whitelist.receivedRequests[index].didDecline,
+            ),
           );
         },
       ),
@@ -140,34 +145,38 @@ class _RequestsReceivedState extends State<RequestsReceived> with AutomaticKeepA
 }
 
 class ReceivedRequestsAction extends StatefulWidget {
+  final int index;
   final String profileId;
-  const ReceivedRequestsAction({Key? key, required this.profileId}) : super(key: key);
+  final bool didAccept, didDecline;
+  const ReceivedRequestsAction({Key? key, required this.index, required this.profileId, required this.didAccept, required this.didDecline}) : super(key: key);
 
   @override
   State<ReceivedRequestsAction> createState() => _ReceivedRequestsActionState();
 }
 
 class _ReceivedRequestsActionState extends State<ReceivedRequestsAction> {
-  bool didAccept = false, didDecline = false;
+  late bool didAccept = widget.didAccept, didDecline = widget.didDecline;
   bool arePerformingAction = false;
 
   @override
   Widget build(BuildContext context) {
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didAccept) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Accepted"));
     } else if (didDecline) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Declined"));
     } else {
-      return Row(children: [_acceptButton(context), const SizedBox(width: 5), _declineButton(context)]);
+      return Row(children: [_acceptButton(context, whitelistProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider)]);
     }
   }
 
-  Widget _acceptButton(BuildContext context) {
+  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didAccept = true;
         });
+        whitelistProvider.receivedRequests[widget.index].didAccept = true;
       },
       color: primary,
       width: 100,
@@ -175,12 +184,13 @@ class _ReceivedRequestsActionState extends State<ReceivedRequestsAction> {
     );
   }
 
-  Widget _declineButton(BuildContext context) {
+  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didDecline = true;
         });
+        whitelistProvider.receivedRequests[widget.index].didDecline = true;
       },
       color: Colors.red,
       width: 100,

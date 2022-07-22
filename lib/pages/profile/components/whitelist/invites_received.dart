@@ -28,11 +28,11 @@ class _InvitesReceivedState extends State<InvitesReceived> with AutomaticKeepAli
 
       // so that when we reopen this page, no new request is made until user scrolls to bottom
       if (whitelistProvider.receivedInvPage == 1) {
-        await whitelistProvider.getReceivedInvites(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+        await whitelistProvider.getReceivedInvites(headers: userProvider.requestHeaders);
       }
       scrollController.addListener(() async {
         if (scrollController.position.maxScrollExtent == scrollController.offset) {
-          await whitelistProvider.getReceivedInvites(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          await whitelistProvider.getReceivedInvites(headers: userProvider.requestHeaders);
         }
       });
     });
@@ -86,7 +86,12 @@ class _InvitesReceivedState extends State<InvitesReceived> with AutomaticKeepAli
             name: whitelist.receivedInvites[index].senderProfile!.name,
             username: whitelist.receivedInvites[index].senderProfile!.username,
             imageUrl: whitelist.receivedInvites[index].senderProfile!.miniProfilePicture,
-            trailingWidget: ReceivedInvitesAction(profileId: whitelist.receivedInvites[index].senderProfile!.profileId),
+            trailingWidget: ReceivedInvitesAction(
+              index: index,
+              profileId: whitelist.receivedInvites[index].senderProfile!.profileId,
+              didAccept: whitelist.receivedInvites[index].didAccept,
+              didDecline: whitelist.receivedInvites[index].didDecline,
+            ),
           );
         },
       ),
@@ -140,34 +145,38 @@ class _InvitesReceivedState extends State<InvitesReceived> with AutomaticKeepAli
 }
 
 class ReceivedInvitesAction extends StatefulWidget {
+  final int index;
   final String profileId;
-  const ReceivedInvitesAction({Key? key, required this.profileId}) : super(key: key);
+  final bool didAccept, didDecline;
+  const ReceivedInvitesAction({Key? key, required this.index, required this.profileId, required this.didAccept, required this.didDecline}) : super(key: key);
 
   @override
   State<ReceivedInvitesAction> createState() => _ReceivedInvitesActionState();
 }
 
 class _ReceivedInvitesActionState extends State<ReceivedInvitesAction> {
-  bool didAccept = false, didDecline = false;
+  late bool didAccept = widget.didAccept, didDecline = widget.didDecline;
   bool arePerformingAction = false;
 
   @override
   Widget build(BuildContext context) {
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didAccept) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Accepted"));
     } else if (didDecline) {
       return PillButton(onTap: () {}, color: primary, enabled: false, width: 100, child: const Text("Declined"));
     } else {
-      return Row(children: [_acceptButton(context), const SizedBox(width: 5), _declineButton(context)]);
+      return Row(children: [_acceptButton(context, whitelistProvider), const SizedBox(width: 5), _declineButton(context, whitelistProvider)]);
     }
   }
 
-  Widget _acceptButton(BuildContext context) {
+  Widget _acceptButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didAccept = true;
         });
+        whitelistProvider.receivedInvites[widget.index].didAccept = true;
       },
       color: primary,
       width: 100,
@@ -175,12 +184,13 @@ class _ReceivedInvitesActionState extends State<ReceivedInvitesAction> {
     );
   }
 
-  Widget _declineButton(BuildContext context) {
+  Widget _declineButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didDecline = true;
         });
+        whitelistProvider.receivedInvites[widget.index].didDecline = true;
       },
       color: Colors.red,
       width: 100,

@@ -18,7 +18,7 @@ class WhitelistProvider extends ChangeNotifier {
   bool get listHasMore => _listHasMore;
   int get listPage => _listPage;
 
-  Future<void> getWhitelist({required String authToken, required String userId, required Map<String, String> headers}) async {
+  Future<void> getWhitelist({required Map<String, String> headers}) async {
     try {
       if (_listHasError) return;
 
@@ -67,7 +67,7 @@ class WhitelistProvider extends ChangeNotifier {
   bool get sentInvHasError => _sentInvHasError;
   bool get sentInvHasMore => _sentInvHasMore;
 
-  Future<void> getSentInvites({required String authToken, required String userId, required Map<String, String> headers}) async {
+  Future<void> getSentInvites({required Map<String, String> headers}) async {
     try {
       if (_sentInvHasError) return;
       if (_isSentInvLoading || !_sentInvHasMore) return;
@@ -115,7 +115,7 @@ class WhitelistProvider extends ChangeNotifier {
   bool get receivedInvHasError => _receivedInvHasError;
   bool get receivedInvHasMore => _receivedInvHasMore;
 
-  Future<void> getReceivedInvites({required String authToken, required String userId, required Map<String, String> headers}) async {
+  Future<void> getReceivedInvites({required Map<String, String> headers}) async {
     try {
       if (_receivedInvHasError) return;
       if (_isReceivedInvLoading || !_receivedInvHasMore) return;
@@ -163,7 +163,7 @@ class WhitelistProvider extends ChangeNotifier {
   bool get sentReqHasError => _sentReqHasError;
   bool get sentReqHasMore => _sentReqHasMore;
 
-  Future<void> getSentRequests({required String authToken, required String userId, required Map<String, String> headers}) async {
+  Future<void> getSentRequests({required Map<String, String> headers}) async {
     try {
       if (_sentReqHasError) return;
       if (_isSentReqLoading || !_sentReqHasMore) return;
@@ -211,7 +211,7 @@ class WhitelistProvider extends ChangeNotifier {
   bool get receivedReqHasError => _receivedReqHasError;
   bool get receivedReqHasMore => _receivedReqHasMore;
 
-  Future<void> getReceivedRequests({required String authToken, required String userId, required Map<String, String> headers}) async {
+  Future<void> getReceivedRequests({required Map<String, String> headers}) async {
     try {
       if (_receivedReqHasError) return;
       if (_isReceivedReqLoading || !_receivedReqHasMore) return;
@@ -246,6 +246,120 @@ class WhitelistProvider extends ChangeNotifier {
       _isReceivedReqLoading = false;
       _receivedReqHasError = true;
       notifyListeners();
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> cancelWhitelistInvite({required String inviteId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.revokeWhitelistInvite}/$inviteId");
+      Response response = await delete(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong canceling the invite...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> acceptWhitelistInvite({required String inviteId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.acceptWhitelistInvite}/$inviteId");
+      Response response = await post(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong accepting the invite...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> declineWhitelistInvite({required String inviteId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.declineWhitelistInvite}/$inviteId");
+      Response response = await delete(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong declining the invite...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> cancelWhitelistRequest({required String requestId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.cancelWhitelistEntryRequest}/$requestId");
+      Response response = await delete(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong canceling the request...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> acceptWhitelistRequest({required String requestId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.acceptWhitelistEntryRequest}/$requestId");
+      Response response = await post(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong accepting the request...");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  /// Success map keys: [status]. Error map keys: [status, message].
+  Future<Map<String, dynamic>> declineWhitelistRequest({required String requestId, required Map<String, String> headers}) async {
+    try {
+      final url = Uri.parse("${ApiEndpoints.declineWhitelistEntryRequest}/$requestId");
+      Response response = await delete(url, headers: headers);
+      final Map<String, dynamic> resData = convert.jsonDecode(convert.utf8.decode(response.bodyBytes));
+
+      if (resData["message"] == "Success") {
+        return {"status": true};
+      } else if (resData["message"] == "Error") {
+        return {"status": false, "message": resData["data"]["data"]};
+      }
+
+      throw Exception("Something went wrong declining the request...");
+    } catch (e) {
       return Future.error(e);
     }
   }

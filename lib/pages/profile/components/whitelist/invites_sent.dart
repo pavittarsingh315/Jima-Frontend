@@ -28,11 +28,11 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
 
       // so that when we reopen this page, no new request is made until user scrolls to bottom
       if (whitelistProvider.sentInvPage == 1) {
-        await whitelistProvider.getSentInvites(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+        await whitelistProvider.getSentInvites(headers: userProvider.requestHeaders);
       }
       scrollController.addListener(() async {
         if (scrollController.position.maxScrollExtent == scrollController.offset) {
-          await whitelistProvider.getSentInvites(authToken: userProvider.user.access, userId: userProvider.user.userId, headers: userProvider.requestHeaders);
+          await whitelistProvider.getSentInvites(headers: userProvider.requestHeaders);
         }
       });
     });
@@ -86,7 +86,11 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
             name: whitelist.sentInvites[index].receiverProfile!.name,
             username: whitelist.sentInvites[index].receiverProfile!.username,
             imageUrl: whitelist.sentInvites[index].receiverProfile!.miniProfilePicture,
-            trailingWidget: SentInvitesAction(profileId: whitelist.sentInvites[index].receiverProfile!.profileId),
+            trailingWidget: SentInvitesAction(
+              index: index,
+              profileId: whitelist.sentInvites[index].receiverProfile!.profileId,
+              didInviteUser: whitelist.sentInvites[index].didInviteUser,
+            ),
           );
         },
       ),
@@ -140,32 +144,36 @@ class _InvitesSentState extends State<InvitesSent> with AutomaticKeepAliveClient
 }
 
 class SentInvitesAction extends StatefulWidget {
+  final int index;
   final String profileId;
-  const SentInvitesAction({Key? key, required this.profileId}) : super(key: key);
+  final bool didInviteUser;
+  const SentInvitesAction({Key? key, required this.index, required this.profileId, required this.didInviteUser}) : super(key: key);
 
   @override
   State<SentInvitesAction> createState() => _SentInvitesActionState();
 }
 
 class _SentInvitesActionState extends State<SentInvitesAction> {
-  bool didInviteUser = true;
+  late bool didInviteUser = widget.didInviteUser;
   bool arePerformingAction = false;
 
   @override
   Widget build(BuildContext context) {
+    WhitelistProvider whitelistProvider = Provider.of<WhitelistProvider>(context, listen: false);
     if (didInviteUser) {
-      return _cancelButton(context);
+      return _cancelButton(context, whitelistProvider);
     } else {
-      return _inviteButton(context);
+      return _inviteButton(context, whitelistProvider);
     }
   }
 
-  Widget _cancelButton(BuildContext context) {
+  Widget _cancelButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didInviteUser = false;
         });
+        whitelistProvider.sentInvites[widget.index].didInviteUser = false;
       },
       color: Colors.red,
       width: 100,
@@ -173,12 +181,13 @@ class _SentInvitesActionState extends State<SentInvitesAction> {
     );
   }
 
-  Widget _inviteButton(BuildContext context) {
+  Widget _inviteButton(BuildContext context, WhitelistProvider whitelistProvider) {
     return PillButton(
       onTap: () async {
         setState(() {
           didInviteUser = true;
         });
+        whitelistProvider.sentInvites[widget.index].didInviteUser = true;
       },
       color: primary,
       width: 100,
