@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -25,12 +27,32 @@ class ThemeProvider extends ChangeNotifier {
     bool? isDarkMode = prefs.getBool('isDarkMode');
     if (isDarkMode == true && _themeMode != ThemeMode.dark) {
       _themeMode = ThemeMode.dark;
+      if (Platform.isAndroid) {
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.black,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ));
+      }
+    } else {
+      if (Platform.isAndroid) {
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ));
+      }
     }
     notifyListeners();
     debugPrint("got theme");
   }
 
   Future<void> changeTheme(bool darkModeIsOn) async {
+    if (Platform.isAndroid) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: darkModeIsOn ? Colors.black : Colors.white,
+        systemNavigationBarIconBrightness: darkModeIsOn ? Brightness.light : Brightness.dark,
+      ));
+    }
+
     _themeMode = darkModeIsOn ? ThemeMode.dark : ThemeMode.light;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDarkMode', _themeMode == ThemeMode.dark ? true : false);
